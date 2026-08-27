@@ -115,3 +115,4 @@ Este projeto está em fase de proposta acadêmica. Contribuições, sugestões e
 - Maria Clara Freire Araújo
 - João Vitor Mâncio Chaves
 - Guilherme Miguel Spyrides Leite Ferro
+- Gabrielle Suemi Iquejiri Alencar
