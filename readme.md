@@ -112,3 +112,4 @@ Este projeto está em fase de proposta acadêmica. Contribuições, sugestões e
 ---
 ## Integrantes
 - Maria Fernanda Siqueira de Moraes
+- Maria Clara Freire Araújo
