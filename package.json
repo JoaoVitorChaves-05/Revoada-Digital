@@ -4,10 +4,12 @@
   "description": "> O estudo que rende e a nota que sobe.",
   "main": "index.js",
   "scripts": {
-    "dev:frontend": "cd apps/frontend && npm run dev",
-    "dev:backend": "cd apps/backend && npm run dev",
-    "build:frontend": "cd apps/frontend && npm run build",
-    "build:backend": "cd apps/backend && npm run build"
+    "dev:backend": "npm run dev -w apps/backend",
+    "dev:frontend": "npm run dev -w apps/frontend",
+    "build:backend": "npm run build -w apps/backend",
+    "build:frontend": "npm run build -w apps/frontend",
+    "start:backend": "npm run start -w apps/backend",
+    "start:frontend": "npm run start -w apps/frontend"
   },
   "repository": {
     "type": "git",
@@ -26,5 +28,13 @@
   "devDependencies": {
     "@types/node": "^26.4.0",
     "typescript": "^7.0.2"
+  },
+  "allowScripts": {
+    "prisma@7.10.0": true,
+    "@prisma/engines@7.10.0": true,
+    "react@19.2.8": true,
+    "react-dom@19.2.8": true,
+    "react-router-dom@7.18.2": true,
+    "bootstrap@5.3.8": true
   }
 }
