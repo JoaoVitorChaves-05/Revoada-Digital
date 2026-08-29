@@ -1,0 +1,42 @@
+{
+  "name": "revoada-digital",
+  "version": "1.0.0",
+  "description": "> O estudo que rende e a nota que sobe.",
+  "main": "index.js",
+  "scripts": {
+    "dev:backend": "npm run dev -w apps/backend",
+    "dev:frontend": "npm run dev -w apps/frontend",
+    "build:backend": "npm run build -w apps/backend",
+    "build:frontend": "npm run build -w apps/frontend",
+    "start:backend": "npm run start -w apps/backend",
+    "start:frontend": "npm run start -w apps/frontend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoaoVitorChaves-05/Revoada-Digital.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JoaoVitorChaves-05/Revoada-Digital/issues"
+  },
+  "homepage": "https://github.com/JoaoVitorChaves-05/Revoada-Digital#readme",
+  "workspaces": [
+    "apps/*"
+  ],
+  "devDependencies": {
+    "@types/node": "^26.4.0",
+    "typescript": "^7.0.2"
+  },
+  "allowScripts": {
+    "prisma@7.10.0": true,
+    "@prisma/engines@7.10.0": true,
+    "react@19.2.8": true,
+    "react-dom@19.2.8": true,
+    "react-router-dom@7.18.2": true,
+    "bootstrap@5.3.8": true,
+    "content-type@1.0.5": true,
+    "content-type@2.1.0": true
+  }
+}
