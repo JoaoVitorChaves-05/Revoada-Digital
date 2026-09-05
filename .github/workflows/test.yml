@@ -4,10 +4,12 @@ on: #quando o workflow será executado
   push:
     branches:
       - main
+      - develop
 
   pull_request:
     branches:
       - main
+      - develop
 
 jobs:
   test:
