@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                                                      String              @id @default(cuid())
+  email                                                   String              @unique
+  fullName                                                String              @map("full_name")
+  rg                                                      String              @unique
+  cpf                                                     String              @unique
+  profileType                                             ProfileType
+  createdAt                                               DateTime            @default(now())
+  updatedAt                                               DateTime            @updatedAt
+  admin_profiles                                          admin_profiles?
+  approval_requests_approval_requests_approvedByIdTousers approval_requests[] @relation("approval_requests_approvedByIdTousers")
+  approval_requests_approval_requests_userIdTousers       approval_requests?  @relation("approval_requests_userIdTousers")
+  student_profiles                                        student_profiles?
+  teacher_profiles                                        teacher_profiles?
+
+  @@map("users")
+}
+
+model admin_profiles {
+  id     String  @id
+  role   String? @default("Geral")
+  userId String  @unique
+  users  User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model approval_requests {
+  id                                          String         @id
+  status                                      ApprovalStatus @default(PENDING)
+  rejectionReason                             String?
+  userId                                      String         @unique
+  approvedById                                String?
+  createdAt                                   DateTime       @default(now())
+  updatedAt                                   DateTime
+  users_approval_requests_approvedByIdTousers User?          @relation("approval_requests_approvedByIdTousers", fields: [approvedById], references: [id])
+  users_approval_requests_userIdTousers       User           @relation("approval_requests_userIdTousers", fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model student_profiles {
+  id     String @id
+  school String
+  points Int    @default(0)
+  userId String @unique
+  users  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model teacher_profiles {
+  id     String @id
+  school String
+  userId String @unique
+  users  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ProfileType {
+  STUDENT
+  TEACHER
+  ADMIN
+}
