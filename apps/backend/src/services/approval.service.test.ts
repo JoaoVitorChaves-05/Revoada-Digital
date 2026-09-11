@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ApprovalRepository } from '../repositories/approval.repository';
+import type { ApprovalRepository } from '../repositories/approval.repository';
 import { ApprovalService } from './approval.service';
+
+vi.mock('../repositories/approval.repository', () => ({
+	ApprovalRepository: class {},
+}));
 
 function createRepositoryMock() {
 	return {

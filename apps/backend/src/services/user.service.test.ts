@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { UserRepository } from '../repositories/user.repository';
+import type { UserRepository } from '../repositories/user.repository';
 import { UserService } from './user.service';
+
+vi.mock('../repositories/user.repository', () => ({
+	UserRepository: class {},
+}));
 
 const userInput = {
 	email: 'aluno@example.com',
