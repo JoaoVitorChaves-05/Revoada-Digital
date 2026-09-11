@@ -53,6 +53,8 @@ coverage/
 build/
 out/
 lib/
+!apps/backend/src/lib/
+!apps/backend/src/lib/prisma.ts
 # Cache incremental do TypeScript
 *.tsbuildinfo
 
