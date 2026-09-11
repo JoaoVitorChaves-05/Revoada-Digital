@@ -9,7 +9,8 @@
     "build:backend": "npm run build -w apps/backend",
     "build:frontend": "npm run build -w apps/frontend",
     "start:backend": "npm run start -w apps/backend",
-    "start:frontend": "npm run start -w apps/frontend"
+    "start:frontend": "npm run start -w apps/frontend",
+    "prisma:push": "npx prisma db push --config apps/backend/prisma.config.ts"
   },
   "repository": {
     "type": "git",

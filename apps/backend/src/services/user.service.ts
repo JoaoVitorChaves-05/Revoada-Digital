@@ -1,4 +1,4 @@
-import { CreateUserInput } from '../schemas/user.schema';
+import { CreateUserInput, UpdateUserInput } from '../schemas/user.schema';
 import { UserRepository } from '../repositories/user.repository';
 
 export class UserService {
@@ -19,6 +19,38 @@ export class UserService {
 		}
 
 		return this.userRepository.createWithProfileAndApproval(data);
+	}
+
+	async updateUser(id: string, data: UpdateUserInput) {
+		const user = await this.userRepository.findById(id);
+		if (!user) {
+			throw new Error('Usuário não encontrado');
+		}
+
+		if (data.email && data.email !== user.email) {
+			const emailUser = await this.userRepository.findByEmail(data.email);
+			if (emailUser) {
+				throw new Error('Email já cadastrado');
+			}
+		}
+
+		if (data.rg && data.rg !== user.rg) {
+			const rgUser = await this.userRepository.findByRg(data.rg);
+			if (rgUser) {
+				throw new Error('RG já cadastrado');
+			}
+		}
+
+		return this.userRepository.update(id, data);
+	}
+
+	async deleteUser(id: string) {
+		const user = await this.userRepository.findById(id);
+		if (!user) {
+			throw new Error('Usuário não encontrado');
+		}
+
+		return this.userRepository.delete(id);
 	}
 }
 
