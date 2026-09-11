@@ -67,3 +67,4 @@ lib/
 # (Opcional) Caso você configure o Prisma Client para ser 
 # gerado em uma pasta customizada em vez do node_modules
 # prisma/generated/
+apps/backend/src/generated/

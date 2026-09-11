@@ -2,8 +2,10 @@
   "name": "backend",
   "version": "1.0.0",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "test": "vitest run --passWithNoTests=false"
+    "dev": "tsx watch src/server.ts",
+    "test": "vitest run --passWithNoTests=false",
+    "prisma:generate": "prisma generate --config prisma.config.ts",
+    "prisma:migrate": "prisma migrate dev --config prisma.config.ts"
   },
   "type": "commonjs",
   "dependencies": {
@@ -21,6 +23,7 @@
     "@types/node": "^26.5.0",
     "@types/pg": "^8.23.1",
     "prisma": "^7.10.0",
+    "tsx": "^4.23.13",
     "vitest": "^5.0.0"
   }
 }
