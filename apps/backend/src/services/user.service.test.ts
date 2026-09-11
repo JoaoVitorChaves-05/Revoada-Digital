@@ -104,4 +104,13 @@ describe('UserService', () => {
 		await expect(service.deleteUser('missing-user')).rejects.toThrow('Usuário não encontrado');
 		expect(repository.delete).not.toHaveBeenCalled();
 	});
+
+    it('busca usuário existente', async () => {
+        repository.findById.mockResolvedValue({ id: 'user-1' });
+
+        const result = await service.readUser('user-1');
+
+        expect(result).toEqual({ id: 'user-1' });
+        expect(repository.findById).toHaveBeenCalledWith('user-1');
+    });
 });

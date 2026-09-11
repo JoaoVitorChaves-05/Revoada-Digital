@@ -21,6 +21,15 @@ export class UserService {
 		return this.userRepository.createWithProfileAndApproval(data);
 	}
 
+	async readUser(id: string) {
+		const user = await this.userRepository.findById(id);
+		if (!user) {
+			throw new Error('Usuário não encontrado');
+		}
+
+		return user;
+	}
+
 	async updateUser(id: string, data: UpdateUserInput) {
 		const user = await this.userRepository.findById(id);
 		if (!user) {
