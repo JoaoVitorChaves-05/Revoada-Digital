@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ------------------------------------------------------
+// Enums para Tipagem Segura
+// ------------------------------------------------------
+
+enum ProfileType {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ------------------------------------------------------
+// Entidade Principal: Usuário
+// ------------------------------------------------------
+
+model User {
+  id          String      @id @default(uuid())
+  email       String      @unique
+  full_name   String
+  rg          String      @unique
+  cpf         String      @unique
+  profileType ProfileType
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamentos 1:1 com os perfis específicos (opcionais)
+  studentProfile StudentProfile?
+  teacherProfile TeacherProfile?
+  adminProfile   AdminProfile?
+
+  // Relacionamentos com as Solicitações de Aprovação:
+  // 1. A solicitação referente ao cadastro deste usuário
+  approvalRequest ApprovalRequest? @relation("UserRegistration")
+
+  // 2. Solicitações que este usuário (se for Admin) aprovou/rejeitou
+  approvedRequests ApprovalRequest[] @relation("AdminApprovals")
+
+  @@map("users")
+}
+
+// ------------------------------------------------------
+// Perfis de Usuário (1:1 com User)
+// ------------------------------------------------------
+
+model StudentProfile {
+  id     String @id @default(uuid())
+  school String
+  points Int    @default(0) // Pontuação do Learn-to-Earn
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("student_profiles")
+}
+
+model TeacherProfile {
+  id     String @id @default(uuid())
+  school String
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("teacher_profiles")
+}
+
+model AdminProfile {
+  id   String  @id @default(uuid())
+  role String? @default("Geral")
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("admin_profiles")
+}
+
+// ------------------------------------------------------
+// Solicitação de Aprovação de Cadastro
+// ------------------------------------------------------
+
+model ApprovalRequest {
+  id              String         @id @default(uuid())
+  status          ApprovalStatus @default(PENDING)
+  rejectionReason String?
+
+  // Usuário que solicitou o cadastro
+  userId String @unique
+  user   User   @relation("UserRegistration", fields: [userId], references: [id], onDelete: Cascade)
+
+  // Administrador que realizou a aprovação/rejeição (opcional até ser avaliado)
+  approvedById String?
+  approvedBy   User?   @relation("AdminApprovals", fields: [approvedById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("approval_requests")
+}
