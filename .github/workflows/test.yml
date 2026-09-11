@@ -1,0 +1,32 @@
+name: Tests
+
+on: #quando o workflow será executado
+  push:
+    branches:
+      - main
+      - develop
+
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest #maq temporária para rodar o workflow
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4 #baixar o código do repositório
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4 #configurar o node
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci #instalar as dependências do projeto
+
+      - name: Run tests
+        run: npm test -w apps/backend #como o projeto é monorepo, precisamos especificar o workspace do backends
