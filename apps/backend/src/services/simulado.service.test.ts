@@ -8,6 +8,7 @@ vi.mock('../repositories/simulado.repository', () => ({
 
 function createRepositoryMock() {
  return {
+  findAll: vi.fn(),
   findById: vi.fn(),
   create: vi.fn(),
   update: vi.fn(),
@@ -22,6 +23,61 @@ describe('SimuladoService', () => {
  beforeEach(() => {
   repository = createRepositoryMock();
   service = new SimuladoService(repository as unknown as SimuladoRepository);
+ });
+
+ it('cria um simulado', async () => {
+	const data = {
+		studentId: 'aluno-1',
+		questionIds: ['questao-1', 'questao-2'],
+	};
+
+	const createdSimulado = {
+		id: 'simulado-1',
+		...data,
+	};
+
+	repository.create.mockReturnValue(createdSimulado);
+	await expect(service.createSimulado(data)).resolves.toEqual(
+		createdSimulado,
+	);
+	expect(repository.create).toHaveBeenCalledWith(data);
+ });
+
+ it('lista todos os simulados', async () => {
+	const simulados = [
+		{
+			id: 'simulado-1',
+			studentId: 'aluno-1',
+			questionIds: ['questao-1'],
+		},
+	];
+
+	repository.findAll.mockReturnValue(simulados);
+	await expect(service.listSimulados()).resolves.toEqual(simulados);
+	expect(repository.findAll).toHaveBeenCalled();
+ });
+
+ it('busca um simulado existente pelo ID', async () => {
+	const simulado = {
+		id: 'simulado-1',
+		studentId: 'aluno-1',
+		questionIds: ['questao-1'],
+	};
+
+	repository.findById.mockReturnValue(simulado);
+
+	await expect(
+		service.readSimulado('simulado-1'),
+	).resolves.toEqual(simulado);
+
+	expect(repository.findById).toHaveBeenCalledWith('simulado-1');
+ });
+
+ it('impede a busca de um simulado inexistente', async () => {
+	repository.findById.mockReturnValue(null);
+	await expect(
+		service.readSimulado('missing-simulado'),
+	).rejects.toThrow('Simulado não encontrado');
  });
 
  it('atualiza um simulado existente', async () => {

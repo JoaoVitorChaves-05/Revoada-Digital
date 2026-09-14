@@ -15,6 +15,20 @@ export class SimuladoService {
   return this.simuladoRepository.create(data);
  }
 
+ async listSimulados() {
+	return this.simuladoRepository.findAll();
+ }
+
+ async readSimulado(id: string) {
+	const simulado = this.simuladoRepository.findById(id);
+
+	if (!simulado) {
+		throw new Error('Simulado não encontrado');
+	}
+
+	return simulado;
+ }
+
  async updateSimulado(id: string, data: UpdateSimuladoInput) {
   const simulado = this.simuladoRepository.findById(id);
   if (!simulado) {
