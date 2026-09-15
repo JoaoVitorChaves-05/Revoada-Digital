@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import {
  createSimulado,
+ listSimulados,
+ readSimulado,
  deleteSimulado,
  updateSimulado,
 } from '../controllers/simulado.controller';
@@ -18,5 +20,7 @@ simuladosRouter.post('/', validateSchema(createSimuladoSchema), createSimulado);
 simuladosRouter.put('/:id', validateSchema(updateSimuladoSchema), updateSimulado);
 // Exclusão física do simulado identificado pelo parâmetro da rota.
 simuladosRouter.delete('/:id', deleteSimulado);
+simuladosRouter.get('/', listSimulados);
+simuladosRouter.get('/:id', readSimulado);
 
 export default simuladosRouter;

@@ -23,6 +23,35 @@ export async function createSimulado(req: Request, res: Response) {
  return res.status(201).json(simulado);
 }
 
+export async function listSimulados(_req: Request, res: Response){
+	try {
+		const simulados = await simuladoService.listSimulados();
+
+		return res.status(200).json(simulados);
+	} catch {
+		return res.status(500).json({
+			error: 'Erro ao listar simulados',
+		});
+	}
+}
+
+export async function readSimulado(req: Request, res: Response) {
+	try {
+		const simulado = await simuladoService.readSimulado(getId(req));
+		return res.status(200).json(simulado);
+	} catch (error) {
+		if (isNotFoundError(error)) {
+			return res.status(404).json({
+				error: 'Simulado não encontrado',
+			});
+		}
+
+		return res.status(500).json({
+			error: 'Erro ao buscar simulado',
+		});
+	}
+}
+
 export async function updateSimulado(req: Request, res: Response) {
  // O service verifica a existência antes de delegar a atualização ao repository.
  try {
