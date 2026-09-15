@@ -5,7 +5,10 @@
     "dev": "tsx watch src/index.ts",
     "test": "vitest run --passWithNoTests=false",
     "prisma:generate": "prisma generate --config prisma.config.ts",
-    "prisma:migrate": "prisma migrate dev --config prisma.config.ts"
+    "prisma:migrate": "npx prisma migrate dev --create-only",
+    "prisma:deploy": "npx prisma migrate deploy",
+    "prisma:applied": "npx prisma migrate resolve --applied",
+    "prisma:rolledback": "npx prisma migrate resolve --rolled-back"
   },
   "type": "commonjs",
   "dependencies": {
