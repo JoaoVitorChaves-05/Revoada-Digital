@@ -133,3 +133,11 @@ model MockExam{
 
   @@map("mock_exams")
 }
+
+  model Question{
+  id        String   @id @default(uuid())
+  // Question Stem (enunciado da questão)
+  QStem     String  @unique
+  Level   Int
+  @@map("questions")
+  }
