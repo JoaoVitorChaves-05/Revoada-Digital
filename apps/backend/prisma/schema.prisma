@@ -123,3 +123,13 @@ model School{
 
   @@map("schools")
 }
+
+model MockExam{
+  id        String   @id @default(uuid())
+  name      String
+  studentId String @unique
+  student  StudentProfile @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  #attempts Attempt[]
+
+  @@map("mock_exams")
+}
