@@ -62,7 +62,8 @@ model StudentProfile {
 
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  school School @relation(fields: [school], references: [name], onDelete: Restrict)
+  schoolname String
+  school School @relation(fields: [schoolname], references: [name], onDelete: Restrict)
 
   @@map("student_profiles")
 }
@@ -72,7 +73,8 @@ model TeacherProfile {
 
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  school School @relation(fields: [school], references: [name], onDelete: Restrict)
+  schoolname String
+  school School @relation(fields: [schoolname], references: [name], onDelete: Restrict)
 
   @@map("teacher_profiles")
 }
