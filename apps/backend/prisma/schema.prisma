@@ -62,8 +62,8 @@ model StudentProfile {
 
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  schoolname String
-  school School @relation(fields: [schoolname], references: [name], onDelete: Restrict)
+  schoolId String
+  school School @relation(fields: [schoolId], references: [id], onDelete: Restrict)
   mockExams MockExam[]
 
   @@map("student_profiles")
@@ -74,8 +74,8 @@ model TeacherProfile {
 
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  schoolname String
-  school School @relation(fields: [schoolname], references: [name], onDelete: Restrict)
+  schoolId String
+  school School @relation(fields: [schoolId], references: [id], onDelete: Restrict)
 
   @@map("teacher_profiles")
 }
@@ -151,6 +151,7 @@ question   Question @relation(fields: [questionId], references: [id], onDelete: 
 mockExamId String 
 mockExam   MockExam @relation(fields: [mockExamId], references: [id], onDelete: Cascade)
 MarkedAnswer_Id String
+alternative Alternative @relation(fields: [MarkedAnswer_Id], references: [id], onDelete: Restrict)
 
   @@map("attempts")
   }
@@ -161,6 +162,7 @@ MarkedAnswer_Id String
   Correct   Boolean
   questionId String
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  attempts   Attempt[]
 
-  @@map("alternatives")
+   @@map("alternatives")  
   }
