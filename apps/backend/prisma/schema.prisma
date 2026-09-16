@@ -127,7 +127,7 @@ model School{
 model MockExam{
   id        String   @id @default(uuid())
   name      String
-  studentId String @unique
+  studentId String 
   student  StudentProfile @relation(fields: [studentId], references: [id], onDelete: Restrict)
   #attempts Attempt[]
 
@@ -140,4 +140,15 @@ model MockExam{
   QStem     String  @unique
   Level   Int
   @@map("questions")
+  }
+
+  model Attempt{
+  id        String   @id @default(uuid())
+questionId String
+question   Question @relation(fields: [questionId], references: [id], onDelete: Restrict)
+mockExamId String 
+mockExam   MockExam @relation(fields: [mockExamId], references: [id], onDelete: Cascade)
+MarkedAnswer_Id String
+
+  @@map("attempts")
   }
