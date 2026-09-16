@@ -64,6 +64,7 @@ model StudentProfile {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   schoolname String
   school School @relation(fields: [schoolname], references: [name], onDelete: Restrict)
+  mockExams MockExam[]
 
   @@map("student_profiles")
 }
@@ -129,8 +130,7 @@ model MockExam{
   name      String
   studentId String 
   student  StudentProfile @relation(fields: [studentId], references: [id], onDelete: Restrict)
-  #attempts Attempt[]
-
+  attempts Attempt[]
   @@map("mock_exams")
 }
 
@@ -139,6 +139,7 @@ model MockExam{
   // Question Stem (enunciado da questão)
   QStem     String  @unique
   Level   Int
+  attempts Attempt[]
   @@map("questions")
   }
 
