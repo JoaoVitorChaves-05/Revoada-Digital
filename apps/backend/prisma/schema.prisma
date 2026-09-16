@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 // ------------------------------------------------------
 // Enums para Tipagem Segura
@@ -30,7 +31,6 @@ model User {
   id          String      @id @default(uuid())
   email       String      @unique
   full_name   String
-  rg          String      @unique
   cpf         String      @unique
   profileType ProfileType
 
