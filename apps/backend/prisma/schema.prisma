@@ -140,6 +140,7 @@ model MockExam{
   QStem     String  @unique
   Level   Int
   attempts Attempt[]
+  alternatives Alternative[]
   @@map("questions")
   }
 
@@ -152,4 +153,14 @@ mockExam   MockExam @relation(fields: [mockExamId], references: [id], onDelete: 
 MarkedAnswer_Id String
 
   @@map("attempts")
+  }
+
+  model Alternative{
+  id        String   @id @default(uuid())
+  text      String
+  Correct   Boolean
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("alternatives")
   }
