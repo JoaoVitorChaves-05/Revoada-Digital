@@ -115,8 +115,8 @@ model ApprovalRequest {
 
 model School{
   id   String @id @default(uuid())
-  name String @unique
-  city String
+  school_name String @unique
+  school_city String
 
   // Listas de relações inversas necessárias para o Prisma
   students StudentProfile[]
