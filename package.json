@@ -39,5 +39,9 @@
     "bootstrap@5.3.8": true,
     "content-type@1.0.5": true,
     "content-type@2.1.0": true
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "prisma": "^6.19.3"
   }
 }

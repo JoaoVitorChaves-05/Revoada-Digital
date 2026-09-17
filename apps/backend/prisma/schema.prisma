@@ -4,18 +4,49 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+// ------------------------------------------------------
+// Enums para Tipagem Segura
+// ------------------------------------------------------
+
+enum ProfileType {
+  STUDENT
+  TEACHER
+  ADMIN
 }
 
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ------------------------------------------------------
+// Entidade Principal: Usuário
+// ------------------------------------------------------
+
 model User {
-  id               String            @id @default(uuid())
-  email            String            @unique
-  full_name        String
-  rg               String            @unique
-  cpf              String            @unique
-  profileType      ProfileType
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  adminProfile     AdminProfile?
+  id          String      @id @default(uuid())
+  email       String      @unique
+  full_name   String
+  cpf         String      @unique
+  profileType ProfileType
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamentos 1:1 com os perfis específicos (opcionais)
+  studentProfile StudentProfile?
+  teacherProfile TeacherProfile?
+  adminProfile   AdminProfile?
+
+  // Relacionamentos com as Solicitações de Aprovação:
+  // 1. A solicitação referente ao cadastro deste usuário
+  approvalRequest ApprovalRequest? @relation("UserRegistration")
+
+  // 2. Solicitações que este usuário (se for Admin) aprovou/rejeitou
   approvedRequests ApprovalRequest[] @relation("AdminApprovals")
   approvalRequest  ApprovalRequest?  @relation("UserRegistration")
   studentProfile   StudentProfile?
@@ -26,19 +57,24 @@ model User {
 
 model StudentProfile {
   id     String @id @default(uuid())
-  school String
-  points Int    @default(0)
+  points Int    @default(0) // Pontuação do Learn-to-Earn
+
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  schoolId String
+  school School @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+  mockExams MockExam[]
 
   @@map("student_profiles")
 }
 
 model TeacherProfile {
   id     String @id @default(uuid())
-  school String
+
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  schoolId String
+  school School @relation(fields: [schoolId], references: [id], onDelete: Restrict)
 
   @@map("teacher_profiles")
 }
@@ -77,3 +113,57 @@ enum ApprovalStatus {
   APPROVED
   REJECTED
 }
+
+model School{
+  id   String @id @default(uuid())
+  school_name String @unique
+  school_city String
+
+  // Listas de relações inversas necessárias para o Prisma
+  students StudentProfile[]
+  teachers TeacherProfile[]
+
+  @@map("schools")
+}
+
+model MockExam{
+  id        String   @id @default(uuid())
+  name      String
+  studentId String 
+  student  StudentProfile @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  attempts Attempt[]
+  @@map("mock_exams")
+}
+
+  model Question{
+  id        String   @id @default(uuid())
+  // Question Stem (enunciado da questão)
+  QStem     String  @unique
+  Level   Int
+  attempts Attempt[]
+  alternatives Alternative[]
+  @@map("questions")
+  }
+
+  model Attempt{
+  id        String   @id @default(uuid())
+questionId String
+question   Question @relation(fields: [questionId], references: [id], onDelete: Restrict)
+mockExamId String 
+mockExam   MockExam @relation(fields: [mockExamId], references: [id], onDelete: Cascade)
+MarkedAnswer_Id String
+alternative Alternative @relation(fields: [MarkedAnswer_Id], references: [id], onDelete: Restrict)
+
+  @@map("attempts")
+  }
+
+  model Alternative{
+  id        String   @id @default(uuid())
+  text      String
+  Correct   Boolean
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  attempts   Attempt[]
+
+   @@map("alternatives")  
+  }
