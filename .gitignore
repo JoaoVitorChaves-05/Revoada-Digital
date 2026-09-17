@@ -70,3 +70,5 @@ lib/
 # gerado em uma pasta customizada em vez do node_modules
 # prisma/generated/
 apps/backend/src/generated/
+
+*.csv
