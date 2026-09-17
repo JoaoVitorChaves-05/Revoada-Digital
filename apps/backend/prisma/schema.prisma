@@ -48,13 +48,12 @@ model User {
 
   // 2. Solicitações que este usuário (se for Admin) aprovou/rejeitou
   approvedRequests ApprovalRequest[] @relation("AdminApprovals")
+  approvalRequest  ApprovalRequest?  @relation("UserRegistration")
+  studentProfile   StudentProfile?
+  teacherProfile   TeacherProfile?
 
   @@map("users")
 }
-
-// ------------------------------------------------------
-// Perfis de Usuário (1:1 com User)
-// ------------------------------------------------------
 
 model StudentProfile {
   id     String @id @default(uuid())
@@ -81,36 +80,38 @@ model TeacherProfile {
 }
 
 model AdminProfile {
-  id   String  @id @default(uuid())
-  role String? @default("Geral")
-
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String  @id @default(uuid())
+  role   String? @default("Geral")
+  userId String  @unique
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("admin_profiles")
 }
-
-// ------------------------------------------------------
-// Solicitação de Aprovação de Cadastro
-// ------------------------------------------------------
 
 model ApprovalRequest {
   id              String         @id @default(uuid())
   status          ApprovalStatus @default(PENDING)
   rejectionReason String?
-
-  // Usuário que solicitou o cadastro
-  userId String @unique
-  user   User   @relation("UserRegistration", fields: [userId], references: [id], onDelete: Cascade)
-
-  // Administrador que realizou a aprovação/rejeição (opcional até ser avaliado)
-  approvedById String?
-  approvedBy   User?   @relation("AdminApprovals", fields: [approvedById], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  userId          String         @unique
+  approvedById    String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  approvedBy      User?          @relation("AdminApprovals", fields: [approvedById], references: [id])
+  user            User           @relation("UserRegistration", fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("approval_requests")
+}
+
+enum ProfileType {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 model School{
