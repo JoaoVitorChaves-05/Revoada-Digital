@@ -15,7 +15,7 @@ function createRepositoryMock() {
 	return {
 		findByName: vi.fn(),
 		findById: vi.fn(),
-		createWithProfileAndApproval: vi.fn(),
+		createWithProfile: vi.fn(),
 	};
 }
 
@@ -31,12 +31,12 @@ describe('SchoolService', () => {
   it('cria escola quando nome ainda não existe', async () => {
     const createdSchool = { id: 'school-1', ...schoolInput };
     repository.findByName.mockResolvedValue(null);
-    repository.createWithProfileAndApproval.mockResolvedValue({ school: createdSchool });
+    repository.createWithProfile.mockResolvedValue({ school: createdSchool });
 
     const result = await service.createSchool(schoolInput);
 
     expect(result).toEqual({ school: createdSchool});
-    expect(repository.createWithProfileAndApproval).toHaveBeenCalledWith(schoolInput);
+    expect(repository.createWithProfile).toHaveBeenCalledWith(schoolInput);
   });
 
   it('impede cadastro de escola com nome já utilizado', async () => {
@@ -46,7 +46,7 @@ describe('SchoolService', () => {
       'Escola já cadastrada',
     );
 
-    expect(repository.createWithProfileAndApproval).not.toHaveBeenCalled();
+    expect(repository.createWithProfile).not.toHaveBeenCalled();
   });
 
   it('busca escola existente', async () => {

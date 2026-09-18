@@ -9,7 +9,7 @@ export class SchoolRepository{
     return prisma.school.findUnique({ where: { id } });
   }
 
-  async createWithProfileAndApproval(data: CreateSchoolInput) {
+  async createWithProfile(data: CreateSchoolInput) {
     return prisma.$transaction(async (tx) =>{
       const school = await tx.school.create({
         data: {
@@ -18,11 +18,7 @@ export class SchoolRepository{
         },
       });
 
-      const approvalRequest = await tx.approvalRequest.create({
-        data: {schoolId: school.id},
-      });
-
-      return { school, approvalRequest };
+      return { school };
     });
   }
 }

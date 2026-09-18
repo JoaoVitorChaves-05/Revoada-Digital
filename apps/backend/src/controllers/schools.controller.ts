@@ -6,7 +6,7 @@ export async function createSchool(req: Request, res: Response) {
     const result = await schoolService.createSchool(req.body);
 
     return res.status(201).json({
-      message: 'Escola cadastrada com sucesso! Aguardando aprovação.',
+      message: 'Escola cadastrada com sucesso!',
       data: result,
     });
   }catch (error: any) {

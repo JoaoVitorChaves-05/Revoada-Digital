@@ -13,7 +13,7 @@ export class SchoolService {
       throw new Error('Escola já cadastrada');
     }
 
-    return this.schoolRepository.createWithProfileAndApproval(data);
+    return this.schoolRepository.createWithProfile(data);
   }
 
   async readSchool(id: String) {
