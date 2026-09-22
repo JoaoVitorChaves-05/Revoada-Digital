@@ -1,4 +1,5 @@
 import { prisma } from '../lib/prisma';
+import { UpdateQuestionInput } from '../schemas/question.schema';
 
 export class QuestionRepository {
     
@@ -8,7 +9,7 @@ export class QuestionRepository {
         });
     }
 
-    async update(id: string, data: any) {
+    async update(id: string, data: UpdateQuestionInput) {
         return prisma.question.update({
             where: { id },
             data: data
