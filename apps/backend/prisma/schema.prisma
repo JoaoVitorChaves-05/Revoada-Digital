@@ -4,8 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 // ------------------------------------------------------
 // Enums para Tipagem Segura
@@ -48,9 +46,6 @@ model User {
 
   // 2. Solicitações que este usuário (se for Admin) aprovou/rejeitou
   approvedRequests ApprovalRequest[] @relation("AdminApprovals")
-  approvalRequest  ApprovalRequest?  @relation("UserRegistration")
-  studentProfile   StudentProfile?
-  teacherProfile   TeacherProfile?
 
   @@map("users")
 }
@@ -100,18 +95,6 @@ model ApprovalRequest {
   user            User           @relation("UserRegistration", fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("approval_requests")
-}
-
-enum ProfileType {
-  STUDENT
-  TEACHER
-  ADMIN
-}
-
-enum ApprovalStatus {
-  PENDING
-  APPROVED
-  REJECTED
 }
 
 model School{

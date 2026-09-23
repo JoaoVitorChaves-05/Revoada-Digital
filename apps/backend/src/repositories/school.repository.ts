@@ -1,4 +1,4 @@
-import { prisma } from '../lib/prisma':
+import { prisma } from '../lib/prisma';
 import { CreateSchoolInput } from '../schemas/school.schema';
 
 export class SchoolRepository{

@@ -1,9 +1,19 @@
 import { Router } from 'express';
-import { updateQuestion, deleteQuestion } from '../controllers/question.controller'
+import {
+  createQuestion,
+  deleteQuestion,
+  getQuestionById,
+  listQuestions,
+  updateQuestion,
+} from '../controllers/question.controller';
 import { validateSchema } from '../middlewares/validate.middleware';
-import { updateQuestionSchema } from '../schemas/question.schema';
+import { createQuestionSchema, updateQuestionSchema } from '../schemas/question.schema';
 
 const questionRoutes = Router();
+
+questionRoutes.post('/', validateSchema(createQuestionSchema), createQuestion);
+questionRoutes.get('/', listQuestions);
+questionRoutes.get('/:id', getQuestionById);
 questionRoutes.put('/:id', validateSchema(updateQuestionSchema), updateQuestion);
 questionRoutes.delete('/:id', deleteQuestion);
 
