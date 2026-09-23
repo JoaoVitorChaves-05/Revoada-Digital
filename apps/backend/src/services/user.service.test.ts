@@ -8,6 +8,7 @@ vi.mock('../repositories/user.repository', () => ({
 
 const userInput = {
 	email: 'aluno@example.com',
+	password: 'senha123',
 	full_name: 'Aluno Exemplo',
 	rg: '123456789',
 	cpf: '12345678901',

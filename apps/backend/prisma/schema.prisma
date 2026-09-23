@@ -30,6 +30,7 @@ enum ApprovalStatus {
 model User {
   id          String      @id @default(uuid())
   email       String      @unique
+  password    String
   full_name   String
   cpf         String      @unique
   profileType ProfileType
