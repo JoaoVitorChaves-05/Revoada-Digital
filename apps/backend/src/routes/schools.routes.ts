@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createSchool, readSchool } from '../controller';
+import { createSchool, readSchool } from '../controllers/schools.controller.ts';
 import { validateSchema } from '../middlewares/validate.middleware';
 import { createSchoolSchema } from '../schemas/school.schema';
 

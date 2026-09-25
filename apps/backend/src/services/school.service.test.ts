@@ -66,6 +66,4 @@ describe('SchoolService', () => {
       'Escola não encontrada',
     );
   });
-
-  
 })
