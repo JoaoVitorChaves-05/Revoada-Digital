@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { createQuestionSchema, updateQuestionSchema } from './question.schema';
 
-
 const baseQuestion = {
-    text: 'Quanto é 2 + 2?',
+    text: 'Qual a capital do Brasil?',
     difficulty: 1,
+    alternatives: [
+        { text: 'Brasília', isCorrect: true },
+        { text: 'Rio de Janeiro', isCorrect: false }
+    ]
 };
 
 describe('createQuestionSchema', () => {
@@ -26,12 +29,12 @@ describe('createQuestionSchema', () => {
 
 describe('updateQuestionSchema', () => {
     it('aceita atualização parcial apenas do texto', () => {
-        const result = updateQuestionSchema.safeParse({ text: 'Novo texto da questão' });
+        const result = updateQuestionSchema.safeParse({ text: 'Novo texto' });
         expect(result.success).toBe(true);
     });
 
     it('aceita atualização parcial apenas da dificuldade', () => {
-        const result = updateQuestionSchema.safeParse({ difficulty: 5 });
+        const result = updateQuestionSchema.safeParse({ difficulty: 2 });
         expect(result.success).toBe(true);
     });
 
