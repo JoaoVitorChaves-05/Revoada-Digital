@@ -21,7 +21,7 @@ export async function readSchool(req: Request, res: Response) {
   const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 
   try {
-    const school = await schoolService.createSchool(id);
+    const school = await schoolService.readSchool(id);
     return res.status(200).json(school);
   }catch (error: any) {
     return res.status(400).json({ error: 'Erro ao buscar escola', details: error.message});
