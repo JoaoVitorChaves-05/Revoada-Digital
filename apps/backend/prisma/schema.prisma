@@ -150,7 +150,7 @@ model Question {
 
   mockExams    MockExamQuestion[]
   answers      AttemptAnswer[]
-  alternatives Alternative[]      // <--- Adicionado para permitir carregar as alternativas
+  alternatives Alternative[]
 
   @@map("questions")
 }
