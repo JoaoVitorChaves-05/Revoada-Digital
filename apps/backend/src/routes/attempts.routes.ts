@@ -1,13 +1,18 @@
 import { Router } from 'express';
-import { createAttempt, readAttempt, deleteAttempt, updateAttempt } from '../controllers/attempt.controller';
+import {
+  createAttempt,
+  readAttempt,
+  deleteAttempt,
+  submitAttempt,
+} from '../controllers/attempt.controller';
 import { validateSchema } from '../middlewares/validate.middleware';
-import { createAttemptSchema, updateAttemptSchema } from '../schemas/attempt.schema';
+import { createAttemptSchema, submitAttemptSchema } from '../schemas/attempt.schema';
 
 const attemptsRouter = Router();
 
 attemptsRouter.get('/:id', readAttempt);
 attemptsRouter.post('/', validateSchema(createAttemptSchema), createAttempt);
-attemptsRouter.put('/:id', validateSchema(updateAttemptSchema), updateAttempt);
+attemptsRouter.post('/:id/submit', validateSchema(submitAttemptSchema), submitAttempt);
 attemptsRouter.delete('/:id', deleteAttempt);
 
 export default attemptsRouter;
