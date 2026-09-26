@@ -4,9 +4,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
+
 // ------------------------------------------------------
 // Enums para Tipagem Segura
 // ------------------------------------------------------
@@ -48,9 +47,6 @@ model User {
 
   // 2. Solicitações que este usuário (se for Admin) aprovou/rejeitou
   approvedRequests ApprovalRequest[] @relation("AdminApprovals")
-  approvalRequest  ApprovalRequest?  @relation("UserRegistration")
-  studentProfile   StudentProfile?
-  teacherProfile   TeacherProfile?
 
   @@map("users")
 }
@@ -59,22 +55,22 @@ model StudentProfile {
   id     String @id @default(uuid())
   points Int    @default(0) // Pontuação do Learn-to-Earn
 
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  schoolId String
-  school School @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  schoolId  String
+  school    School     @relation(fields: [schoolId], references: [id], onDelete: Restrict)
   mockExams MockExam[]
 
   @@map("student_profiles")
 }
 
 model TeacherProfile {
-  id     String @id @default(uuid())
+  id String @id @default(uuid())
 
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String @unique
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   schoolId String
-  school School @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Restrict)
 
   @@map("teacher_profiles")
 }
