@@ -1,4 +1,5 @@
 import type { LoginInput } from '../schemas/auth.schema';
+import { UserRepository } from '../repositories/user.repository';
 
 type AuthUser = {
 	id: string;
@@ -22,8 +23,13 @@ export class AuthService {
 			throw new Error('Email ou senha inválidos');
 		}
 
-		const { password, ...safeUser } = user;
-
-		return safeUser;
+		return {
+			id: user.id,
+			email: user.email,
+			full_name: user.full_name,
+			profileType: user.profileType,
+		};
 	}
 }
+
+export const authService = new AuthService(new UserRepository());
