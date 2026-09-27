@@ -13,5 +13,5 @@ WORKDIR /RevDig/apps/backend
 
 RUN npx prisma generate
 
-CMD ["npm", "run", "dev"]
+CMD ["sh", "-c", "npm run prisma:deploy && npm run dev"]
 
