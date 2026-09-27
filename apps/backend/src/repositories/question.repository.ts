@@ -12,7 +12,9 @@ export class QuestionRepository {
                         text: alt.text,
                         isCorrect: alt.isCorrect
                     }))
-                }
+                },
+                subject: data.subject,
+                concept: data.concept
             },
             include: { alternatives: true }
         });
