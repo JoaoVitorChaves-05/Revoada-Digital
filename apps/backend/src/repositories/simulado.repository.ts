@@ -8,7 +8,6 @@ import {
 type PrismaSimulado = {
 	id: string;
 	name: string;
-	difficulty: string | null;
 	questionIds: string[];
 	studentId: string;
 	createdAt: Date;
@@ -17,8 +16,7 @@ type PrismaSimulado = {
 
 function toSimulado(simulado: PrismaSimulado): Simulado {
 	return {
-		...simulado,
-		difficulty: simulado.difficulty ?? undefined,
+		...simulado
 	};
 }
 
@@ -38,7 +36,6 @@ export class SimuladoRepository {
 			data: {
 				studentId: data.studentId,
 				name: data.name,
-				difficulty: data.difficulty,
 				questionIds: data.questionIds,
 			},
 		});
@@ -50,7 +47,6 @@ export class SimuladoRepository {
 			where: { id },
 			data: {
 				name: data.name,
-				difficulty: data.difficulty,
 				questionIds: data.questionIds,
 			},
 		});
