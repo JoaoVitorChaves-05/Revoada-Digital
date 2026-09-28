@@ -98,8 +98,8 @@ model ApprovalRequest {
   @@map("approval_requests")
 }
 
-model School {
-  id          String @id @default(uuid())
+model School{
+  id   String @id @default(uuid())
   school_name String @unique
   school_city String
 
@@ -111,49 +111,99 @@ model School {
 }
 
 model MockExam {
-  id          String         @id @default(uuid())
-  name        String
-  difficulty  String?
-  questionIds String[]       @default([])
-  studentId   String
-  student     StudentProfile @relation(fields: [studentId], references: [id], onDelete: Restrict)
-  attempts    Attempt[]
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  id        String   @id @default(uuid())
+  name      String
+  studentId String
 
+  student   StudentProfile     @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  questions MockExamQuestion[]
+  attempts  Attempt[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([studentId])
   @@map("mock_exams")
 }
 
+model MockExamQuestion {
+  mockExamId String
+  questionId String
+  position   Int
+
+  mockExam MockExam @relation(fields: [mockExamId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Restrict)
+
+  @@id([mockExamId, questionId])
+  @@unique([mockExamId, position])
+  @@map("mock_exam_questions")
+}
+
 model Question {
-  id           String        @id @default(uuid())
-  // Question Stem (enunciado da questão)
-  QStem        String        @unique
-  Level        Int
-  attempts     Attempt[]
+  id         String @id @default(uuid())
+  text       String @unique
+  difficulty Int
+
+  mockExams    MockExamQuestion[]
+  answers      AttemptAnswer[]
   alternatives Alternative[]
 
   @@map("questions")
 }
 
-model Attempt {
-  id              String      @id @default(uuid())
-  questionId      String
-  question        Question    @relation(fields: [questionId], references: [id], onDelete: Restrict)
-  mockExamId      String
-  mockExam        MockExam    @relation(fields: [mockExamId], references: [id], onDelete: Cascade)
-  MarkedAnswer_Id String
-  alternative     Alternative @relation(fields: [MarkedAnswer_Id], references: [id], onDelete: Restrict)
 
+enum AttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+  ABANDONED
+}
+
+model Attempt {
+  id              String        @id @default(uuid())
+  mockExamId      String
+  status          AttemptStatus @default(IN_PROGRESS)
+  startedAt       DateTime      @default(now())
+  submittedAt     DateTime?
+  score           Int?
+  correctAnswers  Int?
+  totalQuestions  Int?
+  earnedPoints    Int?
+
+  mockExam MockExam        @relation(fields: [mockExamId], references: [id], onDelete: Cascade)
+  answers  AttemptAnswer[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([mockExamId])
   @@map("attempts")
 }
 
+model AttemptAnswer {
+  id                   String   @id @default(uuid())
+  attemptId            String
+  questionId           String
+  selectedAlternativeId String?
+  isCorrect            Boolean?
+  answeredAt           DateTime?
+
+  attempt             Attempt     @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question            Question    @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  selectedAlternative  Alternative? @relation(fields: [selectedAlternativeId], references: [id], onDelete: Restrict)
+
+  @@unique([attemptId, questionId])
+  @@index([questionId])
+  @@map("attempt_answers")
+}
+
 model Alternative {
-  id         String    @id @default(uuid())
+  id         String  @id @default(uuid())
   text       String
-  Correct    Boolean
+  isCorrect  Boolean
   questionId String
-  question   Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  attempts   Attempt[]
+
+  question Question        @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answers  AttemptAnswer[]
 
   @@map("alternatives")
 }

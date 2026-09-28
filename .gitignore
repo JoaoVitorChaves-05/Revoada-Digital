@@ -7,12 +7,12 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 .npm/
-
 # ==========================================
 # 🔐 Variáveis de Ambiente
 # ==========================================
 .env
 .env.local
+.env.docker
 .env.development.local
 .env.test.local
 .env.production.local
@@ -57,7 +57,6 @@ lib/
 !apps/backend/src/lib/prisma.ts
 # Cache incremental do TypeScript
 *.tsbuildinfo
-
 # ==========================================
 # 🗄️ Prisma ORM
 # ==========================================
