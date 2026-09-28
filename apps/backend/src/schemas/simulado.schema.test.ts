@@ -6,6 +6,7 @@ import {
 
 const baseSimulado = {
 	studentId: 'aluno-1',
+	name: 'Simulado de matemática',
 	questionIds: ['questao-1', 'questao-2'],
 };
 
