@@ -1,5 +1,5 @@
-import { prisma } from '../lib/prisma':
-import { CreateSchoolInput } from '../schemas/school.schema';
+import { prisma } from '../lib/prisma';
+import { CreateSchoolInput, UpdateSchoolInput } from '../schemas/school.schema';
 
 export class SchoolRepository{
   async findByName(school_name: string) {
@@ -19,6 +19,17 @@ export class SchoolRepository{
       });
 
       return { school };
+    });
+  }
+
+  async delete(id: string) {
+    return prisma.school.delete({ where: { id } });
+  }
+
+  async update(id: string, data: UpdateSchoolInput) {
+    return prisma.school.update({
+      where: { id },
+      data,
     });
   }
 }

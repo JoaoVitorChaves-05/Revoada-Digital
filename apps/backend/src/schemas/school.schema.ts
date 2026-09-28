@@ -6,5 +6,7 @@ const schoolFieldsSchema = z.object({
 })
 
 export const createSchoolSchema = schoolFieldsSchema;
+export const updateSchoolSchema = schoolFieldsSchema.partial();
 
 export type CreateSchoolInput = z.infer<typeof createSchoolSchema>;
+export type UpdateSchoolInput = z.infer<typeof updateSchoolSchema>;
