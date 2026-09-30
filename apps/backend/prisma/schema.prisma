@@ -48,9 +48,6 @@ model User {
 
   // 2. Solicitações que este usuário (se for Admin) aprovou/rejeitou
   approvedRequests ApprovalRequest[] @relation("AdminApprovals")
-  approvalRequest  ApprovalRequest?  @relation("UserRegistration")
-  studentProfile   StudentProfile?
-  teacherProfile   TeacherProfile?
 
   @@map("users")
 }
@@ -102,18 +99,6 @@ model ApprovalRequest {
   @@map("approval_requests")
 }
 
-enum ProfileType {
-  STUDENT
-  TEACHER
-  ADMIN
-}
-
-enum ApprovalStatus {
-  PENDING
-  APPROVED
-  REJECTED
-}
-
 model School{
   id   String @id @default(uuid())
   school_name String @unique
@@ -139,6 +124,7 @@ model MockExam{
   id        String   @id @default(uuid())
   // Question Stem (enunciado da questão)
   QStem     String  @unique
+  imageUrl    String?
   Level   Int
   attempts Attempt[]
   alternatives Alternative[]
