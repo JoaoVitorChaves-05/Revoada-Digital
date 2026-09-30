@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import iconContainer from './icons/icon-container.png';
 
 type RedefinirScreenProps = {
   onBack: () => void
@@ -19,10 +20,10 @@ export function RedefinirScreen({ onBack }: RedefinirScreenProps) {
           </button>
 
           <div className="reset-brand">
-            <div className="reset-brand-mark">🎓</div>
+            <div className="reset-brand-mark"><img src={iconContainer} alt="Revoada Digital" /></div>
             <div className="reset-brand-name">
-              <span className="brand-orange">Revoada</span>
-              <span className="brand-blue">Digital</span>
+              <span className="text-orange">Revoada</span>
+              <span className="text-blue">Digital</span>
             </div>
           </div>
         </header>

@@ -1,3 +1,4 @@
+import iconContainer from './icons/icon-container.png';
 import { useState } from 'react'
 
 type LoginScreenProps = {
@@ -30,10 +31,10 @@ export function LoginScreen({ onBack, onForgot }: LoginScreenProps) {
             </button>
 
             <div className="login-brand">
-              <div className="login-brand-mark">🎓</div>
+              <div className="login-brand-mark"><img src={iconContainer} alt="Revoada Digital" /></div>
               <div className="login-brand-name">
-                <span className="brand-orange">Revoada</span>
-                <span className="brand-blue">Digital</span>
+                <span className="text-orange">Revoada</span>
+                <span className="text-blue">Digital</span>
               </div>
             </div>
           </header>

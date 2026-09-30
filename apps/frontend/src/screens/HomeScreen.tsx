@@ -1,3 +1,5 @@
+import iconContainer from './icons/icon-container.png';
+
 type HomeScreenProps = {
   onCadastro: () => void
   onLogin: () => void
@@ -8,7 +10,7 @@ export function HomeScreen({ onCadastro, onLogin }: HomeScreenProps) {
     <div className="site-shell">
       <header className="topbar">
         <div className="logo-wrap" aria-label="Revoada Digital">
-          <div className="logo-mark">🎓</div>
+          <div className="logo-mark"><img src={iconContainer} alt="Revoada Digital" /></div>
           <div className="logo-text">
             <span className="text-orange">Revoada</span>
             <span className="text-blue">Digital</span>

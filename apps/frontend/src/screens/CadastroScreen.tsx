@@ -1,3 +1,5 @@
+import iconContainer from './icons/icon-container.png';
+
 type CadastroScreenProps = {
   onBack: () => void
 }
@@ -23,10 +25,10 @@ export function CadastroScreen({ onBack }: CadastroScreenProps) {
             </button>
 
             <div className="cadastro-brand" aria-label="Revoada Digital">
-              <div className="cadastro-brand-mark">🎓</div>
+              <div className="cadastro-brand-mark"><img src={iconContainer} alt="Revoada Digital" /></div>
               <div className="cadastro-brand-name">
-                <span className="brand-orange">Revoada</span>
-                <span className="brand-blue">Digital</span>
+                <span className="text-orange">Revoada</span>
+                <span className="text-blue">Digital</span>
               </div>
             </div>
           </header>
