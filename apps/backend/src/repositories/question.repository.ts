@@ -36,9 +36,26 @@ export class QuestionRepository {
     }
 
     async update(id: string, data: UpdateQuestionInput) {
+        const { alternatives, ...questionData } = data;
+
+        const updatePayload: any = {
+            ...questionData
+        };
+
+        if (alternatives) {
+            updatePayload.alternatives = {
+                deleteMany: {},
+                create: alternatives.map(alt => ({
+                    text: alt.text,
+                    isCorrect: alt.isCorrect
+                }))
+            };
+        }
+
         return prisma.question.update({
             where: { id },
-            data: data
+            data: updatePayload,
+            include: { alternatives: true }
         });
     }
 
