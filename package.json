@@ -4,6 +4,7 @@
   "description": "> O estudo que rende e a nota que sobe.",
   "main": "index.js",
   "scripts": {
+    "dev": "npm run dev:frontend",
     "dev:backend": "npm run dev -w apps/backend",
     "dev:frontend": "npm run dev -w apps/frontend",
     "build:backend": "npm run build -w apps/backend",
