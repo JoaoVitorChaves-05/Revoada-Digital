@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createSchoolSchema } from './school.schema';
+import { createSchoolSchema, updateSchoolSchema } from './school.schema';
 
 const baseSchool = {
   school_name: 'Escola Exemplo',
@@ -35,6 +35,40 @@ describe('createSchoolSchema', () => {
 		const result = createSchoolSchema.safeParse({
 			school_name: 123,
 			school_city: true,
+		});
+
+		expect(result.success).toBe(false);
+	});
+});
+
+describe('updateSchoolSchema', () => {
+	it('aceita atualização somente do nome', () => {
+		const result = updateSchoolSchema.safeParse({
+			school_name: 'Nova Escola',
+		});
+
+		expect(result.success).toBe(true);
+	});
+
+	it('aceita atualização somente da cidade', () => {
+		const result = updateSchoolSchema.safeParse({
+			school_city: 'Nova Cidade',
+		});
+
+		expect(result.success).toBe(true);
+	});
+
+	it('rejeita nome vazio', () => {
+		const result = updateSchoolSchema.safeParse({
+			school_name: '   ',
+		});
+
+		expect(result.success).toBe(false);
+	});
+
+	it('rejeita cidade vazia', () => {
+		const result = updateSchoolSchema.safeParse({
+			school_city: '   ',
 		});
 
 		expect(result.success).toBe(false);

@@ -16,6 +16,8 @@ function createRepositoryMock() {
 		findByName: vi.fn(),
 		findById: vi.fn(),
 		createWithProfile: vi.fn(),
+		update: vi.fn(),
+		delete: vi.fn(),
 	};
 }
 
@@ -66,4 +68,83 @@ describe('SchoolService', () => {
       'Escola não encontrada',
     );
   });
-})
+
+  it('remove escola existente', async () => {
+    const school = { id: 'school-1', ...schoolInput };
+    repository.findById.mockResolvedValue(school);
+    repository.delete.mockResolvedValue(school);
+
+    const result = await service.deleteSchool('school-1');
+
+    expect(result).toEqual(school);
+    expect(repository.findById).toHaveBeenCalledWith('school-1');
+    expect(repository.delete).toHaveBeenCalledWith('school-1');
+  });
+
+  it('impede remoção de escola inexistente', async () => {
+    repository.findById.mockResolvedValue(null);
+
+    await expect(service.deleteSchool('missing-school')).rejects.toThrow(
+      'Escola não encontrada',
+    );
+
+    expect(repository.delete).not.toHaveBeenCalled();
+  });
+
+  it('atualiza escola existente', async () => {
+    const school = { id: 'school-1', ...schoolInput };
+    const updatedSchool = { id: 'school-1', school_name: 'Nova Escola', school_city: 'Nova Cidade' };
+    repository.findById.mockResolvedValue(school);
+    repository.findByName.mockResolvedValue(null);
+    repository.update.mockResolvedValue(updatedSchool);
+
+    const result = await service.updateSchool('school-1', {
+      school_name: 'Nova Escola',
+      school_city: 'Nova Cidade',
+    });
+
+    expect(result).toEqual(updatedSchool);
+    expect(repository.update).toHaveBeenCalledWith('school-1', {
+      school_name: 'Nova Escola',
+      school_city: 'Nova Cidade',
+    });
+  });
+
+  it('atualiza somente a cidade da escola', async () => {
+    const school = { id: 'school-1', ...schoolInput };
+    const updatedSchool = { ...school, school_city: 'Nova Cidade' };
+    repository.findById.mockResolvedValue(school);
+    repository.update.mockResolvedValue(updatedSchool);
+
+    const result = await service.updateSchool('school-1', {
+      school_city: 'Nova Cidade',
+    });
+
+    expect(result).toEqual(updatedSchool);
+    expect(repository.findByName).not.toHaveBeenCalled();
+    expect(repository.update).toHaveBeenCalledWith('school-1', {
+      school_city: 'Nova Cidade',
+    });
+  });
+
+  it('impede atualização de escola inexistente', async () => {
+    repository.findById.mockResolvedValue(null);
+
+    await expect(
+      service.updateSchool('missing-school', schoolInput),
+    ).rejects.toThrow('Escola não encontrada');
+
+    expect(repository.update).not.toHaveBeenCalled();
+  });
+
+  it('impede atualização com nome já utilizado por outra escola', async () => {
+    repository.findById.mockResolvedValue({ id: 'school-1', ...schoolInput });
+    repository.findByName.mockResolvedValue({ id: 'school-2' });
+
+    await expect(
+      service.updateSchool('school-1', schoolInput),
+    ).rejects.toThrow('Escola já cadastrada');
+
+    expect(repository.update).not.toHaveBeenCalled();
+  });
+});
