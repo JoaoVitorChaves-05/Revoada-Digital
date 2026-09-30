@@ -1,0 +1,134 @@
+.gerar-simulado-container {
+  background-color: #F8F9FA;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+.gerar-simulado-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 4rem;
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.logo-revoada {
+  color: #F97316;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.logo-digital {
+  color: #1E3A8A;
+  font-weight: 900;
+  font-size: 1.2rem;
+}
+
+.header-nav {
+  display: flex;
+  gap: 2rem;
+}
+
+.header-nav a {
+  text-decoration: none;
+  color: #4B5563;
+  font-weight: 500;
+}
+
+.header-nav a.ativo {
+  color: #1E3A8A;
+  font-weight: 700;
+}
+
+.gerar-simulado-main {
+  max-width: 1100px;
+  margin: 4rem auto;
+  display: flex;
+  gap: 4rem;
+  align-items: center;
+  padding: 0 2rem;
+}
+
+.apresentacao {
+  flex: 1;
+}
+
+.apresentacao h1 {
+  font-size: 2.8rem;
+  color: #1F2937;
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+.apresentacao p {
+  font-size: 1.1rem;
+  color: #4B5563;
+  line-height: 1.6;
+}
+
+.configuracao-card {
+  flex: 1;
+  background-color: #FFFFFF;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+}
+
+.configuracao-card h2 {
+  color: #1E3A8A;
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.form-group select,
+.form-group input {
+  padding: 0.85rem 1rem;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #1F2937;
+  outline: none;
+  background-color: #F9FAFB;
+  transition: all 0.2s;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+  border-color: #1E3A8A;
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+}
+
+.btn-gerar {
+  width: 100%;
+  background-color: #1E3A8A;
+  color: #FFFFFF;
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: opacity 0.2s;
+}
+
+.btn-gerar:hover {
+  opacity: 0.9;
+}
