@@ -22,6 +22,7 @@ export class UserRepository {
 			const user = await tx.user.create({
 				data: {
 					email: data.email,
+					password: data.password,
 					full_name: data.full_name,
 					rg: data.rg,
 					cpf: data.cpf,
