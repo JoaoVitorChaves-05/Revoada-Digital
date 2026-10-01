@@ -9,7 +9,7 @@ import { ResultPage } from './Pages/result_simulado.page'
 type Screen = 'home' | 'cadastro' | 'login' | 'redefinir' | 'result'
 
 function App() {
-  const [screen, setScreen] = useState<Screen>('result')
+  const [screen, setScreen] = useState<Screen>('home')
   
   const [currentAttemptId, setCurrentAttemptId] = useState<string>("769e855b-4a27-4a5b-a48c-170be35004d2") //ID de teste
 
