@@ -4,6 +4,12 @@ import {
 	AuthService,
 } from './auth.service';
 
+vi.mock('../repositories/user.repository', () => ({
+	UserRepository: class {
+		findByEmail = vi.fn();
+	},
+}));
+
 function createRepositoryMock() {
 	return {
 		findByEmail: vi.fn(),
