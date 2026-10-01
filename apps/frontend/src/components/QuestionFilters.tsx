@@ -1,25 +1,30 @@
 import { useState } from 'react';
-import { getDificuldadeColors } from '../utils/colors';
+import { getDificuldadeColors, theme } from '../utils/colors';
 
-export function QuestionFilters() {
+interface QuestionFiltersProps {
+  filtrosAtivos: string[];
+  setFiltrosAtivos: (filtros: string[]) => void;
+}
+
+export function QuestionFilters({ filtrosAtivos, setFiltrosAtivos }: QuestionFiltersProps) {
   const [menuAberto, setMenuAberto] = useState(false);
-  const [selecionados, setSelecionados] = useState<string[]>([]);
+  
   const dificuldades = ['Fácil', 'Média', 'Difícil'];
 
   const alternarDificuldade = (diff: string) => {
-    if (selecionados.includes(diff)) {
-      setSelecionados(selecionados.filter(item => item !== diff));
+    if (filtrosAtivos.includes(diff)) {
+      setFiltrosAtivos(filtrosAtivos.filter(item => item !== diff));
     } else {
-      setSelecionados([...selecionados, diff]);
+      setFiltrosAtivos([...filtrosAtivos, diff]);
     }
   };
 
   return (
     <div style={{
       padding: '16px',
-      background: '#ffffff',
+      background: theme.background.card,
       borderRadius: '8px',
-      border: '1px solid #e4e4e7',
+      border: `1px solid ${theme.border.card}`,
       marginBottom: '24px',
       display: 'flex',
       flexDirection: 'column',
@@ -32,16 +37,16 @@ export function QuestionFilters() {
           alignSelf: 'flex-start',
           padding: '8px 16px',
           borderRadius: '6px',
-          border: '1px solid #d4d4d8',
-          backgroundColor: menuAberto ? '#e4e4e7' : '#f8fafc',
-          color: '#3f3f46',
+          border: `1px solid ${theme.button.border}`,
+          backgroundColor: menuAberto ? theme.button.bgActive : theme.button.bgDefault,
+          color: theme.button.text,
           fontSize: '14px',
           fontWeight: 'bold',
           cursor: 'pointer',
           transition: 'background-color 0.2s ease'
         }}
       >
-        Dificuldade
+        Filtrar por Dificuldade
       </button>
 
       <div style={{ 
@@ -51,11 +56,11 @@ export function QuestionFilters() {
         maxHeight: menuAberto ? '50px' : '0px',
         opacity: menuAberto ? 1 : 0,
         marginTop: menuAberto ? '8px' : '0px',
-        transition: 'all 0.3s ease-in-out'
+        transition: 'all 0.3s ease-in-out' 
       }}>
         {dificuldades.map(diff => {
           const cores = getDificuldadeColors(diff);
-          const estaSelecionado = selecionados.includes(diff);
+          const estaSelecionado = filtrosAtivos.includes(diff);
 
           return (
             <button

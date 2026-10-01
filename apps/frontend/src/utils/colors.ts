@@ -6,3 +6,27 @@ export const getDificuldadeColors = (nivel: string) => {
     default: return { bg: '#f4f4f5', text: '#3f3f46' };
   }
 };
+
+export const theme = {
+  background: {
+    grid: '#f8fafc',
+    card: '#ffffff',
+  },
+  text: {
+    title: '#18181b',
+    subtitle: '#3f3f46',
+    body: '#71717a',
+  },
+  button: {
+    bgDefault: '#f8fafc',
+    bgActive: '#e4e4e7',
+    border: '#d4d4d8',
+    text: '#3f3f46',
+  },
+  border: {
+    card: '#e4e4e7',
+  },
+  shadow: {
+    card: '0 2px 4px rgba(0,0,0,0.05)'
+  }
+};
