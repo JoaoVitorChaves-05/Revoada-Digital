@@ -4,6 +4,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // ------------------------------------------------------
@@ -29,6 +31,7 @@ enum ApprovalStatus {
 model User {
   id          String      @id @default(uuid())
   email       String      @unique
+  password    String
   full_name   String
   cpf         String      @unique
   profileType ProfileType
@@ -143,6 +146,7 @@ model Question {
   id         String @id @default(uuid())
   text       String @unique
   difficulty Int
+  image   String?
 
   mockExams    MockExamQuestion[]
   answers      AttemptAnswer[]

@@ -3,6 +3,7 @@ import { createUserSchema, updateUserSchema } from './user.schema';
 
 const baseUser = {
 	email: 'usuario@example.com',
+	password: 'senha123',
 	full_name: 'Usuario Exemplo',
 	rg: '123456789',
 	cpf: '12345678901',
