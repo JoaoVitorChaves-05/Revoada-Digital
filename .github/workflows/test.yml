@@ -28,5 +28,8 @@ jobs:
       - name: Install dependencies
         run: npm ci #instalar as dependências do projeto
 
+      - name: Generate Prisma Client
+        run: npm run prisma:generate -w apps/backend
+
       - name: Run tests
         run: npm test -w apps/backend #como o projeto é monorepo, precisamos especificar o workspace do backends
