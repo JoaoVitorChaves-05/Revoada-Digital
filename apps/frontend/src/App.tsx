@@ -1,12 +1,14 @@
-import './App.css'
+import { QuestionFilters } from './components/QuestionFilters';
+import { QuestionGrid } from './components/questionGrid';
 
-function App() {
-  
+export default function App() {
   return (
-    <>
-      <h1>Hello, Vite!</h1>
-    </>
-  )
+    <div style={{ padding: '32px', fontFamily: 'sans-serif', maxWidth: '1200px', margin: '0 auto' }}>
+      <h1 style={{ color: '#18181b' }}>Banco de Questões - Revoada-Digital</h1>
+      
+      {/* Aqui nós empilhamos as caixas que criamos! */}
+      <QuestionFilters />
+      <QuestionGrid />
+    </div>
+  );
 }
-
-export default App
