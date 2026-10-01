@@ -4,6 +4,7 @@
   "description": "> O estudo que rende e a nota que sobe.",
   "main": "index.js",
   "scripts": {
+    "dev": "npm run dev:frontend",
     "dev:backend": "npm run dev -w apps/backend",
     "dev:frontend": "npm run dev -w apps/frontend",
     "build:backend": "npm run build -w apps/backend",
@@ -31,7 +32,7 @@
     "typescript": "^7.0.2"
   },
   "engines": {
-    "node": "24.x"
+    "node": ">=22.0.0"
   },
   "allowScripts": {
     "prisma@7.10.0": true,
