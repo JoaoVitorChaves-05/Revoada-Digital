@@ -15,7 +15,7 @@ export function QuestionGrid({ filtrosAtivos }: QuestionGridProps) {
     },
     {
       id: 2,
-      dificuldade: 'Médio',
+      dificuldade: 'Média',
       enunciado: 'Em que ano o Brasil foi descoberto?',
       alternativas: ['1492', '1500', '1822', '1889']
     },
