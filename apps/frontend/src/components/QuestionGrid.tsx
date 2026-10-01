@@ -12,21 +12,18 @@ export function QuestionGrid() {
             marginTop: '16px'
         }}>
             <QuestionCard 
-            materia="Matemática" 
             dificuldade="Difícil" 
             enunciado="Qual é o valor de X na equação 2x + 4 = 10?" 
             alternativas = {['1', '2', '3', '4']} 
             />
             
-            <QuestionCard 
-            materia="História" 
+            <QuestionCard  
             dificuldade="Fácil" 
             enunciado="Quem descobriu o Brasil?" 
             alternativas = {['Pedro Álvares Cabral', 'Vasco da Gama', 'Cristóvão Colombo', 'Tiradentes']} 
             />
 
             <QuestionCard 
-            materia="Programação" 
             dificuldade="Média" 
             enunciado="O que significa a sigla HTML?" 
             alternativas = {['Hyper Text Markup Language', 'High Tech Machine Learning', 'Hyper Tool Multi Language']} 
