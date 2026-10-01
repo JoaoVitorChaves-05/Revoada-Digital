@@ -1,4 +1,19 @@
+import { useState } from 'react';
+import { getDificuldadeColors } from '../utils/colors';
+
 export function QuestionFilters() {
+  const [menuAberto, setMenuAberto] = useState(false);
+  const [selecionados, setSelecionados] = useState<string[]>([]);
+  const dificuldades = ['Fácil', 'Média', 'Difícil'];
+
+  const alternarDificuldade = (diff: string) => {
+    if (selecionados.includes(diff)) {
+      setSelecionados(selecionados.filter(item => item !== diff));
+    } else {
+      setSelecionados([...selecionados, diff]);
+    }
+  };
+
   return (
     <div style={{
       padding: '16px',
@@ -7,35 +22,62 @@ export function QuestionFilters() {
       border: '1px solid #e4e4e7',
       marginBottom: '24px',
       display: 'flex',
-      alignItems: 'center'
+      flexDirection: 'column',
+      gap: '12px'
     }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-        
-        {/* RÓTULO */}
-        <label htmlFor="dificuldade-select" style={{ fontSize: '19px', fontWeight: 'bold', color: '#3f3f46' }}>
-          Filtros
-        </label>
-        
-        {/* MENU DE SELEÇÃOO*/}
-        <select 
-          id="dificuldade-select"
-          style={{
-            padding: '8px',
-            borderRadius: '4px',
-            border: '1px solid #d4d4d8',
-            backgroundColor: '#fff',
-            color: '#3f3f46',
-            fontSize: '14px',
-            minWidth: '200px',
-            cursor: 'pointer'
-          }}
-        >
-          <option value="todas"> DIFICULDADE </option>
-          <option value="Fácil">Fácil</option>
-          <option value="Média">Média</option>
-          <option value="Difícil">Difícil</option>
-        </select>
+      
+      <button 
+        onClick={() => setMenuAberto(!menuAberto)}
+        style={{
+          alignSelf: 'flex-start',
+          padding: '8px 16px',
+          borderRadius: '6px',
+          border: '1px solid #d4d4d8',
+          backgroundColor: menuAberto ? '#e4e4e7' : '#f8fafc',
+          color: '#3f3f46',
+          fontSize: '14px',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          transition: 'background-color 0.2s ease'
+        }}
+      >
+        Dificuldade
+      </button>
 
+      <div style={{ 
+        display: 'flex', 
+        gap: '8px', 
+        overflow: 'hidden',
+        maxHeight: menuAberto ? '50px' : '0px',
+        opacity: menuAberto ? 1 : 0,
+        marginTop: menuAberto ? '8px' : '0px',
+        transition: 'all 0.3s ease-in-out'
+      }}>
+        {dificuldades.map(diff => {
+          const cores = getDificuldadeColors(diff);
+          const estaSelecionado = selecionados.includes(diff);
+
+          return (
+            <button
+              key={diff}
+              onClick={() => alternarDificuldade(diff)}
+              style={{
+                fontSize: '12px', 
+                fontWeight: 'bold', 
+                backgroundColor: cores.bg, 
+                color: cores.text, 
+                padding: '6px 12px', 
+                borderRadius: '16px',
+                border: estaSelecionado ? `1px solid ${cores.text}` : '1px solid transparent',
+                cursor: 'pointer',
+                filter: estaSelecionado ? 'brightness(0.9)' : 'brightness(1)',
+                transition: 'all 0.2s ease-in-out'
+              }}
+            >
+              {diff}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

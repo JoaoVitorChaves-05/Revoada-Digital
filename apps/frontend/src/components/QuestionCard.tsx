@@ -1,18 +1,10 @@
+import { getDificuldadeColors } from '../utils/colors';
+
 interface QuestionCardProps {
     dificuldade: string;
     enunciado: string;
     alternativas: string[];
 }
-
-// CORES DAS DIFICULDADES
-const getDificuldadeColors = (nivel: string) => {
-    switch (nivel.toLowerCase()) {
-        case 'fácil': return { bg: '#dcfce7', text: '#166534' };
-        case 'média': return { bg: '#f5eba2', text: '#996121' };
-        case 'difícil': return { bg: '#fee2e2', text: '#b91c1c' };
-        default: return { bg: '#f4f4f5', text: '#3f3f46' };
-    }
-};
 
 export function QuestionCard({ dificuldade, enunciado, alternativas }: QuestionCardProps) {
     const dif_Cores = getDificuldadeColors(dificuldade);
