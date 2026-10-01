@@ -1,7 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '../lib/prisma';
 
 describe('Testes da entidade Attempt (Tentativa de Simulado)', () => {
   
@@ -22,6 +20,7 @@ describe('Testes da entidade Attempt (Tentativa de Simulado)', () => {
     const user = await prisma.user.create({
       data: {
         email: `aluno_${Date.now()}@teste.com`,
+        password: 'senha-de-teste',
         full_name: 'Aluno Vitest',
         cpf: `${Math.floor(10000000000 + Math.random() * 90000000000)}`, // CPF aleatório
         profileType: 'STUDENT',
