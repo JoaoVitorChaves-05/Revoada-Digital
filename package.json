@@ -31,6 +31,9 @@
     "@types/node": "^26.4.0",
     "typescript": "^7.0.2"
   },
+  "engines": {
+    "node": "24.x"
+  },
   "allowScripts": {
     "prisma@7.10.0": true,
     "@prisma/engines@7.10.0": true,
@@ -40,5 +43,9 @@
     "bootstrap@5.3.8": true,
     "content-type@1.0.5": true,
     "content-type@2.1.0": true
+  },
+  "dependencies": {
+    "@prisma/client": "7.10.0",
+    "prisma": "7.10.0"
   }
 }

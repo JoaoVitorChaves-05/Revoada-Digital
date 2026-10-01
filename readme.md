@@ -116,3 +116,5 @@ Este projeto está em fase de proposta acadêmica. Contribuições, sugestões e
 - João Vitor Mâncio Chaves
 - Guilherme Miguel Spyrides Leite Ferro
 - Gabrielle Suemi Iquejiri Alencar
+- Guilherme Silva do Nascimento
+- Luiza Dugois Silva Alves
