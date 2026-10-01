@@ -1,0 +1,62 @@
+import { describe, it, expect, beforeEach } from 'vitest';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+describe('Testes da entidade Attempt (Tentativa de Simulado)', () => {
+  
+  // Limpa ou prepara o ambiente antes dos testes se necessário
+  beforeEach(async () => {
+    // Garante que o banco está limpo ou pronto - FIX
+  });
+
+  it('deve criar uma tentativa de simulado com sucesso no banco de dados', async () => {
+    // 1. ARRANGE (Preparar os dados necessários)
+    const school = await prisma.school.create({
+      data: { 
+        school_name: `Escola Teste Vitest ${Date.now()}`, 
+        school_city: 'São Paulo' 
+      }
+    });
+
+    const user = await prisma.user.create({
+      data: {
+        email: `aluno_${Date.now()}@teste.com`,
+        full_name: 'Aluno Vitest',
+        cpf: `${Math.floor(10000000000 + Math.random() * 90000000000)}`, // CPF aleatório
+        profileType: 'STUDENT',
+        studentProfile: {
+          create: { schoolId: school.id, points: 50 }
+        }
+      },
+      include: { studentProfile: true }
+    });
+
+    const mockExam = await prisma.mockExam.create({
+      data: {
+        name: 'Simulado de Teste Automatizado',
+        studentId: user.studentProfile!.id
+      }
+    });
+
+    // 2. ACT (Executar a ação de criar a tentativa)
+    const attempt = await prisma.attempt.create({
+      data: {
+        mockExamId: mockExam.id,
+        status: 'SUBMITTED',
+        score: 100,
+        correctAnswers: 10,
+        totalQuestions: 10,
+        earnedPoints: 50,
+        submittedAt: new Date()
+      }
+    });
+
+    // 3. ASSERT (Verificar se o resultado foi o esperado)
+    expect(attempt).toBeDefined();
+    expect(attempt.id).toBeTypeOf('string');
+    expect(attempt.status).toBe('SUBMITTED');
+    expect(attempt.score).toBe(100);
+    expect(attempt.correctAnswers).toBe(10);
+  });
+});
