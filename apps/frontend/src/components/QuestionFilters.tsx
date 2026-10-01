@@ -46,7 +46,7 @@ export function QuestionFilters({ filtrosAtivos, setFiltrosAtivos }: QuestionFil
           transition: 'background-color 0.2s ease'
         }}
       >
-        Filtrar por Dificuldade
+        Dificuldade
       </button>
 
       <div style={{ 
