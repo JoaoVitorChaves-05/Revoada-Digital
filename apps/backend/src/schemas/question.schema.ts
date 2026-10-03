@@ -9,9 +9,11 @@ const questionFieldsSchema = z.object({
             isCorrect: z.boolean()
         })
     ).min(1, 'É obrigatório enviar pelo menos uma alternativa')
-     .refine((alts) => alts.some((alt) => alt.isCorrect === true), {
-         message: 'Pelo menos uma alternativa deve estar correta',
-     })
+        .refine((alts) => alts.some((alt) => alt.isCorrect === true), {
+            message: 'Pelo menos uma alternativa deve estar correta',
+        }),
+    subject: z.string().trim().min(1, 'A matéria é obrigatória'),
+    concept: z.string().trim().min(1, 'O conceito é obrigatório')
 });
 
 export const createQuestionSchema = questionFieldsSchema;
