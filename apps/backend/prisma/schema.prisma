@@ -101,8 +101,8 @@ model ApprovalRequest {
   @@map("approval_requests")
 }
 
-model School{
-  id   String @id @default(uuid())
+model School {
+  id          String @id @default(uuid())
   school_name String @unique
   school_city String
 
@@ -114,7 +114,7 @@ model School{
 }
 
 model MockExam {
-  id        String   @id @default(uuid())
+  id        String @id @default(uuid())
   name      String
   studentId String
 
@@ -146,15 +146,17 @@ model Question {
   id         String @id @default(uuid())
   text       String @unique
   difficulty Int
+  subject    String
+  concept    String
   image   String?
 
   mockExams    MockExamQuestion[]
   answers      AttemptAnswer[]
   alternatives Alternative[]
 
+  @@index([subject, concept])
   @@map("questions")
 }
-
 
 enum AttemptStatus {
   IN_PROGRESS
@@ -163,15 +165,15 @@ enum AttemptStatus {
 }
 
 model Attempt {
-  id              String        @id @default(uuid())
-  mockExamId      String
-  status          AttemptStatus @default(IN_PROGRESS)
-  startedAt       DateTime      @default(now())
-  submittedAt     DateTime?
-  score           Int?
-  correctAnswers  Int?
-  totalQuestions  Int?
-  earnedPoints    Int?
+  id             String        @id @default(uuid())
+  mockExamId     String
+  status         AttemptStatus @default(IN_PROGRESS)
+  startedAt      DateTime      @default(now())
+  submittedAt    DateTime?
+  score          Int?
+  correctAnswers Int?
+  totalQuestions Int?
+  earnedPoints   Int?
 
   mockExam MockExam        @relation(fields: [mockExamId], references: [id], onDelete: Cascade)
   answers  AttemptAnswer[]
@@ -184,16 +186,16 @@ model Attempt {
 }
 
 model AttemptAnswer {
-  id                   String   @id @default(uuid())
-  attemptId            String
-  questionId           String
+  id                    String    @id @default(uuid())
+  attemptId             String
+  questionId            String
   selectedAlternativeId String?
-  isCorrect            Boolean?
-  answeredAt           DateTime?
+  isCorrect             Boolean?
+  answeredAt            DateTime?
 
-  attempt             Attempt     @relation(fields: [attemptId], references: [id], onDelete: Cascade)
-  question            Question    @relation(fields: [questionId], references: [id], onDelete: Restrict)
-  selectedAlternative  Alternative? @relation(fields: [selectedAlternativeId], references: [id], onDelete: Restrict)
+  attempt             Attempt      @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question            Question     @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  selectedAlternative Alternative? @relation(fields: [selectedAlternativeId], references: [id], onDelete: Restrict)
 
   @@unique([attemptId, questionId])
   @@index([questionId])
