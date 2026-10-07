@@ -4,9 +4,10 @@ import { useState } from 'react'
 type LoginScreenProps = {
   onBack: () => void
   onForgot: () => void
+  onLogin: () => void
 }
 
-export function LoginScreen({ onBack, onForgot }: LoginScreenProps) {
+export function LoginScreen({ onBack, onForgot, onLogin }: LoginScreenProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -43,7 +44,7 @@ export function LoginScreen({ onBack, onForgot }: LoginScreenProps) {
             <h1>Acesse a plataforma</h1>
             <p>Faça login ou registre-se para começar a estudar ainda hoje</p>
 
-            <form className="login-form">
+            <form className="login-form" onSubmit={(event) => { event.preventDefault(); onLogin() }}>
               <div className="field">
                 <label htmlFor="login-email">Email</label>
                 <input id="login-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu.email@exemplo.com" />
