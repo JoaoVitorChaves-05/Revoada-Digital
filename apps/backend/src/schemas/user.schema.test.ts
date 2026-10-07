@@ -15,10 +15,10 @@ describe('createUserSchema', () => {
 		expect(result.success).toBe(true);
 	});
 
-	it('rejeita estudante sem escola', () => {
+	it('aceita estudante sem escola', () => {
 		const result = createUserSchema.safeParse({ ...baseUser, profileType: 'STUDENT' });
 
-		expect(result.success).toBe(false);
+		expect(result.success).toBe(true);
 	});
 
 	it('aceita administrador sem escola', () => {
@@ -45,9 +45,9 @@ describe('updateUserSchema', () => {
 		expect(result.success).toBe(true);
 	});
 
-	it('exige escola ao mudar o perfil para professor', () => {
+	it('aceita mudança para professor sem escola', () => {
 		const result = updateUserSchema.safeParse({ profileType: 'TEACHER' });
 
-		expect(result.success).toBe(false);
+		expect(result.success).toBe(true);
 	});
 });

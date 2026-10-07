@@ -12,7 +12,7 @@
     "start:backend": "npm run start -w apps/backend",
     "start:frontend": "npm run start -w apps/frontend",
     "prisma:push": "npx prisma db push --config apps/backend/prisma.config.ts"
- },
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/JoaoVitorChaves-05/Revoada-Digital.git"
@@ -28,7 +28,9 @@
     "apps/*"
   ],
   "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^26.4.0",
+    "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2"
   },
   "allowScripts": {
@@ -40,9 +42,5 @@
     "bootstrap@5.3.8": true,
     "content-type@1.0.5": true,
     "content-type@2.1.0": true
-  },
-  "dependencies": {
-    "@prisma/client": "^6.19.3",
-    "prisma": "^6.19.3"
   }
 }
