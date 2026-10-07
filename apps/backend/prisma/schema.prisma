@@ -4,8 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 // ------------------------------------------------------
@@ -33,6 +31,7 @@ model User {
   email       String      @unique
   password    String
   full_name   String
+  rg          String?     @unique
   cpf         String      @unique
   profileType ProfileType
 
