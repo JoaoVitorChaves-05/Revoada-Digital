@@ -6,9 +6,9 @@ export class UserRepository {
 		return prisma.user.findUnique({ where: { email } });
 	}
 
-	async findByRg(rg: string) {
-		return prisma.user.findUnique({ where: { rg } });
-	}
+	//async findByRg(rg: string) {
+	//	return prisma.user.findUnique({ where: { rg } });
+	//}
 
 	async findById(id: string) {
 		return prisma.user.findUnique({
@@ -24,19 +24,39 @@ export class UserRepository {
 					email: data.email,
 					password: data.password,
 					full_name: data.full_name,
-					rg: data.rg,
+					//rg: data.rg,
 					cpf: data.cpf,
 					profileType: data.profileType,
 				},
 			});
 
+			const resolveSchool = async (schoolIdentifier: string) => {
+				const school = await tx.school.findFirst({
+					where: {
+						OR: [{ id: schoolIdentifier }, { school_name: schoolIdentifier }],
+					},
+				});
+
+				if (!school) {
+					throw new Error('Escola não encontrada');
+				}
+
+				return school;
+			};
+
 			if (data.profileType === 'STUDENT') {
 				await tx.studentProfile.create({
-					data: { userId: user.id, school: data.school as string },
+					data: {
+						userId: user.id,
+						...(data.school ? { schoolId: (await resolveSchool(data.school)).id } : {}),
+					},
 				});
 			} else if (data.profileType === 'TEACHER') {
 				await tx.teacherProfile.create({
-					data: { userId: user.id, school: data.school as string },
+					data: {
+						userId: user.id,
+						...(data.school ? { schoolId: (await resolveSchool(data.school)).id } : {}),
+					},
 				});
 			} else {
 				await tx.adminProfile.create({ data: { userId: user.id } });
@@ -64,11 +84,25 @@ export class UserRepository {
 				data: {
 					email: data.email,
 					full_name: data.full_name,
-					rg: data.rg,
+					//rg: data.rg,
 					cpf: data.cpf,
 					profileType: data.profileType,
 				},
 			});
+
+			const resolveSchool = async (schoolIdentifier: string) => {
+				const school = await tx.school.findFirst({
+					where: {
+						OR: [{ id: schoolIdentifier }, { school_name: schoolIdentifier }],
+					},
+				});
+
+				if (!school) {
+					throw new Error('Escola não encontrada');
+				}
+
+				return school;
+			};
 
 			if (profileType !== currentUser.profileType) {
 				await tx.studentProfile.deleteMany({ where: { userId: id } });
@@ -76,16 +110,34 @@ export class UserRepository {
 				await tx.adminProfile.deleteMany({ where: { userId: id } });
 
 				if (profileType === 'STUDENT') {
-					await tx.studentProfile.create({ data: { userId: id, school: data.school as string } });
+					await tx.studentProfile.create({
+						data: {
+							userId: id,
+							...(data.school ? { schoolId: (await resolveSchool(data.school)).id } : {}),
+						},
+					});
 				} else if (profileType === 'TEACHER') {
-					await tx.teacherProfile.create({ data: { userId: id, school: data.school as string } });
+					await tx.teacherProfile.create({
+						data: {
+							userId: id,
+							...(data.school ? { schoolId: (await resolveSchool(data.school)).id } : {}),
+						},
+					});
 				} else {
 					await tx.adminProfile.create({ data: { userId: id } });
 				}
-			} else if (data.school && profileType === 'STUDENT') {
-				await tx.studentProfile.update({ where: { userId: id }, data: { school: data.school } });
-			} else if (data.school && profileType === 'TEACHER') {
-				await tx.teacherProfile.update({ where: { userId: id }, data: { school: data.school } });
+			} else if (data.school !== undefined && profileType === 'STUDENT') {
+				const schoolId = data.school ? (await resolveSchool(data.school)).id : null;
+				await tx.studentProfile.update({
+					where: { userId: id },
+					data: { schoolId },
+				});
+			} else if (data.school !== undefined && profileType === 'TEACHER') {
+				const schoolId = data.school ? (await resolveSchool(data.school)).id : null;
+				await tx.teacherProfile.update({
+					where: { userId: id },
+					data: { schoolId },
+				});
 			}
 
 			return tx.user.findUnique({
