@@ -62,6 +62,11 @@ model User {
   forumPosts   Forum[]        @relation("ForumAuthor")
   forumReplies ForumReplies[] @relation("ForumReplyAuthor")
 
+  // Relacionamentos do chat
+  chatParticipants ConversationParticipant[]
+  sentMessages     ChatMessage[] @relation("ChatMessageSender")
+  messageReads     MessageRead[]
+
   @@map("users")
 }
 
@@ -255,4 +260,63 @@ model ForumReplies {
   @@index([forumId])
   @@index([authorId])
   @@map("forum_replies")
+}
+
+enum ConversationType {
+  DIRECT
+  GROUP
+}
+
+model Conversation {
+  id        String           @id @default(uuid())
+  type      ConversationType
+  name      String?
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  participants ConversationParticipant[]
+  messages     ChatMessage[]
+
+  @@map("chat_conversations")
+}
+
+model ConversationParticipant {
+  conversationId String   @map("conversation_id")
+  userId         String   @map("user_id")
+  joinedAt       DateTime @default(now()) @map("joined_at")
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Restrict)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@id([conversationId, userId])
+  @@index([userId])
+  @@map("chat_conversation_participants")
+}
+
+model ChatMessage {
+  id             String   @id @default(uuid())
+  conversationId String   @map("conversation_id")
+  senderId       String   @map("sender_id")
+  content        String
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Restrict)
+  sender       User         @relation("ChatMessageSender", fields: [senderId], references: [id], onDelete: Restrict)
+  reads        MessageRead[]
+
+  @@index([conversationId, createdAt])
+  @@index([senderId])
+  @@map("chat_messages")
+}
+
+model MessageRead {
+  messageId String   @map("message_id")
+  userId    String   @map("user_id")
+  readAt    DateTime @default(now()) @map("read_at")
+
+  message ChatMessage @relation(fields: [messageId], references: [id], onDelete: Restrict)
+  user    User        @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@id([messageId, userId])
+  @@index([userId])
+  @@map("chat_message_reads")
 }
