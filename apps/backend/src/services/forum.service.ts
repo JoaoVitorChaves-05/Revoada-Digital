@@ -1,6 +1,7 @@
 import {
 	CreateForumPostInput,
 	CreateForumReplyInput,
+	ListForumPostsInput,
 	UpdateForumPostInput,
 	UpdateForumReplyInput,
 } from '../schemas/forum.schema';
@@ -9,8 +10,17 @@ import { ForumRepository } from '../repositories/forum.repository';
 export class ForumService {
 	constructor(private readonly forumRepository = new ForumRepository()) {}
 
-	async listPosts() {
-		return this.forumRepository.findAllPosts();
+	async listPosts(
+		data: ListForumPostsInput = { page: 1 },
+	) {
+		const limit = 10;
+		const skip = (data.page - 1) * limit;
+
+		return this.forumRepository.findAllPosts(
+			skip,
+			limit,
+			data.subject,
+		);
 	}
 
 	async getPost(id: string) {
