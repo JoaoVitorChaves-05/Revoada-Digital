@@ -5,31 +5,39 @@ import {
 	UpdateSimuladoInput,
 } from '../schemas/simulado.schema';
 
-type PrismaSimulado = {
+type PrismaSimuladoWithQuestions = {
 	id: string;
 	name: string;
-	difficulty: string | null;
-	questionIds: string[];
 	studentId: string;
+	questions: { questionId: string }[];
 	createdAt: Date;
 	updatedAt: Date;
 };
 
-function toSimulado(simulado: PrismaSimulado): Simulado {
+function toSimulado(simulado: PrismaSimuladoWithQuestions): Simulado {
 	return {
-		...simulado,
-		difficulty: simulado.difficulty ?? undefined,
+		id: simulado.id,
+		name: simulado.name,
+		studentId: simulado.studentId,
+		questionIds: simulado.questions.map((q) => q.questionId),
+		createdAt: simulado.createdAt,
+		updatedAt: simulado.updatedAt,
 	};
 }
 
 export class SimuladoRepository {
 	async findAll(): Promise<Simulado[]> {
-		const simulados = await prisma.mockExam.findMany();
+		const simulados = await prisma.mockExam.findMany({
+			include: { questions: true },
+		});
 		return simulados.map(toSimulado);
 	}
 
 	async findById(id: string): Promise<Simulado | null> {
-		const simulado = await prisma.mockExam.findUnique({ where: { id } });
+		const simulado = await prisma.mockExam.findUnique({
+			where: { id },
+			include: { questions: true },
+		});
 		return simulado ? toSimulado(simulado) : null;
 	}
 
@@ -38,9 +46,14 @@ export class SimuladoRepository {
 			data: {
 				studentId: data.studentId,
 				name: data.name,
-				difficulty: data.difficulty,
-				questionIds: data.questionIds,
+				questions: {
+					create: data.questionIds.map((questionId, index) => ({
+						questionId,
+						position: index + 1,
+					})),
+				},
 			},
+			include: { questions: true },
 		});
 		return toSimulado(simulado);
 	}
@@ -50,9 +63,17 @@ export class SimuladoRepository {
 			where: { id },
 			data: {
 				name: data.name,
-				difficulty: data.difficulty,
-				questionIds: data.questionIds,
+				...(data.questionIds && {
+					questions: {
+						deleteMany: {},               // apaga todos os MockExamQuestion desse simulado
+						create: data.questionIds.map((questionId, index) => ({
+							questionId,
+							position: index + 1,
+						})),
+					},
+				}),
 			},
+			include: { questions: true },
 		});
 		return toSimulado(simulado);
 	}
