@@ -1,12 +1,7 @@
-// Define valores fictícios ANTES de importar qualquer serviço que use o Supabase
-process.env.SUPABASE_URL = 'https://mock-supabase.co';
-process.env.SUPABASE_SERVICE_ROLE_KEY = 'mock-service-role-key';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { questionService } from '../services/question.service';
 import { prisma } from '../lib/prisma';
-import * as storageService from '../services/storage.service';
 
-// 1. Mockamos o Prisma para ele não bater num banco de dados real durante o teste
+// Mockar o Prisma
 vi.mock('../lib/prisma', () => ({
     prisma: {
         question: {
@@ -15,10 +10,14 @@ vi.mock('../lib/prisma', () => ({
     },
 }));
 
-// 2. Mockamos a função de upload do Supabase para retornar uma URL fictícia sem acessar a internet
+// Mockar o storage.service INTEIRO ANTES de ele ser importado.
 vi.mock('../services/storage.service', () => ({
     uploadQuestionImageToSupabase: vi.fn(),
 }));
+
+
+import { questionService } from './question.service';
+import * as storageService from '../services/storage.service';
 
 describe('QuestionService - Criar Questão com Imagem', () => {
     
@@ -27,7 +26,6 @@ describe('QuestionService - Criar Questão com Imagem', () => {
     });
 
     it('deve criar uma questão com sucesso enviando uma imagem', async () => {
-        // Dados simulados da questão que viriam do front-end
         const questionInput = {
             text: 'Qual é a capital do Brasil?',
             difficulty: 1,
@@ -37,7 +35,6 @@ describe('QuestionService - Criar Questão com Imagem', () => {
             ],
         };
 
-        // Simulação do arquivo que o Multer injeta em req.file
         const mockFile = {
             fieldname: 'image',
             originalname: 'teste-imagem.png',
@@ -47,11 +44,11 @@ describe('QuestionService - Criar Questão com Imagem', () => {
             size: 1024,
         } as Express.Multer.File;
 
-        // Definimos o que o mock do Supabase deve retornar quando chamado
         const fakeImageUrl = 'https://seu-projeto.supabase.co/storage/v1/object/public/questoes-imagens/questoes/teste-123.png';
-        vi.spyOn(storageService, 'uploadQuestionImageToSupabase').mockResolvedValueOnce(fakeImageUrl);
+        
+        //retornar a URL fake
+        vi.mocked(storageService.uploadQuestionImageToSupabase).mockResolvedValueOnce(fakeImageUrl);
 
-        // Definimos o que o Prisma.create deve retornar quando salvar no banco simulado
         const fakeCreatedQuestion = {
             id: 'uuid-123',
             text: questionInput.text,
@@ -65,15 +62,11 @@ describe('QuestionService - Criar Questão com Imagem', () => {
 
         vi.mocked(prisma.question.create).mockResolvedValueOnce(fakeCreatedQuestion as any);
 
-        // Executamos a função do service
         const result = await questionService.createQuestion(questionInput, mockFile);
 
-        // Validações (Asserts)
-        // 1. Verifica se chamou a função de upload do Supabase passando o arquivo correto
         expect(storageService.uploadQuestionImageToSupabase).toHaveBeenCalledTimes(1);
         expect(storageService.uploadQuestionImageToSupabase).toHaveBeenCalledWith(mockFile);
 
-        // 2. Verifica se salvou no Prisma com o imageUrl preenchido corretamente
         expect(prisma.question.create).toHaveBeenCalledTimes(1);
         expect(prisma.question.create).toHaveBeenCalledWith(
             expect.objectContaining({
@@ -84,7 +77,6 @@ describe('QuestionService - Criar Questão com Imagem', () => {
             })
         );
 
-        // 3. Garante que o retorno da função é o esperada
         expect(result).toEqual(fakeCreatedQuestion);
     });
 
@@ -102,19 +94,16 @@ describe('QuestionService - Criar Questão com Imagem', () => {
             id: 'uuid-456',
             text: questionInput.text,
             difficulty: questionInput.difficulty,
-            imageUrl: null, // Sem imagem
+            imageUrl: null,
             alternatives: [],
         };
 
         vi.mocked(prisma.question.create).mockResolvedValueOnce(fakeCreatedQuestionWithoutImage as any);
 
-        // Chamamos o service sem passar o segundo parâmetro (arquivo)
         const result = await questionService.createQuestion(questionInput, undefined);
 
-        // Garante que o Supabase NÃO foi chamado
         expect(storageService.uploadQuestionImageToSupabase).not.toHaveBeenCalled();
 
-        // Garante que salvou no Prisma com o imageUrl como null/undefined
         expect(prisma.question.create).toHaveBeenCalledWith(
             expect.objectContaining({
                 data: expect.objectContaining({
