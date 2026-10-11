@@ -79,7 +79,10 @@ export class SimuladoRepository {
 	}
 
 	async delete(id: string): Promise<Simulado> {
-		const simulado = await prisma.mockExam.delete({ where: { id } });
+		const simulado = await prisma.mockExam.delete({
+			where: { id },
+			include: { questions: true },
+		});
 		return toSimulado(simulado);
 	}
 }
