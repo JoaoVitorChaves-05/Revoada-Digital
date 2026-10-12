@@ -4,8 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 // ------------------------------------------------------
@@ -24,6 +22,16 @@ enum ApprovalStatus {
   REJECTED
 }
 
+enum Subjects {
+  PORTUGUESE
+  MATH
+  ENGLISH
+  GEOGRAPHY
+  PHYSICS
+  CHEMICAL
+  HISTORY
+}
+
 // ------------------------------------------------------
 // Entidade Principal: Usuário
 // ------------------------------------------------------
@@ -33,6 +41,7 @@ model User {
   email       String      @unique
   password    String
   full_name   String
+  rg          String?     @unique
   cpf         String      @unique
   profileType ProfileType
 
@@ -50,6 +59,9 @@ model User {
 
   // 2. Solicitações que este usuário (se for Admin) aprovou/rejeitou
   approvedRequests ApprovalRequest[] @relation("AdminApprovals")
+
+  forumPosts   Forum[]        @relation("ForumAuthor")
+  forumReplies ForumReplies[] @relation("ForumReplyAuthor")
 
   @@map("users")
 }
@@ -101,8 +113,8 @@ model ApprovalRequest {
   @@map("approval_requests")
 }
 
-model School{
-  id   String @id @default(uuid())
+model School {
+  id          String @id @default(uuid())
   school_name String @unique
   school_city String
 
@@ -114,7 +126,7 @@ model School{
 }
 
 model MockExam {
-  id        String   @id @default(uuid())
+  id        String @id @default(uuid())
   name      String
   studentId String
 
@@ -146,15 +158,17 @@ model Question {
   id         String @id @default(uuid())
   text       String @unique
   difficulty Int
+  subject    String
+  concept    String
   image   String?
 
   mockExams    MockExamQuestion[]
   answers      AttemptAnswer[]
   alternatives Alternative[]
 
+  @@index([subject, concept])
   @@map("questions")
 }
-
 
 enum AttemptStatus {
   IN_PROGRESS
@@ -163,15 +177,15 @@ enum AttemptStatus {
 }
 
 model Attempt {
-  id              String        @id @default(uuid())
-  mockExamId      String
-  status          AttemptStatus @default(IN_PROGRESS)
-  startedAt       DateTime      @default(now())
-  submittedAt     DateTime?
-  score           Int?
-  correctAnswers  Int?
-  totalQuestions  Int?
-  earnedPoints    Int?
+  id             String        @id @default(uuid())
+  mockExamId     String
+  status         AttemptStatus @default(IN_PROGRESS)
+  startedAt      DateTime      @default(now())
+  submittedAt    DateTime?
+  score          Int?
+  correctAnswers Int?
+  totalQuestions Int?
+  earnedPoints   Int?
 
   mockExam MockExam        @relation(fields: [mockExamId], references: [id], onDelete: Cascade)
   answers  AttemptAnswer[]
@@ -184,16 +198,16 @@ model Attempt {
 }
 
 model AttemptAnswer {
-  id                   String   @id @default(uuid())
-  attemptId            String
-  questionId           String
+  id                    String    @id @default(uuid())
+  attemptId             String
+  questionId            String
   selectedAlternativeId String?
-  isCorrect            Boolean?
-  answeredAt           DateTime?
+  isCorrect             Boolean?
+  answeredAt            DateTime?
 
-  attempt             Attempt     @relation(fields: [attemptId], references: [id], onDelete: Cascade)
-  question            Question    @relation(fields: [questionId], references: [id], onDelete: Restrict)
-  selectedAlternative  Alternative? @relation(fields: [selectedAlternativeId], references: [id], onDelete: Restrict)
+  attempt             Attempt      @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question            Question     @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  selectedAlternative Alternative? @relation(fields: [selectedAlternativeId], references: [id], onDelete: Restrict)
 
   @@unique([attemptId, questionId])
   @@index([questionId])
@@ -210,4 +224,38 @@ model Alternative {
   answers  AttemptAnswer[]
 
   @@map("alternatives")
+}
+
+model Forum {
+  id        String         @id @default(uuid())
+  authorId  String
+  title     String
+  content   String
+  subject   Subjects
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  author  User          @relation("ForumAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  replies ForumReplies[]
+
+  @@index([authorId])
+  @@index([subject])
+  @@map("forums")
+}
+
+model ForumReplies {
+  id           String   @id @default(uuid())
+  forumId      String
+  authorId     String
+  replyContent String
+
+  forum  Forum @relation(fields: [forumId], references: [id], onDelete: Cascade)
+  author User  @relation("ForumReplyAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([forumId])
+  @@index([authorId])
+  @@map("forum_replies")
 }
