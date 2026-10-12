@@ -5,7 +5,9 @@ import healthRouter from './routes/health.routes';
 import usersRouter from './routes/users.routes';
 import simuladosRouter from './routes/simulados.routes';
 import schoolsRouter from './routes/schools.routes';
+import { questionRoutes } from './routes/question.routes';
 import authRouter from './routes/auth.routes';
+import forumRouter from './routes/forum.routes';
 
 export const app = express();
 
@@ -17,4 +19,6 @@ app.use('/approvals', approvalsRouter);
 app.use('/users', usersRouter);
 app.use('/simulados', simuladosRouter);
 app.use('/school', schoolsRouter);
+app.use('/questions', questionRoutes);
 app.use('/auth', authRouter);
+app.use('/forum', forumRouter);

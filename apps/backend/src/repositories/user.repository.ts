@@ -1,5 +1,23 @@
 import { prisma } from '../lib/prisma';
 import { CreateUserInput, UpdateUserInput } from '../schemas/user.schema';
+import type { Prisma } from '@prisma/client';
+
+async function findSchoolId(tx: Prisma.TransactionClient, schoolName: string | undefined) {
+	if (!schoolName) {
+		throw new Error('Escola é obrigatória para este perfil');
+	}
+
+	const school = await tx.school.findUnique({
+		where: { school_name: schoolName },
+		select: { id: true },
+	});
+
+	if (!school) {
+		throw new Error('Escola não cadastrada');
+	}
+
+	return school.id;
+}
 
 export class UserRepository {
 	async findByEmail(email: string) {
@@ -30,33 +48,15 @@ export class UserRepository {
 				},
 			});
 
-			const resolveSchool = async (schoolIdentifier: string) => {
-				const school = await tx.school.findFirst({
-					where: {
-						OR: [{ id: schoolIdentifier }, { school_name: schoolIdentifier }],
-					},
-				});
-
-				if (!school) {
-					throw new Error('Escola não encontrada');
-				}
-
-				return school;
-			};
-
 			if (data.profileType === 'STUDENT') {
+				const schoolId = await findSchoolId(tx, data.school);
 				await tx.studentProfile.create({
-					data: {
-						userId: user.id,
-						...(data.school ? { schoolId: (await resolveSchool(data.school)).id } : {}),
-					},
+					data: { userId: user.id, schoolId },
 				});
 			} else if (data.profileType === 'TEACHER') {
+				const schoolId = await findSchoolId(tx, data.school);
 				await tx.teacherProfile.create({
-					data: {
-						userId: user.id,
-						...(data.school ? { schoolId: (await resolveSchool(data.school)).id } : {}),
-					},
+					data: { userId: user.id, schoolId },
 				});
 			} else {
 				await tx.adminProfile.create({ data: { userId: user.id } });
@@ -90,54 +90,26 @@ export class UserRepository {
 				},
 			});
 
-			const resolveSchool = async (schoolIdentifier: string) => {
-				const school = await tx.school.findFirst({
-					where: {
-						OR: [{ id: schoolIdentifier }, { school_name: schoolIdentifier }],
-					},
-				});
-
-				if (!school) {
-					throw new Error('Escola não encontrada');
-				}
-
-				return school;
-			};
-
 			if (profileType !== currentUser.profileType) {
 				await tx.studentProfile.deleteMany({ where: { userId: id } });
 				await tx.teacherProfile.deleteMany({ where: { userId: id } });
 				await tx.adminProfile.deleteMany({ where: { userId: id } });
 
 				if (profileType === 'STUDENT') {
-					await tx.studentProfile.create({
-						data: {
-							userId: id,
-							...(data.school ? { schoolId: (await resolveSchool(data.school)).id } : {}),
-						},
-					});
+					const schoolId = await findSchoolId(tx, data.school);
+					await tx.studentProfile.create({ data: { userId: id, schoolId } });
 				} else if (profileType === 'TEACHER') {
-					await tx.teacherProfile.create({
-						data: {
-							userId: id,
-							...(data.school ? { schoolId: (await resolveSchool(data.school)).id } : {}),
-						},
-					});
+					const schoolId = await findSchoolId(tx, data.school);
+					await tx.teacherProfile.create({ data: { userId: id, schoolId } });
 				} else {
 					await tx.adminProfile.create({ data: { userId: id } });
 				}
-			} else if (data.school !== undefined && profileType === 'STUDENT') {
-				const schoolId = data.school ? (await resolveSchool(data.school)).id : null;
-				await tx.studentProfile.update({
-					where: { userId: id },
-					data: { schoolId },
-				});
-			} else if (data.school !== undefined && profileType === 'TEACHER') {
-				const schoolId = data.school ? (await resolveSchool(data.school)).id : null;
-				await tx.teacherProfile.update({
-					where: { userId: id },
-					data: { schoolId },
-				});
+			} else if (data.school && profileType === 'STUDENT') {
+				const schoolId = await findSchoolId(tx, data.school);
+				await tx.studentProfile.update({ where: { userId: id }, data: { schoolId } });
+			} else if (data.school && profileType === 'TEACHER') {
+				const schoolId = await findSchoolId(tx, data.school);
+				await tx.teacherProfile.update({ where: { userId: id }, data: { schoolId } });
 			}
 
 			return tx.user.findUnique({
