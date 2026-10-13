@@ -4,13 +4,17 @@ set -e
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "$0")" && pwd)"
 SEEDS_DIR="$SCRIPT_DIR/seeds"
-
+####
+echo "[seed] Reached confirmation prompt" >&2
+printf '[seed] stdin is a terminal: '
+[[ -t 0 ]] && echo yes || echo no
+####
 if [ "$#" -eq 0 ]; then
-  read -r -p "Run all seeds in "$SEEDS_DIR"? (y/n): " answer
+  read -r -p "Run all seeds in "$SEEDS_DIR"? (y/n): " answer </dev/tty
   case "$answer" in
     y|Y|yes|Yes|YES)
       for script in "$SEEDS_DIR"/*.sh; do
-        if [-f "$script"]; then
+        if [ -f "$script" ]; then
           bash "$script"
         fi
       done
@@ -27,7 +31,7 @@ if [ "$#" -eq 0 ]; then
 fi
 
 for file in "$@"; do
-  if [ -f "$file"]; then
+  if [ -f "$file" ]; then
     bash "$file"
   else
     echo "File Not Found -> "$file""
