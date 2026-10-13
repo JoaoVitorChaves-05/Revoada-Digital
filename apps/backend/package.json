@@ -8,7 +8,8 @@
     "prisma:migrate": "npx prisma migrate dev --create-only",
     "prisma:deploy": "npx prisma migrate deploy",
     "prisma:applied": "npx prisma migrate resolve --applied",
-    "prisma:rolledback": "npx prisma migrate resolve --rolled-back"
+    "prisma:rolledback": "npx prisma migrate resolve --rolled-back",
+    "prisma:seed": "npx prisma db seed --"
   },
   "type": "commonjs",
   "dependencies": {
