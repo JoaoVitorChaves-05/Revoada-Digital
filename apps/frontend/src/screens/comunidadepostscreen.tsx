@@ -7,7 +7,6 @@ import {
   BookOpen,
   Bookmark,
   ChevronDown,
-  Ellipsis,
   HeartHandshake,
   MessageCircle,
   MessageSquareMore,

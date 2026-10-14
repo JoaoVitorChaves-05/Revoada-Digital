@@ -8,7 +8,6 @@ import {
   ChevronDown,
   ChevronRight,
   Ellipsis,
-  HeartHandshake,
   MessageCircle,
   MessageSquareMore,
   Plus,
