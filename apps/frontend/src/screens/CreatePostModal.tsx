@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface CreatePostModalProps {
   isOpen: boolean;
@@ -7,122 +7,246 @@ interface CreatePostModalProps {
 
 export function CreatePostModal({ isOpen, onClose }: CreatePostModalProps) {
   const [titulo, setTitulo] = useState('');
+  const [detalhes, setDetalhes] = useState('');
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [materia, setMateria] = useState('');
-  const [conteudo, setConteudo] = useState('');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [buscaMateria, setBuscaMateria] = useState('');
+  const [arquivo, setArquivo] = useState<File | null>(null);
   
-  const disciplinas = ['Matemática', 'Física', 'Química', 'Biologia'];
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const materiasLista = [
+    '...', 'Matemática', 'Física', 'Gramática', 'História', 'Geografia', 'Biologia', 'Química'
+  ];
+
+  useEffect(() => {
+    if (isOpen) {
+      setTitulo('');
+      setDetalhes('');
+      setActiveDropdown(null);
+      setMateria('');
+      setBuscaMateria('');
+      setArquivo(null);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); 
-    if (!materia) {
-      alert('Selecione uma disciplina');
-      return;
+  const toggleDropdown = (dropdown: string) => {
+    setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
+  };
+
+  const handleSelectMateria = (selecionada: string) => {
+    setMateria(selecionada === '...' ? '' : selecionada);
+    setActiveDropdown(null);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setArquivo(e.target.files[0]);
     }
-    console.log({ titulo, materia, conteudo });
-    onClose(); 
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log({ titulo, detalhes, materia, arquivo });
+    onClose();
   };
 
   return (
     <div style={{
       position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-      backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', 
-      justifyContent: 'center', alignItems: 'center', zIndex: 1000
+      backgroundColor: 'rgba(128, 128, 128, 0.8)',
+      display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000,
+      fontFamily: 'sans-serif'
     }}>
-      <div style={{ background: 'white', padding: '24px', borderRadius: '8px', width: '500px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <h2 style={{ margin: 0, color: '#333' }}>Criar novo post</h2>
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 14px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: #112288;
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #FFFFFF;
+          border-radius: 10px;
+          border: 3px solid #112288;
+        }
+      `}</style>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '800px' }}>
         
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ 
+            backgroundColor: '#112288', padding: '8px 24px', borderRadius: '16px',
+            color: '#FF8C42', fontWeight: 'bold', fontSize: '18px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+          }}>
+            Novo Post
+          </div>
+          <button 
+            onClick={onClose}
+            style={{ 
+              width: '32px', height: '32px', backgroundColor: 'white', border: 'none', 
+              borderRadius: '8px', color: '#112288', fontWeight: 'bold', fontSize: '18px', cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+            }}>
+            X
+          </button>
+        </div>
+
+        <div style={{ position: 'relative', display: 'flex', gap: '16px' }}>
           
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <label style={{ fontWeight: 'bold', fontSize: '14px' }}>Título da dúvida</label>
+          <form onSubmit={handleSubmit} style={{ 
+            flex: 2.5, backgroundColor: 'white', borderRadius: '12px', padding: '24px',
+            display: 'flex', flexDirection: 'column', gap: '16px', height: '400px', boxSizing: 'border-box',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
+          }}>
+            <h2 style={{ margin: 0, color: '#112288', fontSize: '20px' }}>Título da dúvida:</h2>
             <input 
               type="text" 
-              placeholder="Ex: Como saber quando usar arranjo ou combinação?"
+              placeholder="Ex: Gente, como faz logaritmo?"
               value={titulo}
               onChange={(e) => setTitulo(e.target.value)}
-              style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-              required
-            />
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', position: 'relative' }}>
-            <label style={{ fontWeight: 'bold', fontSize: '14px' }}>Disciplina</label>
-            <div 
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               style={{ 
-                padding: '8px', borderRadius: '4px', border: '1px solid #ccc', 
-                cursor: 'pointer', display: 'flex', justifyContent: 'space-between',
-                backgroundColor: 'white'
+                padding: '16px', borderRadius: '8px', border: 'none', backgroundColor: '#F0F0F0',
+                fontSize: '15px', color: '#333'
               }}
-            >
-              <span style={{ color: materia ? '#000' : '#757575' }}>
-                {materia || 'Selecione uma matéria...'}
-              </span>
-              <span style={{ transform: isDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s ease' }}>
-                ▼
-              </span>
-            </div>
+            />
 
-            <div style={{ 
-              position: 'absolute', top: '100%', left: 0, right: 0, 
-              backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', 
-              marginTop: '4px', zIndex: 10,
-              maxHeight: isDropdownOpen ? '200px' : '0px',
-              opacity: isDropdownOpen ? 1 : 0,
-              overflow: 'hidden',
-              transition: 'all 0.3s ease',
-              boxShadow: isDropdownOpen ? '0 4px 6px rgba(0,0,0,0.1)' : 'none'
-            }}>
-              {disciplinas.map((disc) => (
-                <div 
-                  key={disc}
-                  onClick={() => {
-                    setMateria(disc);
-                    setIsDropdownOpen(false);
-                  }}
-                  style={{ 
-                    padding: '10px 8px', cursor: 'pointer', borderBottom: '1px solid #eee' 
-                  }}
-                >
-                  {disc}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <label style={{ fontWeight: 'bold', fontSize: '14px' }}>Detalhes da dúvida</label>
             <textarea 
-              placeholder="Explique sua dúvida com detalhes..."
-              value={conteudo}
-              onChange={(e) => setConteudo(e.target.value)}
-              rows={5}
-              style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', resize: 'vertical' }}
-              required
+              placeholder="Detalhe sua dúvida..."
+              value={detalhes}
+              onChange={(e) => setDetalhes(e.target.value)}
+              style={{ 
+                padding: '16px', borderRadius: '8px', border: 'none', backgroundColor: '#F0F0F0',
+                fontSize: '15px', color: '#333', resize: 'none', flexGrow: 1
+              }}
             />
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
+              
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={handleFileChange} 
+                style={{ display: 'none' }} 
+              />
+              
+              <button 
+                type="button" 
+                onClick={() => fileInputRef.current?.click()}
+                style={{ 
+                  padding: '8px 16px', backgroundColor: '#D9D9D9', color: '#112288', 
+                  border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                  maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
+                }}>
+                {arquivo ? arquivo.name : 'Anexar Arquivo'}
+              </button>
+              
+              <button 
+                type="submit" 
+                style={{ 
+                  padding: '10px 24px', backgroundColor: '#FF8C42', color: 'white', 
+                  border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+                }}>
+                Publicar
+              </button>
+            </div>
+          </form>
+
+          <div style={{ 
+            flex: 1, backgroundColor: 'white', borderRadius: '12px', padding: '24px',
+            display: 'flex', flexDirection: 'column', gap: '12px', height: '400px', boxSizing: 'border-box',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
+          }}>
+            <h2 style={{ margin: 0, color: '#112288', fontSize: '20px', marginBottom: '8px' }}>Tags:</h2>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <button 
+                type="button"
+                onClick={() => toggleDropdown('materia')}
+                style={{
+                  padding: '10px', 
+                  backgroundColor: activeDropdown === 'materia' ? '#FF8C42' : '#F0F0F0', 
+                  color: activeDropdown === 'materia' ? 'white' : '#112288',
+                  border: materia && activeDropdown !== 'materia' ? '2px solid #112288' : '2px solid transparent', 
+                  borderRadius: '8px', cursor: 'pointer', textAlign: 'center',
+                  fontWeight: (materia || activeDropdown === 'materia') ? 'bold' : 'normal',
+                  fontSize: '15px', transition: 'all 0.2s',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                }}
+              >
+                {materia || 'Matéria'}
+              </button>
+
+              <button type="button" style={{
+                  padding: '10px', backgroundColor: '#F0F0F0', color: '#112288',
+                  border: '2px solid transparent', borderRadius: '8px', cursor: 'pointer', textAlign: 'center',
+                  fontSize: '15px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+              }}>
+                Disciplina
+              </button>
+
+              <button type="button" style={{
+                  padding: '10px', backgroundColor: '#F0F0F0', color: '#112288',
+                  border: '2px solid transparent', borderRadius: '8px', cursor: 'pointer', textAlign: 'center',
+                  fontSize: '15px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+              }}>
+                Conteúdo
+              </button>
+            </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <label style={{ fontWeight: 'bold', fontSize: '14px' }}>Anexar imagem (opcional)</label>
-            <input 
-              type="file" 
-              accept="image/*"
-            />
-          </div>
+          {activeDropdown === 'materia' && (
+            <div style={{ 
+              position: 'absolute', top: 0, left: 'calc(100% + 16px)',
+              width: '240px', backgroundColor: 'white', borderRadius: '12px', padding: '16px',
+              display: 'flex', flexDirection: 'column', gap: '12px', height: '400px', boxSizing: 'border-box',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.2)', zIndex: 10
+            }}>
+              <input 
+                type="text"
+                placeholder="Pesquisar..."
+                value={buscaMateria}
+                onChange={(e) => setBuscaMateria(e.target.value)}
+                style={{ 
+                  padding: '8px 12px', borderRadius: '6px', border: 'none', backgroundColor: '#D9D9D9',
+                  fontSize: '14px'
+                }}
+              />
+              <div className="custom-scrollbar" style={{ 
+                flexGrow: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', paddingRight: '8px'
+              }}>
+                {materiasLista.filter(m => m.toLowerCase().startsWith(buscaMateria.toLowerCase())).map((item) => (
+                  <div 
+                    key={item}
+                    onClick={() => handleSelectMateria(item)}
+                    onMouseEnter={(e) => {
+                      if (item !== materia) e.currentTarget.style.backgroundColor = '#f5f5f5';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (item !== materia) e.currentTarget.style.backgroundColor = 'white';
+                    }}
+                    style={{
+                      padding: '10px', color: item === materia ? 'white' : '#112288',
+                      backgroundColor: item === materia ? '#FF8C42' : 'white',
+                      borderRadius: '6px', textAlign: 'center', cursor: 'pointer',
+                      fontWeight: 'bold', fontSize: '14px', transition: 'background-color 0.2s',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+                    }}
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '8px' }}>
-            <button type="button" onClick={onClose} style={{ padding: '8px 16px', cursor: 'pointer', background: 'transparent', border: '1px solid #ccc', borderRadius: '4px' }}>
-              Cancelar
-            </button>
-            <button type="submit" style={{ padding: '8px 16px', background: '#2563EB', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
-              Publicar
-            </button>
-          </div>
-
-        </form>
+        </div>
       </div>
     </div>
   );
