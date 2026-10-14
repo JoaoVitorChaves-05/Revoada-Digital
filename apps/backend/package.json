@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "pretest": "npm run prisma:generate",
     "test": "vitest run --passWithNoTests=false",
     "prisma:generate": "prisma generate --config prisma.config.ts",
     "prisma:migrate": "npx prisma migrate dev --create-only",
@@ -14,6 +15,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "7.10.0",
+    "@supabase/supabase-js": "^2.117.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",

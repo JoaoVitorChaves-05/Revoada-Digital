@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import { HomeScreen } from './screens/HomeScreen'
 import { CadastroScreen } from './screens/CadastroScreen'
