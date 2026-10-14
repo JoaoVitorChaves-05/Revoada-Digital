@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { forumService } from '../services/forum.service';
+import { listForumPostsSchema } from '../schemas/forum.schema';
 
 function getParam(req: Request, name: string) {
 	const value = req.params[name];
@@ -13,11 +14,26 @@ function isNotFoundError(error: unknown) {
 	);
 }
 
-export async function listPosts(_req: Request, res: Response) {
+export async function listPosts(req: Request, res: Response) {
+	const result = listForumPostsSchema.safeParse(req.query);
+
+	if (!result.success) {
+		return res.status(400).json({
+			error: 'Parâmetros inválidos',
+			details: result.error.issues.map((issue) => ({
+				path: issue.path.join('.'),
+				message: issue.message,
+			})),
+		});
+	}
+
 	try {
-		return res.status(200).json(await forumService.listPosts());
+		const posts = await forumService.listPosts(result.data);
+		return res.status(200).json(posts);
 	} catch {
-		return res.status(500).json({ error: 'Erro ao listar postagens' });
+		return res.status(500).json({
+			error: 'Erro ao listar postagens',
+		});
 	}
 }
 
