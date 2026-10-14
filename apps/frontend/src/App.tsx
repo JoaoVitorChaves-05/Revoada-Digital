@@ -1,27 +1,20 @@
-import { useState } from 'react';
-import { QuestionFilters } from './components/QuestionFilters';
-import { QuestionGrid } from './components/QuestionGrid';
-import { theme } from '../src/utils/colors';
+import { useState } from 'react'
+import './App.css'
+import { HomeScreen } from './screens/HomeScreen'
+import { CadastroScreen } from './screens/CadastroScreen'
+import { LoginScreen } from './screens/LoginScreen'
+import { RedefinirScreen } from './screens/RedefinirScreen'
 
-export default function App() {
-  const [filtrosAtivos, setFiltrosAtivos] = useState<string[]>([]);
+type Screen = 'home' | 'cadastro' | 'login' | 'redefinir'
 
-  return (
-    <div style={{
-      padding: '32px',
-      fontFamily: 'sans-serif',
-      maxWidth: '1200px',
-      margin: '0 auto' }}>
-      <h1 style={{ color: theme.text.title, marginBottom: '20px' }}>
-        Banco de Questões - Revoada-Digital
-      </h1>
-      
-      <QuestionFilters 
-        filtrosAtivos = {filtrosAtivos} 
-        setFiltrosAtivos={setFiltrosAtivos} 
-      />
-      
-      <QuestionGrid filtrosAtivos = {filtrosAtivos} />
-    </div>
-  );
+function App() {
+  const [screen, setScreen] = useState<Screen>('home')
+
+  if (screen === 'cadastro') return <CadastroScreen onBack={() => setScreen('home')} />
+  if (screen === 'login') return <LoginScreen onBack={() => setScreen('home')} onForgot={() => setScreen('redefinir')} />
+  if (screen === 'redefinir') return <RedefinirScreen onBack={() => setScreen('login')} />
+
+  return <HomeScreen onCadastro={() => setScreen('cadastro')} onLogin={() => setScreen('login')} />
 }
+
+export default App
