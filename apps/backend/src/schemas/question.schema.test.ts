@@ -4,6 +4,8 @@ import { createQuestionSchema, updateQuestionSchema } from './question.schema';
 const baseQuestion = {
     text: 'Qual a capital do Brasil?',
     difficulty: 1,
+    subject: 'Geografia',
+    concept: 'Capitais do Brasil',
     alternatives: [
         { text: 'Brasília', isCorrect: true },
         { text: 'Rio de Janeiro', isCorrect: false }
@@ -32,12 +34,12 @@ describe('createQuestionSchema', () => {
     });
 
     it('rejeita questão onde todas as alternativas são falsas', () => {
-        const result = createQuestionSchema.safeParse({ 
-            ...baseQuestion, 
+        const result = createQuestionSchema.safeParse({
+            ...baseQuestion,
             alternatives: [
                 { text: 'Apenas errada 1', isCorrect: false },
                 { text: 'Apenas errada 2', isCorrect: false }
-            ] 
+            ]
         });
         expect(result.success).toBe(false);
     });
@@ -55,10 +57,10 @@ describe('updateQuestionSchema', () => {
     });
 
     it('aceita atualização parcial com alternativas', () => {
-        const result = updateQuestionSchema.safeParse({ 
+        const result = updateQuestionSchema.safeParse({
             alternatives: [
                 { text: 'Nova alternativa certa', isCorrect: true }
-            ] 
+            ]
         });
         expect(result.success).toBe(true);
     });

@@ -1,11 +1,28 @@
+import { prisma } from '../lib/prisma';
 import { QuestionRepository } from '../repositories/question.repository';
+import { uploadQuestionImageToSupabase } from './storage.service';
 import { CreateQuestionInput, UpdateQuestionInput } from '../schemas/question.schema';
 
-export class QuestionService {
-    constructor(private readonly questionRepository = new QuestionRepository()) {}
+export class QuestionService { 
+    private questionRepository: QuestionRepository;
 
-    async createQuestion(data: CreateQuestionInput) {
-        return this.questionRepository.create(data);
+    constructor(questionRepository?: QuestionRepository) {
+        this.questionRepository = questionRepository || new QuestionRepository();
+    }
+
+    async createQuestion(data: CreateQuestionInput, file?: Express.Multer.File) {
+        let imageUrl: string | null = null;
+
+        if (file) {
+            imageUrl = await uploadQuestionImageToSupabase(file);
+        }
+
+        const questionData = {
+            ...data,
+            imageUrl: imageUrl, // 'image' para 'imageUrl'
+        };
+
+        return this.questionRepository.create(questionData);
     }
 
     async listQuestions(page: number, limit: number, difficulty?: number) {
