@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "pretest": "npm run prisma:generate",
     "test": "vitest run --passWithNoTests=false",
     "prisma:generate": "prisma generate --config prisma.config.ts",
     "prisma:migrate": "npx prisma migrate dev --create-only",
