@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { AttemptResult } from '../types/resultado_simulado.types';
 
 interface ResultPageProps {

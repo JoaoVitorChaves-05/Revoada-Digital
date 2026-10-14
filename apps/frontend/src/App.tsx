@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import { HomeScreen } from './screens/HomeScreen'
 import { CadastroScreen } from './screens/CadastroScreen'
@@ -12,6 +12,8 @@ function App() {
   const [screen, setScreen] = useState<Screen>('home')
   
   const [currentAttemptId, setCurrentAttemptId] = useState<string>("769e855b-4a27-4a5b-a48c-170be35004d2") //ID de teste
+
+  useEffect(() => setCurrentAttemptId("769e855b-4a27-4a5b-a48c-170be35004d2"), [])
 
   if (screen === 'cadastro') return <CadastroScreen onBack={() => setScreen('home')} />
   if (screen === 'login') return <LoginScreen onBack={() => setScreen('home')} onForgot={() => setScreen('redefinir')}/>
