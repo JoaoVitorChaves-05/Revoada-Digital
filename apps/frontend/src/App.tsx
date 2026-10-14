@@ -4,7 +4,7 @@ import { HomeScreen } from './screens/HomeScreen'
 import { CadastroScreen } from './screens/CadastroScreen'
 import { LoginScreen } from './screens/LoginScreen'
 import { RedefinirScreen } from './screens/RedefinirScreen'
-import { ResultPage } from './Pages/result_simulado.page' 
+import { ResultPage } from './pages/result_simulado.page' 
 
 type Screen = 'home' | 'cadastro' | 'login' | 'redefinir' | 'result'
 
