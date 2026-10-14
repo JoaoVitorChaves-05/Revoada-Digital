@@ -29,7 +29,7 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
 
     try {
         const secretKey = process.env.JWT_SECRET;
-
+        
         if (!secretKey) {
             throw new Error('JWT_SECRET não configurado nas variáveis de ambiente');
         }
