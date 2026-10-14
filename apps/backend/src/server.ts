@@ -8,6 +8,7 @@ import schoolsRouter from './routes/schools.routes';
 import { questionRoutes } from './routes/question.routes';
 import authRouter from './routes/auth.routes';
 import forumRouter from './routes/forum.routes';
+import chatRouter from './routes/chat.routes';
 
 export const app = express();
 
@@ -22,3 +23,4 @@ app.use('/school', schoolsRouter);
 app.use('/questions', questionRoutes);
 app.use('/auth', authRouter);
 app.use('/forum', forumRouter);
+app.use('/chat', chatRouter);
