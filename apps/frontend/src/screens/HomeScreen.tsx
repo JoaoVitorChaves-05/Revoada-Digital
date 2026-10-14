@@ -1,32 +1,54 @@
-import iconContainer from './icons/icon-container.png';
+import { Bell, ChevronDown, GraduationCap } from 'lucide-react'
 
 type HomeScreenProps = {
   onCadastro: () => void
   onLogin: () => void
+  onComunidade: () => void
+  isLoggedIn: boolean
+  onChat: () => void
 }
 
-export function HomeScreen({ onCadastro, onLogin }: HomeScreenProps) {
+export function HomeScreen({ onCadastro, onLogin, onComunidade, isLoggedIn, onChat }: HomeScreenProps) {
   return (
-    <div className="site-shell">
-      <header className="topbar">
-        <div className="logo-wrap" aria-label="Revoada Digital">
-          <div className="logo-mark"><img src={iconContainer} alt="Revoada Digital" /></div>
-          <div className="logo-text">
-            <span className="text-orange">Revoada</span>
-            <span className="text-blue">Digital</span>
-          </div>
-        </div>
+    <div className="site-shell min-h-screen bg-[#F8FAFC]">
+      <header className="border-b border-[#E2E8F0] bg-white">
+        <div className="mx-auto flex h-20 w-full max-w-[1200px] items-center justify-between px-5 sm:px-10 xl:px-0">
+          <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center gap-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FE7F2D]" aria-label="Revoada Digital">
+            <span className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-[#183189]">
+              <GraduationCap size={20} color="#FE7F2D" strokeWidth={2} />
+            </span>
+            <span className="font-['Sora'] text-xl font-extrabold leading-[25px]">
+              <span className="text-[#FE7F2D]">Revoada</span>
+              <span className="text-[#183189]">Digital</span>
+            </span>
+          </button>
 
-        <nav className="main-nav">
-          <a href="#inicio">Início</a>
-          <a href="#disciplinas">Disciplinas</a>
-          <a href="#simulados">Simulados</a>
-          <a href="#faq">FAQ</a>
-        </nav>
+          <nav className="hidden h-20 items-stretch gap-7 md:flex" aria-label="Principal">
+            <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="relative flex items-center text-sm font-extrabold leading-[19px] text-[#183189] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FE7F2D]">
+              Início
+              <span className="absolute inset-x-0 bottom-0 h-[3px] rounded-sm bg-[#183189]" />
+            </button>
+            <a href="#disciplinas" className="flex items-center text-sm font-semibold leading-[19px] text-[#183189] hover:text-[#FE7F2D]">Disciplinas</a>
+            <a href="#simulados" className="flex items-center text-sm font-semibold leading-[19px] text-[#183189] hover:text-[#FE7F2D]">Simulados</a>
+            <button type="button" onClick={onComunidade} className="flex items-center text-sm font-semibold leading-[19px] text-[#183189] hover:text-[#FE7F2D]">Comunidade</button>
+            {isLoggedIn && <button type="button" onClick={onChat} className="flex items-center text-sm font-semibold leading-[19px] text-[#183189] hover:text-[#FE7F2D]">Chat</button>}
+            <a href="#faq" className="flex items-center text-sm font-semibold leading-[19px] text-[#183189] hover:text-[#FE7F2D]">FAQ</a>
+          </nav>
 
-        <div className="header-actions">
-          <button type="button" className="btn btn-link" onClick={onLogin}>Login</button>
-          <button type="button" className="btn btn-primary" onClick={onCadastro}>Nova conta</button>
+          {isLoggedIn ? (
+            <div className="flex items-center gap-4">
+              <button type="button" aria-label="Notificações" className="text-[#183189]"><Bell size={18} /></button>
+              <span className="h-6 w-px bg-[#E2E8F0]" />
+              <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#EEF2FF] text-[11.52px] font-extrabold text-[#183189]">JL</span>
+              <span className="hidden text-sm font-bold text-[#183189] sm:inline">Júlia</span>
+              <ChevronDown size={14} className="text-[#64748B]" />
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <button type="button" onClick={onLogin} className="rounded-lg px-3 py-2 text-sm font-bold text-[#183189] hover:text-[#FE7F2D]">Login</button>
+              <button type="button" onClick={onCadastro} className="rounded-lg bg-[#FE7F2D] px-4 py-2 text-sm font-bold text-white hover:bg-[#e86d20]">Nova conta</button>
+            </div>
+          )}
         </div>
       </header>
 

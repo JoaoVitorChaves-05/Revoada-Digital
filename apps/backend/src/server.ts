@@ -13,7 +13,11 @@ import forumRouter from './routes/forum.routes';
 export const app = express();
 
 // --- Middlewares Globais ---
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:5174'],
+  credentials: true,
+}));
+
 app.use(express.json());
 app.use('/health', healthRouter);
 app.use('/approvals', approvalsRouter);
