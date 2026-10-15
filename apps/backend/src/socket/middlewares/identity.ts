@@ -2,6 +2,8 @@ import type { ChatServer } from '../types';
 
 type SocketMiddleware = Parameters<ChatServer['use']>[0];
 
+//TODO: provisório !! substituir por verificação JWT
+
 export const identityMiddleware: SocketMiddleware = (socket, next) => {
     const userId = socket.handshake.auth.userId;
 
