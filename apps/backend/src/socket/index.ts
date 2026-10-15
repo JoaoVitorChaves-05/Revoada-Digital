@@ -1,24 +1,32 @@
 import type { Server as HttpServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
+import { registerChatHandlers } from './handlers/chat';
+import type {
+    ChatServer,
+    ClientToServerEvents,
+    InterServerEvents,
+    ServerToClientEvents,
+    SocketData,
+} from './types';
+import { identityMiddleware } from './middlewares/identity';
 
-export function initializeSocket(server: HttpServer): SocketIOServer {
-    const io = new SocketIOServer(server, {
+export function initializeSocket(server: HttpServer): ChatServer {
+    const io = new SocketIOServer<
+        ClientToServerEvents,
+        ServerToClientEvents,
+        InterServerEvents,
+        SocketData
+    >(server, {
         cors: {
             origin: '*', // TODO: restringir junto com o CORS do Express
             methods: ['GET', 'POST'],
         },
     });
 
+    io.use(identityMiddleware);
+
     io.on('connection', (socket) => {
-        console.log('Novo cliente conectado:', socket.id);
-
-        socket.on('sendMsg', (data) => {
-            console.log('Mensagem recebida do cliente:', data);
-        });
-
-        socket.on('disconnect', (reason) => {
-            console.log('Cliente desconectado:', socket.id, reason);
-        });
+        registerChatHandlers(socket);
     });
 
     return io;
