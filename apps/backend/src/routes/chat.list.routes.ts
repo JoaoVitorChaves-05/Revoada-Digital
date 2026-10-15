@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { listUserConversations } from '../controllers/chat.controller';
+import { listUserConversations } from '../controllers/chat.list.controller';
 import { ensureAuthenticated } from '../middlewares/auth.middleware';
 
 const chatRoutes = Router();

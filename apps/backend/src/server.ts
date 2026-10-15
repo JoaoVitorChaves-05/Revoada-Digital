@@ -9,7 +9,7 @@ import { questionRoutes } from './routes/question.routes';
 import authRouter from './routes/auth.routes';
 import attemptsRouter from './routes/attempts.routes';
 import forumRouter from './routes/forum.routes';
-import { chatRoutes } from './routes/chat.routes';
+import { chatRoutes } from './routes/chat.list.routes';
 
 export const app = express();
 

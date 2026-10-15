@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { chatService } from '../services/chat.service';
+import { chatService } from '../services/chat.list.service';
 
 export async function listUserConversations(req: Request, res: Response) {
     try {
