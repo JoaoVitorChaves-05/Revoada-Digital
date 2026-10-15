@@ -9,24 +9,35 @@ export function CreatePostModal({ isOpen, onClose }: CreatePostModalProps) {
   const [titulo, setTitulo] = useState('');
   const [detalhes, setDetalhes] = useState('');
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const [materia, setMateria] = useState('');
-  const [buscaMateria, setBuscaMateria] = useState('');
   const [arquivo, setArquivo] = useState<File | null>(null);
   
+  const [materia, setMateria] = useState('');
+  const [buscaMateria, setBuscaMateria] = useState('');
+  
+  const [disciplina, setDisciplina] = useState('');
+  const [buscaDisciplina, setBuscaDisciplina] = useState('');
+  
+  const [conteudoTag, setConteudoTag] = useState('');
+  const [buscaConteudo, setBuscaConteudo] = useState('');
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const materiasLista = [
-    '...', 'Matemática', 'Física', 'Gramática', 'História', 'Geografia', 'Biologia', 'Química'
-  ];
+  const materiasLista = ['...', 'Matemática', 'Física', 'Gramática', 'História', 'Geografia', 'Biologia', 'Química'];
+  const disciplinasLista = ['...'];
+  const conteudosLista = ['...'];
 
   useEffect(() => {
     if (isOpen) {
       setTitulo('');
       setDetalhes('');
       setActiveDropdown(null);
+      setArquivo(null);
       setMateria('');
       setBuscaMateria('');
-      setArquivo(null);
+      setDisciplina('');
+      setBuscaDisciplina('');
+      setConteudoTag('');
+      setBuscaConteudo('');
     }
   }, [isOpen]);
 
@@ -36,8 +47,11 @@ export function CreatePostModal({ isOpen, onClose }: CreatePostModalProps) {
     setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
   };
 
-  const handleSelectMateria = (selecionada: string) => {
-    setMateria(selecionada === '...' ? '' : selecionada);
+  const handleSelectTag = (tipo: string, selecionada: string) => {
+    const valor = selecionada === '...' ? '' : selecionada;
+    if (tipo === 'materia') setMateria(valor);
+    if (tipo === 'disciplina') setDisciplina(valor);
+    if (tipo === 'conteudo') setConteudoTag(valor);
     setActiveDropdown(null);
   };
 
@@ -49,8 +63,71 @@ export function CreatePostModal({ isOpen, onClose }: CreatePostModalProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ titulo, detalhes, materia, arquivo });
+    console.log({ titulo, detalhes, materia, disciplina, conteudoTag, arquivo });
     onClose();
+  };
+
+  const renderDropdownContent = () => {
+    let lista: string[] = [];
+    let busca = '';
+    let setBusca: (val: string) => void = () => {};
+    let tagAtual = '';
+    let tipo = '';
+
+    if (activeDropdown === 'materia') {
+      lista = materiasLista; busca = buscaMateria; setBusca = setBuscaMateria; tagAtual = materia; tipo = 'materia';
+    } else if (activeDropdown === 'disciplina') {
+      lista = disciplinasLista; busca = buscaDisciplina; setBusca = setBuscaDisciplina; tagAtual = disciplina; tipo = 'disciplina';
+    } else if (activeDropdown === 'conteudo') {
+      lista = conteudosLista; busca = buscaConteudo; setBusca = setBuscaConteudo; tagAtual = conteudoTag; tipo = 'conteudo';
+    } else {
+      return null;
+    }
+
+    return (
+      <div style={{ 
+        position: 'absolute', top: 0, left: 'calc(100% + 16px)',
+        width: '240px', backgroundColor: 'white', borderRadius: '12px', padding: '16px',
+        display: 'flex', flexDirection: 'column', gap: '12px', height: '400px', boxSizing: 'border-box',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.2)', zIndex: 10
+      }}>
+        <input 
+          type="text"
+          placeholder="Pesquisar..."
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+          style={{ 
+            padding: '8px 12px', borderRadius: '6px', border: 'none', backgroundColor: '#D9D9D9',
+            fontSize: '14px'
+          }}
+        />
+        <div className="custom-scrollbar" style={{ 
+          flexGrow: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', paddingRight: '8px'
+        }}>
+          {lista.filter(m => m.toLowerCase().startsWith(busca.toLowerCase())).map((item) => (
+            <div 
+              key={item}
+              onClick={() => handleSelectTag(tipo, item)}
+              onMouseEnter={(e) => {
+                if (item !== tagAtual) e.currentTarget.style.backgroundColor = '#f5f5f5';
+              }}
+              onMouseLeave={(e) => {
+                if (item !== tagAtual) e.currentTarget.style.backgroundColor = 'white';
+              }}
+              style={{
+                padding: '10px', color: item === tagAtual ? 'white' : '#112288',
+                backgroundColor: item === tagAtual ? '#FF8C42' : 'white',
+                borderRadius: '6px', textAlign: 'center', cursor: 'pointer',
+                fontWeight: 'bold', fontSize: '14px', transition: 'background-color 0.2s',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+              }}
+            >
+              {item}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -61,18 +138,9 @@ export function CreatePostModal({ isOpen, onClose }: CreatePostModalProps) {
       fontFamily: 'sans-serif'
     }}>
       <style>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 14px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: #112288;
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #FFFFFF;
-          border-radius: 10px;
-          border: 3px solid #112288;
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 14px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #112288; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #FFFFFF; border-radius: 10px; border: 3px solid #112288; }
       `}</style>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '800px' }}>
@@ -166,6 +234,7 @@ export function CreatePostModal({ isOpen, onClose }: CreatePostModalProps) {
             <h2 style={{ margin: 0, color: '#112288', fontSize: '20px', marginBottom: '8px' }}>Tags:</h2>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              
               <button 
                 type="button"
                 onClick={() => toggleDropdown('materia')}
@@ -176,75 +245,48 @@ export function CreatePostModal({ isOpen, onClose }: CreatePostModalProps) {
                   border: materia && activeDropdown !== 'materia' ? '2px solid #112288' : '2px solid transparent', 
                   borderRadius: '8px', cursor: 'pointer', textAlign: 'center',
                   fontWeight: (materia || activeDropdown === 'materia') ? 'bold' : 'normal',
-                  fontSize: '15px', transition: 'all 0.2s',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                  fontSize: '15px', transition: 'all 0.2s', boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
                 }}
               >
                 {materia || 'Matéria'}
               </button>
 
-              <button type="button" style={{
-                  padding: '10px', backgroundColor: '#F0F0F0', color: '#112288',
-                  border: '2px solid transparent', borderRadius: '8px', cursor: 'pointer', textAlign: 'center',
-                  fontSize: '15px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-              }}>
-                Disciplina
+              <button 
+                type="button"
+                onClick={() => toggleDropdown('disciplina')}
+                style={{
+                  padding: '10px', 
+                  backgroundColor: activeDropdown === 'disciplina' ? '#FF8C42' : '#F0F0F0', 
+                  color: activeDropdown === 'disciplina' ? 'white' : '#112288',
+                  border: disciplina && activeDropdown !== 'disciplina' ? '2px solid #112288' : '2px solid transparent', 
+                  borderRadius: '8px', cursor: 'pointer', textAlign: 'center',
+                  fontWeight: (disciplina || activeDropdown === 'disciplina') ? 'bold' : 'normal',
+                  fontSize: '15px', transition: 'all 0.2s', boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                }}
+              >
+                {disciplina || 'Disciplina'}
               </button>
 
-              <button type="button" style={{
-                  padding: '10px', backgroundColor: '#F0F0F0', color: '#112288',
-                  border: '2px solid transparent', borderRadius: '8px', cursor: 'pointer', textAlign: 'center',
-                  fontSize: '15px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-              }}>
-                Conteúdo
+              <button 
+                type="button"
+                onClick={() => toggleDropdown('conteudo')}
+                style={{
+                  padding: '10px', 
+                  backgroundColor: activeDropdown === 'conteudo' ? '#FF8C42' : '#F0F0F0', 
+                  color: activeDropdown === 'conteudo' ? 'white' : '#112288',
+                  border: conteudoTag && activeDropdown !== 'conteudo' ? '2px solid #112288' : '2px solid transparent', 
+                  borderRadius: '8px', cursor: 'pointer', textAlign: 'center',
+                  fontWeight: (conteudoTag || activeDropdown === 'conteudo') ? 'bold' : 'normal',
+                  fontSize: '15px', transition: 'all 0.2s', boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                }}
+              >
+                {conteudoTag || 'Conteúdo'}
               </button>
+
             </div>
           </div>
 
-          {activeDropdown === 'materia' && (
-            <div style={{ 
-              position: 'absolute', top: 0, left: 'calc(100% + 16px)',
-              width: '240px', backgroundColor: 'white', borderRadius: '12px', padding: '16px',
-              display: 'flex', flexDirection: 'column', gap: '12px', height: '400px', boxSizing: 'border-box',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.2)', zIndex: 10
-            }}>
-              <input 
-                type="text"
-                placeholder="Pesquisar..."
-                value={buscaMateria}
-                onChange={(e) => setBuscaMateria(e.target.value)}
-                style={{ 
-                  padding: '8px 12px', borderRadius: '6px', border: 'none', backgroundColor: '#D9D9D9',
-                  fontSize: '14px'
-                }}
-              />
-              <div className="custom-scrollbar" style={{ 
-                flexGrow: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', paddingRight: '8px'
-              }}>
-                {materiasLista.filter(m => m.toLowerCase().startsWith(buscaMateria.toLowerCase())).map((item) => (
-                  <div 
-                    key={item}
-                    onClick={() => handleSelectMateria(item)}
-                    onMouseEnter={(e) => {
-                      if (item !== materia) e.currentTarget.style.backgroundColor = '#f5f5f5';
-                    }}
-                    onMouseLeave={(e) => {
-                      if (item !== materia) e.currentTarget.style.backgroundColor = 'white';
-                    }}
-                    style={{
-                      padding: '10px', color: item === materia ? 'white' : '#112288',
-                      backgroundColor: item === materia ? '#FF8C42' : 'white',
-                      borderRadius: '6px', textAlign: 'center', cursor: 'pointer',
-                      fontWeight: 'bold', fontSize: '14px', transition: 'background-color 0.2s',
-                      boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
-                    }}
-                  >
-                    {item}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          {renderDropdownContent()}
 
         </div>
       </div>
