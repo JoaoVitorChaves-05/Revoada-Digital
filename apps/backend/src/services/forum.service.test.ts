@@ -47,11 +47,58 @@ describe('ForumService', () => {
 		expect(repository.createPost).toHaveBeenCalledWith(postInput);
 	});
 
-	it('lista postagens', async () => {
+	it('lista a primeira página sem filtro', async () => {
 		const posts = [{ id: 'post-1' }];
 		repository.findAllPosts.mockResolvedValue(posts);
 
 		await expect(service.listPosts()).resolves.toEqual(posts);
+
+		expect(repository.findAllPosts).toHaveBeenCalledWith(
+			0,
+			10,
+			undefined,
+		);
+	});
+
+	it('calcula quantos posts pular na segunda página', async () => {
+		repository.findAllPosts.mockResolvedValue([]);
+
+		await service.listPosts({ page: 2 });
+
+		expect(repository.findAllPosts).toHaveBeenCalledWith(
+			10,
+			10,
+			undefined,
+		);
+	});
+
+	it('envia o filtro por matéria ao repository', async () => {
+		const posts = [{ id: 'post-1', subject: 'MATH' }];
+		repository.findAllPosts.mockResolvedValue(posts);
+
+		await expect(
+			service.listPosts({ page: 1, subject: 'MATH' }),
+		).resolves.toEqual(posts);
+
+		expect(repository.findAllPosts).toHaveBeenCalledWith(
+			0,
+			10,
+			'MATH',
+		);
+	});
+
+	it('retorna lista vazia quando não há postagens', async () => {
+		repository.findAllPosts.mockResolvedValue([]);
+
+		await expect(
+			service.listPosts({ page: 3, subject: 'HISTORY' }),
+		).resolves.toEqual([]);
+
+		expect(repository.findAllPosts).toHaveBeenCalledWith(
+			20,
+			10,
+			'HISTORY',
+		);
 	});
 
 	it('impede consulta de postagem inexistente', async () => {
