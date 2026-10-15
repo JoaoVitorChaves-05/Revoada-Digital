@@ -1,25 +1,60 @@
 import { Request, Response } from 'express';
+import { getChatMessagesSchema } from '../schemas/chat.schema';
 import { chatService } from '../services/chat.service';
 
-export async function listUserConversations(req: Request, res: Response) {
-    try {
-        // Assume que o middleware de auth adicionou o id do usuário logado em req.user
-        const userId = req.user?.id || (req as any).userId; 
+function getUserId(req: Request) {
+	const value = req.params.userId;
 
-        if (!userId) {
-            return res.status(401).json({ error: 'Usuário não autenticado' });
-        }
+	return Array.isArray(value) ? value[0] : value;
+}
 
-        const conversations = await chatService.getUserConversations(userId);
+export async function getMessageHistory(
+	req: Request,
+	res: Response,
+) {
+	const result = getChatMessagesSchema.safeParse({
+		currentUserId: req.header('x-user-id'),
+		userId: getUserId(req),
+	});
 
-        return res.status(200).json({
-            message: 'Conversas listadas com sucesso',
-            data: conversations,
-        });
-    } catch (error: any) {
-        return res.status(400).json({
-            error: 'Erro ao listar conversas',
-            details: error.message,
-        });
-    }
+	if (!result.success) {
+		return res.status(400).json({
+			error: 'Dados inválidos',
+			details: result.error.issues.map((issue) => ({
+				path: issue.path.join('.'),
+				message: issue.message,
+			})),
+		});
+	}
+
+	try {
+		const history = await chatService.getMessageHistory(
+			result.data,
+		);
+
+		return res.status(200).json(history);
+	} catch (error) {
+		if (
+			error instanceof Error &&
+			error.message === 'Usuário não encontrado'
+		) {
+			return res.status(404).json({
+				error: 'Usuário não encontrado',
+			});
+		}
+
+		if (
+			error instanceof Error &&
+			error.message ===
+				'Não é possível consultar mensagens com o próprio usuário'
+		) {
+			return res.status(400).json({
+				error: error.message,
+			});
+		}
+
+		return res.status(500).json({
+			error: 'Erro ao buscar histórico de mensagens',
+		});
+	}
 }

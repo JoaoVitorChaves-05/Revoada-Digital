@@ -1,9 +1,8 @@
 import { Router } from 'express';
-import { listUserConversations } from '../controllers/chat.controller';
-import { ensureAuthenticated } from '../middlewares/auth.middleware';
+import { getMessageHistory } from '../controllers/chat.controller';
 
-const chatRoutes = Router();
+const chatRouter = Router();
 
-chatRoutes.get('/conversations', ensureAuthenticated, listUserConversations);
+chatRouter.get('/messages/:userId', getMessageHistory);
 
-export { chatRoutes };
+export default chatRouter;
