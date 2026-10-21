@@ -118,3 +118,4 @@ Este projeto está em fase de proposta acadêmica. Contribuições, sugestões e
 - Gabrielle Suemi Iquejiri Alencar
 - Guilherme Silva do Nascimento
 - Luiza Dugois Silva Alves
+- Layza Ariane dos santos carvalho
