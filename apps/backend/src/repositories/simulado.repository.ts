@@ -5,39 +5,31 @@ import {
 	UpdateSimuladoInput,
 } from '../schemas/simulado.schema';
 
-type PrismaSimuladoWithQuestions = {
+type PrismaSimulado = {
 	id: string;
 	name: string;
+	difficulty: string | null;
+	questionIds: string[];
 	studentId: string;
-	questions: { questionId: string }[];
 	createdAt: Date;
 	updatedAt: Date;
 };
 
-function toSimulado(simulado: PrismaSimuladoWithQuestions): Simulado {
+function toSimulado(simulado: PrismaSimulado): Simulado {
 	return {
-		id: simulado.id,
-		name: simulado.name,
-		studentId: simulado.studentId,
-		questionIds: simulado.questions.map((q) => q.questionId),
-		createdAt: simulado.createdAt,
-		updatedAt: simulado.updatedAt,
+		...simulado,
+		difficulty: simulado.difficulty ?? undefined,
 	};
 }
 
 export class SimuladoRepository {
 	async findAll(): Promise<Simulado[]> {
-		const simulados = await prisma.mockExam.findMany({
-			include: { questions: true },
-		});
+		const simulados = await prisma.mockExam.findMany();
 		return simulados.map(toSimulado);
 	}
 
 	async findById(id: string): Promise<Simulado | null> {
-		const simulado = await prisma.mockExam.findUnique({
-			where: { id },
-			include: { questions: true },
-		});
+		const simulado = await prisma.mockExam.findUnique({ where: { id } });
 		return simulado ? toSimulado(simulado) : null;
 	}
 
@@ -46,14 +38,9 @@ export class SimuladoRepository {
 			data: {
 				studentId: data.studentId,
 				name: data.name,
-				questions: {
-					create: data.questionIds.map((questionId, index) => ({
-						questionId,
-						position: index + 1,
-					})),
-				},
+				difficulty: data.difficulty,
+				questionIds: data.questionIds,
 			},
-			include: { questions: true },
 		});
 		return toSimulado(simulado);
 	}
@@ -63,26 +50,15 @@ export class SimuladoRepository {
 			where: { id },
 			data: {
 				name: data.name,
-				...(data.questionIds && {
-					questions: {
-						deleteMany: {},               // apaga todos os MockExamQuestion desse simulado
-						create: data.questionIds.map((questionId, index) => ({
-							questionId,
-							position: index + 1,
-						})),
-					},
-				}),
+				difficulty: data.difficulty,
+				questionIds: data.questionIds,
 			},
-			include: { questions: true },
 		});
 		return toSimulado(simulado);
 	}
 
 	async delete(id: string): Promise<Simulado> {
-		const simulado = await prisma.mockExam.delete({
-			where: { id },
-			include: { questions: true },
-		});
+		const simulado = await prisma.mockExam.delete({ where: { id } });
 		return toSimulado(simulado);
 	}
 }

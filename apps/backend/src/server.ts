@@ -29,6 +29,7 @@ app.use('/approvals', approvalsRouter);
 app.use('/users', usersRouter);
 app.use('/simulados', simuladosRouter);
 app.use('/school', schoolsRouter);
-app.use('/questions', questionRoutes);
 app.use('/auth', authRouter);
+app.use('/attempts', attemptsRouter);
 app.use('/forum', forumRouter);
+app.use('/chat', chatRoutes);

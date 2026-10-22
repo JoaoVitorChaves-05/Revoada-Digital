@@ -3,7 +3,11 @@ import { questionService } from '../services/question.service';
 
 export async function createQuestion(req: Request, res: Response) {
     try {
-        const question = await questionService.createQuestion(req.body);
+        const imageFile = req.file; // Pega o arquivo do Multer
+
+        // Passa o body e o arquivo para o serviço
+        const question = await questionService.createQuestion(req.body, imageFile);
+        
         return res.status(201).json({ message: 'Questão criada com sucesso', data: question });
     } catch (error: any) {
         return res.status(400).json({ error: 'Erro ao criar questão', details: error.message });

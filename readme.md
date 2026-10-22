@@ -72,6 +72,17 @@ O projeto foi desenvolvido como proposta para a disciplina de **Engenharia de So
 - **API Docs ENEM** – pública e gratuita
 - **API de pagamentos** – Mercado Pago ou ASAAS (isentas de taxa para CNPJ ativo como associação sem fins lucrativos ou ONG)
 
+## Diagramas
+
+##### Diagrama de Implantação
+![Alt](diagramas/Diagramas%20Revoada%20Digital.jpg "Diagrama de Implantação")
+##### Diagrama de Componentes
+![Alt](diagramas/Diagramas%20Revoada%20Digital%20(1).jpg "Diagrama de Componentes")
+##### Diagrama de Classes
+![Alt](diagramas/Diagramas%20Revoada%20Digital%20(2).jpg "Diagrama de Classes")
+##### Diagrama de Atividades
+![Alt](diagramas/Diagramas%20Revoada%20Digital%20(3).jpg "Diagrama de Atividades")
+
 ---
 
 ## Impactos esperados

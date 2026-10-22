@@ -4,6 +4,7 @@ import {
 	createForumReplySchema,
 	updateForumPostSchema,
 	updateForumReplySchema,
+	listForumPostsSchema,
 } from './forum.schema';
 
 const validPost = {
@@ -97,5 +98,63 @@ describe('updateForumReplySchema', () => {
 		const result = updateForumReplySchema.safeParse({ replyContent: 'Resposta editada' });
 
 		expect(result.success).toBe(true);
+	});
+});
+
+describe('listForumPostsSchema', () => {
+	it('usa a primeira página quando nenhum parâmetro é enviado', () => {
+		const result = listForumPostsSchema.safeParse({});
+
+		expect(result.success).toBe(true);
+		if (result.success) {
+			expect(result.data.page).toBe(1);
+		}
+	});
+
+	it('aceita filtro por matéria e converte a página para número', () => {
+		const result = listForumPostsSchema.safeParse({
+			subject: 'MATH',
+			page: '2',
+		});
+
+		expect(result.success).toBe(true);
+		if (result.success) {
+			expect(result.data).toEqual({
+				subject: 'MATH',
+				page: 2,
+			});
+		}
+	});
+
+	it('rejeita matéria inválida', () => {
+		const result = listForumPostsSchema.safeParse({
+			subject: 'SCIENCE',
+		});
+
+		expect(result.success).toBe(false);
+	});
+
+	it('rejeita páginas inválidas', () => {
+		for (const page of ['0', '-1', '1.5', 'abc', '']) {
+			expect(
+				listForumPostsSchema.safeParse({ page }).success,
+			).toBe(false);
+		}
+	});
+
+	it('rejeita números de página grandes demais', () => {
+		const result = listForumPostsSchema.safeParse({
+			page: '9007199254740992',
+		});
+
+		expect(result.success).toBe(false);
+	});
+
+	it('rejeita o parâmetro page repetido como array', () => {
+		const result = listForumPostsSchema.safeParse({
+			page: ['1', '2'],
+		});
+
+		expect(result.success).toBe(false);
 	});
 });

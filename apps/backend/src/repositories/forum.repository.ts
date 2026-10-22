@@ -4,6 +4,7 @@ import {
 	CreateForumReplyInput,
 	UpdateForumPostInput,
 	UpdateForumReplyInput,
+	ListForumPostsInput,
 } from '../schemas/forum.schema';
 
 const postInclude = {
@@ -27,10 +28,20 @@ const replyInclude = {
 };
 
 export class ForumRepository {
-	async findAllPosts() {
+	async findAllPosts(
+		skip: number,
+		take: number,
+		subject?: ListForumPostsInput['subject'],
+	) {
 		return prisma.forum.findMany({
+			where: subject ? { subject } : {},
+			skip,
+			take,
 			include: postInclude,
-			orderBy: { createdAt: 'desc' },
+			orderBy: [
+				{ createdAt: 'desc' },
+				{ id: 'desc' },
+			],
 		});
 	}
 

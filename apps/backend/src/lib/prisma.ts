@@ -4,9 +4,8 @@ import { PrismaClient } from '@prisma/client';
 
 config({ path: '../../.env' });
 
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL ?? '' });
-
 const globalForPrisma = globalThis as typeof globalThis & { prisma?: PrismaClient };
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL ?? '' });
 
 export const prisma =
 	globalForPrisma.prisma ??
