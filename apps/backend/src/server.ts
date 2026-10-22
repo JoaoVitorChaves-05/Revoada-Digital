@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import attemptsRouter from './routes/attempts.routes';
+import { attemptsRouter } from './routes/attempts.routes';
 import { chatRoutes } from './routes/chat.list.routes';
 import { approvalsRouter } from './routes/approvals.routes';
 import { healthRouter } from './routes/health.routes';
