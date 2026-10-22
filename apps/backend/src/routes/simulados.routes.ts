@@ -14,7 +14,7 @@ import {
 } from '../schemas/simulado.schema';
 import { generateSimuladoSchema } from '../schemas/simulado-generate.schema';
 
-const simuladosRouter = Router();
+export const simuladosRouter = Router();
 
 simuladosRouter.post('/generate', validateSchema(generateSimuladoSchema), generateSimulado);
 // Criação mantida para permitir o ciclo completo do recurso.
@@ -25,5 +25,3 @@ simuladosRouter.put('/:id', validateSchema(updateSimuladoSchema), updateSimulado
 simuladosRouter.delete('/:id', deleteSimulado);
 simuladosRouter.get('/', listSimulados);
 simuladosRouter.get('/:id', readSimulado);
-
-export default simuladosRouter;

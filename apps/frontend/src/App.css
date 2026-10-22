@@ -140,6 +140,12 @@ button {
   padding: 0 12px;
 }
 
+.btn-nav{
+  background: transparent;
+  color: var(--blue-900);
+  font-weight: 600;
+}
+
 .btn-text {
   background: transparent;
   color: var(--blue-900);
@@ -442,6 +448,11 @@ button {
   stroke-width: 2.2;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.return-home{
+  background: transparent;
+  border: none;
 }
 
 .reset-brand{

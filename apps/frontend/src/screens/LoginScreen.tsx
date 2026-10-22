@@ -4,9 +4,10 @@ import { useState } from 'react'
 type LoginScreenProps = {
   onBack: () => void
   onForgot: () => void
+  onHome: () => void
 }
 
-export function LoginScreen({ onBack, onForgot }: LoginScreenProps) {
+export function LoginScreen({ onBack, onForgot, onHome }: LoginScreenProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -30,13 +31,15 @@ export function LoginScreen({ onBack, onForgot }: LoginScreenProps) {
               </svg>
             </button>
 
-            <div className="login-brand">
-              <div className="login-brand-mark"><img src={iconContainer} alt="Revoada Digital" /></div>
-              <div className="login-brand-name">
-                <span className="text-orange">Revoada</span>
-                <span className="text-blue">Digital</span>
+            <button className="return-home" type="button" onClick={onHome} aria-label="Home">
+              <div className="login-brand">
+                <div className="login-brand-mark"><img src={iconContainer} alt="Revoada Digital" /></div>
+                <div className="login-brand-name">
+                  <span className="text-orange">Revoada</span>
+                  <span className="text-blue">Digital</span>
+                </div>
               </div>
-            </div>
+            </button>
           </header>
 
           <div className="login-box">

@@ -7,7 +7,7 @@ import {
 	parseQuestionFields,
 } from '../middlewares/question-upload.middleware';
 
-const questionRoutes = Router();
+export const questionRoutes = Router();
 
 questionRoutes.post(
 	'/',
@@ -20,5 +20,3 @@ questionRoutes.get('/', listQuestions);
 questionRoutes.get('/:id', readQuestion);
 questionRoutes.put('/:id', validateSchema(updateQuestionSchema), updateQuestion);
 questionRoutes.delete('/:id', deleteQuestion);
-
-export { questionRoutes };

@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import './TelaSimulado.css';
 
+type TelaSimuladoProps = {
+  config: SimuladoConfig | null;
+};
+
 interface Alternativa {
   id: string;
   text: string;
@@ -24,16 +28,32 @@ const mockQuestao: Questao = {
   ]
 };
 
-export function TelaSimulado() {
+export function TelaSimulado({ config }: TelaSimuladoProps) {
   const [tempoSegundos, setTempoSegundos] = useState(0);
   const [alternativaSelecionada, setAlternativaSelecionada] = useState<string | null>(null);
+  const [simuladoIniciado, setSimuladoIniciado] = useState(false);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTempoSegundos((prev) => prev + 1);
-    }, 1000);
+    if(simuladoIniciado){
+      const timer = setInterval(() => {
+        setTempoSegundos((prev) => prev + 1);
+      }, 1000);
     return () => clearInterval(timer);
-  }, []);
+    }
+  }, [simuladoIniciado]);
+  
+  if (!simuladoIniciado){
+    return (
+      <div>
+        <h1>Simulado pronto!</h1>
+        <p>Dificuldade: { config.dificuldade }</p>
+        <p>Área: { config.materia }</p>
+        <p>Quantidade: { config.quantidade }</p>
+
+        <button onClick={() => setSimuladoIniciado(true)}>Começar Simulado </button>
+      </div>
+    );
+  }
 
   const formatarTempo = (segundos: number) => {
     const min = Math.floor(segundos / 60).toString().padStart(2, '0');
@@ -45,7 +65,6 @@ export function TelaSimulado() {
     if (!alternativaSelecionada) return;
     alert("Lógica de avançar questão entrará aqui!");
   };
-
   return (
     <div className="simulado-container">
       <header className="simulado-header">

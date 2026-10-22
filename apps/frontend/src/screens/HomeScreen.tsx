@@ -3,9 +3,10 @@ import iconContainer from './icons/icon-container.png';
 type HomeScreenProps = {
   onCadastro: () => void
   onLogin: () => void
+  onSimulado: () => void
 }
 
-export function HomeScreen({ onCadastro, onLogin }: HomeScreenProps) {
+export function HomeScreen({ onCadastro, onLogin, onSimulado }: HomeScreenProps) {
   return (
     <div className="site-shell">
       <header className="topbar">
@@ -20,7 +21,7 @@ export function HomeScreen({ onCadastro, onLogin }: HomeScreenProps) {
         <nav className="main-nav">
           <a href="#inicio">Início</a>
           <a href="#disciplinas">Disciplinas</a>
-          <a href="#simulados">Simulados</a>
+          <button type = "button" className="btn btn-nav" onClick={onSimulado}>Simulados</button>
           <a href="#faq">FAQ</a>
         </nav>
 

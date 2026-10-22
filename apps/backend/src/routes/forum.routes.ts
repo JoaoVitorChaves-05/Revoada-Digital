@@ -18,7 +18,15 @@ import {
 	updateForumReplySchema,
 } from '../schemas/forum.schema';
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 const forumRouter = Router();
+=======
+export const forumRouter = Router();
+>>>>>>> Stashed changes
+=======
+export const forumRouter = Router();
+>>>>>>> Stashed changes
 
 forumRouter.post('/posts', validateSchema(createForumPostSchema), createPost);
 forumRouter.get('/posts', listPosts);
@@ -30,5 +38,11 @@ forumRouter.post('/posts/:postId/replies', validateSchema(createForumReplySchema
 forumRouter.get('/posts/:postId/replies', listReplies);
 forumRouter.put('/posts/:postId/replies/:id', validateSchema(updateForumReplySchema), updateReply);
 forumRouter.delete('/posts/:postId/replies/:id', deleteReply);
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 export default forumRouter;
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes

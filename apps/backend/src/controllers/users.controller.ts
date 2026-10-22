@@ -2,7 +2,9 @@ import { Request, Response } from 'express';
 import { userService } from '../services/user.service';
 
 export async function createUser(req: Request, res: Response) {
-	try {
+	console.log('REQ.BODY:', req.body);
+  console.log('INSIDE CONTROLLER - full req object keys:', Object.keys(req));
+  try {
 		const result = await userService.createUser(req.body);
 
 		return res.status(201).json({

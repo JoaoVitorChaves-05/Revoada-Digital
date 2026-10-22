@@ -1,15 +1,51 @@
 import { useState } from 'react';
 import './GerarSimulado.css';
 
-export function GerarSimulado() {
-  const [materia, setMateria] = useState('');
-  const [dificuldade, setDificuldade] = useState('');
-  const [quantidade, setQuantidade] = useState<number | string>(10);
+type GerarSimuladoScreenProps = {  
+  onHome: () => void;
+  onPractice: (config: SimuladoConfig) => void;
+}
 
-  const handleGerar = (e: React.FormEvent) => {
+type SimuladoConfig ={
+  subject: string;
+  difficulty: number;
+  quantidade: number;
+};
+
+export function GerarSimulado({ onHome, onPractice }: GerarSimuladoScreenProps) {
+  const [subject, setSubject] = useState('');
+  const [difficulty, setDifficulty] = useState('');
+  const [quantidade, setQuantidade] = useState<number | string>(10);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleGerar = async (e: React.FormEvent) => {
     e.preventDefault();
-    // No futuro, isso vai chamar a API pra gerar as questões e mudar de página
-    alert(`Preparando simulado de ${materia} com ${quantidade} questões (${dificuldade})...`);
+    setError(null);
+    setLoading(true);
+
+    const config: SimuladoConfig = {
+      subject,
+      difficulty: Number(difficulty),
+      quantidade: Number(quantidade),
+    };
+
+    try {
+      const res = await fetch('http://localhost:3000/simulados/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(config),
+      });
+      if (!res.ok) throw new Error(`Falha na requisição: ${res.status}`);
+      const data = await res.json();
+      console.log(data);        
+
+      onPractice(config);      
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro inesperado');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -20,7 +56,8 @@ export function GerarSimulado() {
           <span className="logo-digital">Digital</span>
         </div>
         <nav className="header-nav">
-          <a href="#inicio">Início</a>
+          <button type="button" className="btn btn-nav" onClick={onHome}> Início </button>
+
           <a href="#disciplinas">Disciplinas</a>
           <a href="#simulados" className="ativo">Simulados</a>
         </nav>
@@ -36,11 +73,11 @@ export function GerarSimulado() {
           <h2>Gerar Novo Simulado</h2>
           <form onSubmit={handleGerar}>
             <div className="form-group">
-              <label htmlFor="materia">Área de Conhecimento</label>
+              <label htmlFor="subject">Área de Conhecimento</label>
               <select 
-                id="materia" 
-                value={materia} 
-                onChange={(e) => setMateria(e.target.value)} 
+                id="subject" 
+                value={subject} 
+                onChange={(e) => setSubject(e.target.value)} 
                 required
               >
                 <option value="" disabled>Selecione uma área...</option>
@@ -52,11 +89,11 @@ export function GerarSimulado() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="dificuldade">Nível de Dificuldade</label>
+              <label htmlFor="difficulty">Nível de Dificuldade</label>
               <select 
-                id="dificuldade" 
-                value={dificuldade} 
-                onChange={(e) => setDificuldade(e.target.value)} 
+                id="difficulty" 
+                value={difficulty} 
+                onChange={(e) => setDifficulty(e.target.value)} 
                 required
               >
                 <option value="" disabled>Selecione a dificuldade...</option>
@@ -79,7 +116,7 @@ export function GerarSimulado() {
               />
             </div>
 
-            <button type="submit" className="btn-gerar">
+            <button type="submit" className="btn-gerar" /**disabled={loading}*/>
               Começar a Praticar
             </button>
           </form>

@@ -119,14 +119,14 @@ export function FazerSimulado() {
                 />
                 <span className="alternativa-letra">{alt.id})</span>
                 <span className="alternativa-texto">{alt.text}</span>
-              </label>
+               </label>
             ))}
           </div>
 
           <div className="acoes-container">
             <button 
               className="btn-proxima" 
-              onClick={handleProxima}
+              onClick={isUltimaQuestão? on : handleProxima}
               disabled={!alternativaMarcada}
             >
               {isUltimaQuestao ? 'Finalizar Simulado' : 'Próxima Questão'}

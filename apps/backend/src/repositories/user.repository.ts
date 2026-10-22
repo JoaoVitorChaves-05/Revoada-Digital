@@ -23,11 +23,11 @@ export class UserRepository {
 	async findByEmail(email: string) {
 		return prisma.user.findUnique({ where: { email } });
 	}
-
+/**
 	async findByRg(rg: string) {
 		return prisma.user.findUnique({ where: { rg } });
 	}
-
+*/
 	async findById(id: string) {
 		return prisma.user.findUnique({
 			where: { id },
@@ -42,7 +42,7 @@ export class UserRepository {
 					email: data.email,
 					password: data.password,
 					full_name: data.full_name,
-					rg: data.rg,
+					//rg: data.rg,
 					cpf: data.cpf,
 					profileType: data.profileType,
 				},
