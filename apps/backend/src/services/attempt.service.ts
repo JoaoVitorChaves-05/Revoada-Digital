@@ -88,6 +88,10 @@ export class AttemptService {
     }
     return this.attemptRepository.delete(id);
   }
+
+  async getUserAttempts(userId: string) {
+    return this.attemptRepository.findByUserId(userId);
+  }
 }
 
 export const attemptService = new AttemptService();
