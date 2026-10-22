@@ -20,7 +20,11 @@ import {
 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 const forumRouter = Router();
+=======
+export const forumRouter = Router();
+>>>>>>> Stashed changes
 =======
 export const forumRouter = Router();
 >>>>>>> Stashed changes
@@ -40,8 +44,11 @@ forumRouter.put('/posts/:postId/replies/:id', validateSchema(updateForumReplySch
 forumRouter.delete('/posts/:postId/replies/:id', deleteReply);
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 export default forumRouter;
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
