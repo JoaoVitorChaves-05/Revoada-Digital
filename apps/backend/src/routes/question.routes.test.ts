@@ -38,11 +38,8 @@ describe('POST /questions', () => {
 			.post('/questions')
 			.send({
 				text: 'Quanto é 1 + 1?',
-				subject: 'Matemática',
-				concept: 'Adição',
 				difficulty: 1,
 				alternatives,
-
 			});
 
 		expect(response.status).toBe(201);
@@ -53,8 +50,6 @@ describe('POST /questions', () => {
 		const response = await request(createTestApp())
 			.post('/questions')
 			.field('text', 'Quanto é 1 + 1?')
-			.field('subject', 'Matemática')
-			.field('concept', 'Adição')
 			.field('difficulty', '1')
 			.field('alternatives', JSON.stringify(alternatives));
 
@@ -67,8 +62,6 @@ describe('POST /questions', () => {
 		const response = await request(createTestApp())
 			.post('/questions')
 			.field('text', 'Observe a figura')
-			.field('subject', 'Matemática')
-			.field('concept', 'Adição')
 			.field('difficulty', '2')
 			.field('alternatives', JSON.stringify(alternatives))
 			.attach('image', Buffer.from('arquivo para testar o recebimento'), 'figura.png');

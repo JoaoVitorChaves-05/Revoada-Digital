@@ -11,7 +11,8 @@
     "build:frontend": "npm run build -w apps/frontend",
     "start:backend": "npm run start -w apps/backend",
     "start:frontend": "npm run start -w apps/frontend",
-    "prisma:push": "npx prisma db push --config apps/backend/prisma.config.ts"
+    "prisma:push": "npx prisma db push --config apps/backend/prisma.config.ts",
+    "prisma:seed": "npx prisma db seed --"
   },
   "repository": {
     "type": "git",
@@ -34,7 +35,7 @@
     "typescript": "^7.0.2"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": "24.x"
   },
   "allowScripts": {
     "prisma@7.10.0": true,
