@@ -10,6 +10,7 @@ import authRouter from './routes/auth.routes';
 import attemptsRouter from './routes/attempts.routes';
 import forumRouter from './routes/forum.routes';
 import { chatRoutes } from './routes/chat.list.routes';
+import dashboardRouter from './routes/dashboard.routes';
 
 export const app = express();
 
@@ -26,3 +27,4 @@ app.use('/auth', authRouter);
 app.use('/attempts', attemptsRouter);
 app.use('/forum', forumRouter);
 app.use('/chat', chatRoutes);
+app.use('/dashboard', dashboardRouter);
