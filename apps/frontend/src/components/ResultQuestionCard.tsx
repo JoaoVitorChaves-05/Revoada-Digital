@@ -6,20 +6,25 @@ interface QuestionCardProps {
 
 export function ResultQuestionCard({ question }: QuestionCardProps) {
   const isCorrect = question.isCorrect;
-  const baseClasses = "p-4 border rounded-md mb-3";
-  const colorClasses = isCorrect 
-    ? "bg-green-50 border-green-200" 
-    : "bg-red-50 border-red-200";
 
   return (
-    <div className={`${baseClasses} ${colorClasses}`}>
-      <div className="flex justify-between items-center mb-2">
-        <span className="font-bold">Questão {question.questionNumber}</span>
-        <span className={isCorrect ? 'text-green-700 font-medium' : 'text-red-700 font-medium'}>
+    <div style={{
+      padding: '16px',
+      border: `1px solid ${isCorrect ? '#bbf7d0' : '#fecaca'}`,
+      borderRadius: '8px',
+      marginBottom: '12px',
+      backgroundColor: isCorrect ? '#f0fdf4' : '#fef2f2',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '8px'
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontWeight: 'bold' }}>Questão {question.questionNumber}</span>
+        <span style={{ fontWeight: 'bold', color: isCorrect ? '#15803d' : '#b91c1c' }}>
           {isCorrect ? 'Correta' : 'Incorreta'}
         </span>
       </div>
-      <div className="text-sm text-gray-800">
+      <div style={{ fontSize: '14px', color: '#374151' }}>
         <p>Sua resposta: <strong>{question.userAnswer || 'Não respondida'}</strong></p>
         <p>Resposta correta: <strong>{question.correctAnswer}</strong></p>
       </div>

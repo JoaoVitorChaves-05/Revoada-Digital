@@ -12,24 +12,37 @@ export function ResultPage({ attemptId }: ResultPageProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchResult() {
-      try {
-        const response = await fetch(`http://localhost:3000/attempts/${attemptId}`);
-        
-        if (!response.ok) {
-          throw new Error('Não foi possível carregar os resultados do simulado.');
-        }
-
-        const data: AttemptResult = await response.json();
-        setResult(data);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchResult();
+    // Simulando o tempo de resposta de uma API (1 segundo)
+    setTimeout(() => {
+      setResult({
+        id: attemptId,
+        status: 'SUBMITTED',
+        startedAt: '2026-10-28T10:00:00Z',
+        submittedAt: '2026-10-28T10:30:00Z',
+        score: 90,
+        correctAnswers: 1,
+        totalQuestions: 2,
+        earnedPoints: 150,
+        timeSpentSeconds: 1800, // 30 minutos
+        questions: [
+          {
+            questionId: 'q1',
+            questionNumber: 1,
+            userAnswer: 'A',
+            correctAnswer: 'A',
+            isCorrect: true
+          },
+          {
+            questionId: 'q2',
+            questionNumber: 2,
+            userAnswer: 'C',
+            correctAnswer: 'B',
+            isCorrect: false
+          }
+        ]
+      });
+      setLoading(false);
+    }, 1000);
   }, [attemptId]);
 
   if (loading) return <div className="p-5">Carregando resultados...</div>;
@@ -44,10 +57,10 @@ export function ResultPage({ attemptId }: ResultPageProps) {
   };
 
   return (
-    <div className="p-8 font-sans max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Desempenho no Simulado</h1>
+    <div style={{ padding: '32px', fontFamily: 'sans-serif', maxWidth: '672px', margin: '0 auto' }}>
+      <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '24px', color: '#1e3a8a' }}>Desempenho no Simulado</h1>
       
-      <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-8">
+      <div style={{ backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '24px', borderRadius: '8px', marginBottom: '32px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <p><strong>Status:</strong> {result.status}</p>
         <p><strong>Tempo gasto:</strong> {formatTime(result.timeSpentSeconds)}</p>
         <p><strong>Acertos:</strong> {result.correctAnswers} de {result.totalQuestions}</p>
@@ -55,8 +68,8 @@ export function ResultPage({ attemptId }: ResultPageProps) {
         <p><strong>Pontos Conquistados:</strong> +{result.earnedPoints ?? 0} pts</p>
       </div>
 
-      <h2 className="text-xl font-bold mb-4">Gabarito</h2>
-      <div className="flex flex-col">
+      <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px', color: '#1e3a8a' }}>Gabarito</h2>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
         {result.questions?.map((q) => (
           <ResultQuestionCard key={q.questionId} question={q} />
         ))}
