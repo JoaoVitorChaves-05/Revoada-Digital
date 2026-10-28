@@ -7,8 +7,16 @@ vi.mock('../services/dashboard.service', () => ({
     dashboardService: {
         getClassPerformance: vi.fn(),
     },
-    SchoolNotFoundError: class SchoolNotFoundError extends Error {},
+    SchoolNotFoundError: class SchoolNotFoundError extends Error {
+        constructor() {
+            super('Escola não encontrada');
+        }
+    },
 }));
+
+function createRequestMock(query: Request['query']): Request {
+    return { query } as unknown as Request;
+}
 
 function createResponseMock() {
     return {
@@ -26,7 +34,7 @@ describe('getDashboard', () => {
         const response = createResponseMock();
 
         await getDashboard(
-            { query: {} } as Request,
+            createRequestMock({}),
             response as unknown as Response,
         );
 
@@ -38,11 +46,11 @@ describe('getDashboard', () => {
     it('retorna 404 quando a escola não existe', async () => {
         const response = createResponseMock();
         vi.mocked(dashboardService.getClassPerformance).mockRejectedValue(
-            new SchoolNotFoundError('Escola não encontrada'),
+            new SchoolNotFoundError(),
         );
 
         await getDashboard(
-            { query: { school_id: 'missing-school' } } as Request,
+            createRequestMock({ school_id: 'missing-school' }),
             response as unknown as Response,
         );
 
@@ -64,7 +72,7 @@ describe('getDashboard', () => {
         vi.mocked(dashboardService.getClassPerformance).mockResolvedValue(performance);
 
         await getDashboard(
-            { query: { school_id: 'school-1' } } as Request,
+            createRequestMock({ school_id: 'school-1' }),
             response as unknown as Response,
         );
 
