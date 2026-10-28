@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { AttemptResult } from '../types/resultado_simulado.types';
+import { ResultQuestionCard } from './ResultQuestionCard';
 
 interface ResultPageProps {
   attemptId: string;
@@ -55,23 +56,9 @@ export function ResultPage({ attemptId }: ResultPageProps) {
       </div>
 
       <h2 className="text-xl font-bold mb-4">Gabarito</h2>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col">
         {result.questions?.map((q) => (
-          <div 
-            key={q.questionId} 
-            className={`p-4 border rounded-md ${q.isCorrect ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}
-          >
-            <div className="flex justify-between items-center mb-2">
-              <span className="font-bold">Questão {q.questionNumber}</span>
-              <span className={q.isCorrect ? 'text-green-700 font-medium' : 'text-red-700 font-medium'}>
-                {q.isCorrect ? 'Correta' : 'Incorreta'}
-              </span>
-            </div>
-            <div className="text-sm text-gray-800">
-              <p>Sua resposta: <strong>{q.userAnswer || 'Não respondida'}</strong></p>
-              <p>Resposta correta: <strong>{q.correctAnswer}</strong></p>
-            </div>
-          </div>
+          <ResultQuestionCard key={q.questionId} question={q} />
         ))}
       </div>
     </div>
