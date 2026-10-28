@@ -12,37 +12,24 @@ export function ResultPage({ attemptId }: ResultPageProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Simulando o tempo de resposta de uma API (1 segundo)
-    setTimeout(() => {
-      setResult({
-        id: attemptId,
-        status: 'SUBMITTED',
-        startedAt: '2026-10-28T10:00:00Z',
-        submittedAt: '2026-10-28T10:30:00Z',
-        score: 90,
-        correctAnswers: 1,
-        totalQuestions: 2,
-        earnedPoints: 150,
-        timeSpentSeconds: 1800, // 30 minutos
-        questions: [
-          {
-            questionId: 'q1',
-            questionNumber: 1,
-            userAnswer: 'A',
-            correctAnswer: 'A',
-            isCorrect: true
-          },
-          {
-            questionId: 'q2',
-            questionNumber: 2,
-            userAnswer: 'C',
-            correctAnswer: 'B',
-            isCorrect: false
-          }
-        ]
-      });
-      setLoading(false);
-    }, 1000);
+    async function fetchResult() {
+      try {
+        const response = await fetch(`http://localhost:3000/attempts/${attemptId}`);
+        
+        if (!response.ok) {
+          throw new Error('Não foi possível carregar os resultados do simulado.');
+        }
+
+        const data: AttemptResult = await response.json();
+        setResult(data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchResult();
   }, [attemptId]);
 
   if (loading) return <div className="p-5">Carregando resultados...</div>;
