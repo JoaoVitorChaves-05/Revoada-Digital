@@ -53,6 +53,10 @@ describe('GET /dashboard/me', () => {
     const dashboard = {
       coins: 100,
       ranking_position: 4,
+      ranking_positions: {
+        school: 2,
+        global: 4,
+      },
       weekly_correct_answers: {
         total: 9,
         daily: [

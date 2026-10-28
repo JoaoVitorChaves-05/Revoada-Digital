@@ -9,6 +9,7 @@ export class DashboardRepository {
       select: {
         id: true,
         points: true,
+        schoolid: true,
       },
     });
   }
@@ -37,12 +38,32 @@ export class DashboardRepository {
     });
   }
 
-    // Conta quantos alunos possuem mais pontos 
-  async countStudentsWithMorePoints(points: number) {
-    return prisma.studentProfile.count({
-      where: {
-        points: {
-          gt: points,
+  async findStudentsForRanking() {
+    return prisma.studentProfile.findMany({
+      select: {
+        id: true,
+        schoolId: true,
+        mockExams: {
+          select: {
+            attempts: {
+              where: {
+                status: AttemptStatus.SUBMITTED,
+              },
+              select: {
+                answers: {
+                  select: {
+                    isCorrect: true,
+                    selectedAlternativeId: true,
+                    question: {
+                      select: {
+                        difficulty: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
       },
     });

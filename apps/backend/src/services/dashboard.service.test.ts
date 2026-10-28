@@ -21,9 +21,38 @@ const repositoryMock = {
   findSubmittedAttemptsInPeriod:
     vi.fn<DashboardRepository['findSubmittedAttemptsInPeriod']>(),
 
-  countStudentsWithMorePoints:
-    vi.fn<DashboardRepository['countStudentsWithMorePoints']>(),
+  findStudentsForRanking:
+    vi.fn<DashboardRepository['findStudentsForRanking']>(),
 };
+
+function createRankingStudent(
+  id: string,
+  schoolId: string,
+  answers: {
+    difficulty: number;
+    isCorrect: boolean;
+  }[] = [],
+) {
+  return {
+    id,
+    schoolId,
+    mockExams: [
+      {
+        attempts: [
+          {
+            answers: answers.map((answer, index) => ({
+              selectedAlternativeId: `alternative-${index}`,
+              isCorrect: answer.isCorrect,
+              question: {
+                difficulty: answer.difficulty,
+              },
+            })),
+          },
+        ],
+      },
+    ],
+  };
+}
 
 describe('DashboardService', () => {
   let service: DashboardService;
@@ -38,13 +67,15 @@ describe('DashboardService', () => {
     repositoryMock.findStudentByUserId.mockResolvedValue({
       id: 'student-1',
       points: 100,
+      schoolId: 'school-1',
     });
 
     repositoryMock.findSubmittedAttemptsInPeriod
       .mockResolvedValue([]);
 
-    repositoryMock.countStudentsWithMorePoints
-      .mockResolvedValue(0);
+    repositoryMock.findStudentsForRanking.mockResolvedValue([
+      createRankingStudent('student-1', 'school-1'),
+    ]);
 
     service = new DashboardService(repositoryMock);
   });
@@ -70,14 +101,28 @@ describe('DashboardService', () => {
         },
       ]);
 
-    repositoryMock.countStudentsWithMorePoints
-      .mockResolvedValue(3);
+    repositoryMock.findStudentsForRanking.mockResolvedValue([
+      createRankingStudent('student-1', 'school-1'),
+      createRankingStudent('student-2', 'school-1', [
+        { difficulty: 1, isCorrect: true },
+      ]),
+      createRankingStudent('student-3', 'school-1', [
+        { difficulty: 2, isCorrect: true },
+      ]),
+      createRankingStudent('student-4', 'school-1', [
+        { difficulty: 3, isCorrect: true },
+      ]),
+    ]);
 
     const result = await service.getMyDashboard('user-1');
 
     expect(result).toEqual({
       coins: 100,
       ranking_position: 4,
+      ranking_positions: {
+        school: 4,
+        global: 4,
+      },
       weekly_correct_answers: {
         total: 9,
         daily: [
@@ -102,8 +147,8 @@ describe('DashboardService', () => {
         new Date('2026-11-02T03:00:00.000Z'),
       );
 
-    expect(repositoryMock.countStudentsWithMorePoints)
-      .toHaveBeenCalledWith(100);
+    expect(repositoryMock.findStudentsForRanking)
+      .toHaveBeenCalledTimes(1);
   });
 
   it('retorna sete dias zerados quando não existem tentativas', async () => {
@@ -131,7 +176,7 @@ describe('DashboardService', () => {
     expect(repositoryMock.findSubmittedAttemptsInPeriod)
       .not.toHaveBeenCalled();
 
-    expect(repositoryMock.countStudentsWithMorePoints)
+    expect(repositoryMock.findStudentsForRanking)
       .not.toHaveBeenCalled();
   });
 
@@ -208,5 +253,70 @@ describe('DashboardService', () => {
     await expect(
       service.getMyDashboard('user-1'),
     ).rejects.toThrow('Falha na consulta');
+  });
+
+  it('soma a dificuldade dos acertos e não pontua erros', async () => {
+    repositoryMock.findStudentsForRanking.mockResolvedValue([
+      createRankingStudent('student-1', 'school-1', [
+        { difficulty: 1, isCorrect: true },
+        { difficulty: 2, isCorrect: true },
+        { difficulty: 3, isCorrect: true },
+        { difficulty: 3, isCorrect: false },
+      ]),
+      createRankingStudent('student-2', 'school-1', [
+        { difficulty: 3, isCorrect: true },
+        { difficulty: 2, isCorrect: true },
+        { difficulty: 2, isCorrect: true },
+      ]),
+    ]);
+
+    const result = await service.getMyDashboard('user-1');
+
+    // Aluno atual: 6 pontos. Outro aluno: 7 pontos.
+    expect(result.ranking_position).toBe(2);
+
+    // Coins permanecem independentes da pontuação calculada.
+    expect(result.coins).toBe(100);
+  });
+
+  it('desempata a pontuação pela maior taxa de acerto', async () => {
+    repositoryMock.findStudentsForRanking.mockResolvedValue([
+      createRankingStudent('student-1', 'school-1', [
+        { difficulty: 3, isCorrect: true },
+        { difficulty: 1, isCorrect: false },
+      ]),
+      createRankingStudent('student-2', 'school-1', [
+        { difficulty: 1, isCorrect: true },
+        { difficulty: 2, isCorrect: true },
+      ]),
+    ]);
+
+    const result = await service.getMyDashboard('user-1');
+
+    // Ambos têm 3 pontos; as taxas são 50% e 100%.
+    expect(result.ranking_position).toBe(2);
+  });
+
+  it('separa escola e global e compartilha posições em empates', async () => {
+    repositoryMock.findStudentsForRanking.mockResolvedValue([
+      createRankingStudent('student-1', 'school-1', [
+        { difficulty: 1, isCorrect: true },
+      ]),
+      createRankingStudent('student-2', 'school-1', [
+        { difficulty: 1, isCorrect: true },
+      ]),
+      createRankingStudent('student-3', 'school-2', [
+        { difficulty: 3, isCorrect: true },
+      ]),
+    ]);
+
+    const result = await service.getMyDashboard('user-1');
+
+    expect(result.ranking_positions).toEqual({
+      school: 1,
+      global: 2,
+    });
+
+    expect(result.ranking_position).toBe(2);
   });
 });

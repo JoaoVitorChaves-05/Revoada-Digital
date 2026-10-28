@@ -36,16 +36,79 @@ export class DashboardService {
     const startDate = new Date(monday + BRASILIA_OFFSET_MS);
     const endDate = new Date(startDate.getTime() + 7 * DAY_MS);
 
-    const [attempts, studentsWithMorePoints] = await Promise.all([
+    const [attempts, studentsForRanking] = await Promise.all([
       this.dashboardRepository.findSubmittedAttemptsInPeriod(
         student.id,
         startDate,
         endDate,
       ),
-      this.dashboardRepository.countStudentsWithMorePoints(
-        student.points,
-      ),
+      this.dashboardRepository.findStudentsForRanking()
     ]);
+
+    const ranking = studentsForRanking.map((rankedStudent) => {
+      let totalScore = 0;
+      let correctAnswers = 0;
+      let answeredQuestions = 0;
+
+      for (const mockExam of rankedStudent.mockExams) {
+        for (const attempt of mockExam.attempts) {
+          for (const answer of attempt.answers) {
+            if (answer.selectedAlternativeId === null) {
+              continue;
+            }
+
+            answeredQuestions++;
+
+            if (answer.isCorrect === true) {
+              correctAnswers++;
+              totalScore += answer.question.difficulty;
+            }
+          }
+        }
+      }
+
+      return {
+        studentId: rankedStudent.id,
+        schoolId: rankedStudent.schoolId,
+        totalScore,
+        correctAnswers,
+        answeredQuestions,
+      };
+    });
+
+    const currentStudentRanking = ranking.find(
+      (entry) => entry.studentId === student.id,
+    );
+
+    if (!currentStudentRanking) {
+      throw new Error('Perfil de aluno não encontrado');
+    }
+
+    const isAhead = (other: (typeof ranking)[number]) => {
+      if (other.totalScore !== currentStudentRanking.totalScore) {
+        return other.totalScore > currentStudentRanking.totalScore;
+      }
+
+      // Compara as taxas de acertos, evitando divisão por zero
+      const otherTotal = other.answeredQuestions || 1;
+      const currentTotal =
+        currentStudentRanking.answeredQuestions || 1;
+
+      return (
+        other.correctAnswers * currentTotal >
+        currentStudentRanking.correctAnswers * otherTotal
+      );
+    };
+
+    const globalPosition =
+      ranking.filter(isAhead).length + 1;
+
+    const schoolPosition =
+      ranking.filter(
+        (entry) =>
+          entry.schoolId === student.schoolId &&
+          isAhead(entry),
+      ).length + 1;
 
     const daily = Array.from({ length: 7 }, (_, index) => ({
       date: new Date(monday + index * DAY_MS)
@@ -78,7 +141,11 @@ export class DashboardService {
 
     return {
       coins: student.points,
-      ranking_position: studentsWithMorePoints + 1,
+      ranking_position: globalPosition,
+      ranking_positions: {
+        school: schoolPosition,
+        global: globalPosition,
+      },
       weekly_correct_answers: {
         total,
         daily,
