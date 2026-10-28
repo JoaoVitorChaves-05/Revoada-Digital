@@ -30,3 +30,19 @@ export const theme = {
     card: '0 2px 4px rgba(0,0,0,0.05)'
   }
 };
+
+// Mapeamento Nivel_De_Defasagem -> cor (CHA-30).
+// Semantica de desempenho traduzida para a paleta de getDificuldadeColors:
+//   defasagem BAIXA = melhor desempenho -> verde ('fácil')
+//   defasagem MÉDIA = intermediario     -> amarelo ('média')
+//   defasagem ALTA  = pior (reforçar)   -> vermelho ('difícil')
+import type { NivelDefasagem } from '../types/desempenho.types';
+
+const NIVEL_PARA_DIFICULDADE: Record<NivelDefasagem, string> = {
+  baixa: 'fácil',
+  'média': 'média',
+  alta: 'difícil',
+};
+
+export const coresDoNivelDefasagem = (nivel: NivelDefasagem) =>
+  getDificuldadeColors(NIVEL_PARA_DIFICULDADE[nivel]);
