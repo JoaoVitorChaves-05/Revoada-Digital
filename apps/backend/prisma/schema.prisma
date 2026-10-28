@@ -79,8 +79,12 @@ model StudentProfile {
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   schoolId  String
   school    School     @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+  classId   String?
+  class     SchoolClass? @relation(fields: [classId], references: [id], onDelete: SetNull)
   mockExams MockExam[]
 
+  @@index([schoolId])
+  @@index([classId])
   @@map("student_profiles")
 }
 
@@ -126,8 +130,24 @@ model School {
   // Listas de relações inversas necessárias para o Prisma
   students StudentProfile[]
   teachers TeacherProfile[]
+  classes  SchoolClass[]
 
   @@map("schools")
+}
+
+model SchoolClass {
+  id       String @id @default(uuid())
+  name     String
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+
+  students StudentProfile[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId])
+  @@map("school_classes")
 }
 
 model MockExam {
