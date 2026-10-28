@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { AttemptResult } from '../types/resultado_simulado.types';
-import { ResultQuestionCard } from './ResultQuestionCard';
+import { ResultQuestionCard } from '../components/ResultQuestionCard';
 
 interface ResultPageProps {
   attemptId: string;
