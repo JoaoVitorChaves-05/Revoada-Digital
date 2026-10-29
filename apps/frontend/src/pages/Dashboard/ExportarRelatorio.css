@@ -1,0 +1,76 @@
+.exportacao-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  font-family: 'Inter', sans-serif;
+  max-width: 1200px;
+  margin: 1.5rem auto;
+}
+
+.exportacao-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.exportacao-titulo {
+  color: #1E3A8A;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.exportacao-descricao {
+  color: #4B5563;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.exportacao-botoes {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-exportar {
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-csv {
+  background-color: #FFFFFF;
+  color: #1E3A8A;
+  border: 2px solid #1E3A8A;
+}
+
+.btn-csv:hover:not(:disabled) {
+  background-color: #EFF6FF;
+}
+
+.btn-pdf {
+  background-color: #F97316;
+  color: #FFFFFF;
+  border: 2px solid #F97316;
+}
+
+.btn-pdf:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.btn-exportar:disabled {
+  background-color: #9CA3AF;
+  border-color: #9CA3AF;
+  color: #FFFFFF;
+  cursor: not-allowed;
+}
