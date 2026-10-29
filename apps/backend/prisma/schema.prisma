@@ -74,6 +74,7 @@ model User {
 model StudentProfile {
   id     String @id @default(uuid())
   points Int    @default(0) // Pontuação do Learn-to-Earn
+  yearId Int    // Ano escolar do estudante
 
   userId    String     @unique
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
