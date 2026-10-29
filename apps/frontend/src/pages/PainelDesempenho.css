@@ -1,0 +1,138 @@
+.painel {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family: sans-serif;
+  color: #18181b;
+}
+
+.painel__voltar {
+  background: #f8fafc;
+  border: 1px solid #d4d4d8;
+  color: #3f3f46;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.painel__voltar:hover {
+  background: #e4e4e7;
+}
+
+.painel__voltar:focus-visible,
+.painel__botao:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.painel__titulo {
+  font-size: 26px;
+  margin: 0 0 20px;
+}
+
+.painel__status,
+.painel__vazio {
+  color: #3f3f46;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.painel__erro {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+.painel__botao {
+  margin-top: 12px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.painel__materia {
+  background: #ffffff;
+  border: 1px solid #e4e4e7;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.painel__subtitulo {
+  font-size: 15px;
+  color: #3f3f46;
+  margin: 18px 0 10px;
+}
+
+/* Barra por materia */
+.barra-materia__topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.barra-materia__nome {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.barra-materia__valor {
+  font-size: 14px;
+  color: #3f3f46;
+  font-variant-numeric: tabular-nums;
+}
+
+.barra-materia__trilho {
+  width: 100%;
+  height: 14px;
+  background: #f1f5f9;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.barra-materia__preenchimento {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+/* Mapa de defasagem */
+.mapa-defasagem {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.celula-conteudo {
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.celula-conteudo__nome {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.celula-conteudo__dados {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.mapa-defasagem__vazio {
+  color: #71717a;
+  font-style: italic;
+  font-size: 14px;
+}
