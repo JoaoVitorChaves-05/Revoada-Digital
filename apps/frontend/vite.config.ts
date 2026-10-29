@@ -9,6 +9,13 @@ const dirname = path.dirname(fileURLToPath(import.meta.url))
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  server: {
+    // Escuta em todos os enderecos (IPv4 + IPv6) para que links
+    // http://localhost:5173 e http://127.0.0.1:5173 funcionem no navegador.
+    host: true,
+    port: 5173,
+    strictPort: true,
+  },
   test: {
     globals: true,
     // jsdom cobre tanto os testes de componentes React quanto os de funcoes puras.
