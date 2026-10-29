@@ -5,7 +5,6 @@ import {
 } from '../services/dashboard.service';
 
 export async function getDashboard(req: Request, res: Response) {
-  // TODO: exigir autenticação/autorização quando o login emitir JWT compatível.
   const schoolId = req.query.school_id;
   if (typeof schoolId !== 'string' || !schoolId.trim()) {
     return res.status(400).json({ error: 'school_id é obrigatório' });
