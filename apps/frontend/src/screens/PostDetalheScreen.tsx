@@ -2,10 +2,8 @@ import { useState, useEffect } from 'react';
 import iconContainer from './icons/icon-container.png';
 import {
   ArrowLeft,
-  Bell,
   Bookmark,
   BadgeCheck,
-  ChevronDown,
   ChevronRight,
   Ellipsis,
   MessageCircle,
@@ -20,6 +18,7 @@ import {
 import { useForumPost, useCreateReply } from '../hooks/useForum';
 import { SUBJECT_LABELS, PROFILE_LABELS } from '../types/forum.types';
 import type { ForumReply } from '../types/forum.types';
+import { UserMenu } from '../components/UserMenu';
 
 const NAV = ['Início', 'Disciplinas', 'Simulados', 'Comunidade', 'Chat', 'FAQ'];
 
@@ -28,10 +27,14 @@ interface Props {
   onBack: () => void;
   isLoggedIn?: boolean;
   onChat?: () => void;
+  onPerfil?: () => void;
+  onConfiguracoes?: () => void;
+  onLogout?: () => void;
+  userId?: string;
   userName?: string;
 }
 
-export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, onChat, userName }: Props) {
+export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, onChat, userName, onPerfil, onConfiguracoes, onLogout, userId }: Props) {
   // Estados do backend
   const { post, loading, error, refetch } = useForumPost(postId);
   const { createReply, loading: creatingReply } = useCreateReply(postId);
@@ -102,8 +105,7 @@ export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, 
   const publish = async () => {
     const text = draft.trim();
     if (!text) return;
-
-    const userId = localStorage.getItem('userId') || '1'; // Usar ID do usuário logado
+    if (!userId) { alert('Você precisa estar logado para responder.'); return; }
 
     const newReply = await createReply({
       authorId: userId,
@@ -189,17 +191,7 @@ export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, 
             )
           )}
         </nav>
-        <div className="flex items-center gap-2 text-xs font-bold text-indigo-900">
-          <Bell size={14} />
-          <span className="h-5 w-px bg-slate-200" />
-          <span className={`${avatar} h-7 w-7 bg-indigo-50 text-indigo-700`}>
-            {userName ? getInitials(userName) : 'U'}
-          </span>
-          <span className="hidden sm:inline">
-            {userName ? userName.split(' ')[0] : 'Visitante'}
-          </span>
-          <ChevronDown size={12} className="text-slate-400" />
-        </div>
+        <UserMenu userName={userName} onPerfil={onPerfil} onConfiguracoes={onConfiguracoes} onLogout={onLogout} />
       </header>
 
       <main className="mx-auto max-w-[1280px] px-4 py-5 sm:px-10 lg:px-[8%]">

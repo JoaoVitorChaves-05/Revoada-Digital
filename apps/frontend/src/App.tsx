@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import './App.css'
 import { HomeScreen } from './screens/HomeScreen'
 import { CadastroScreen } from './screens/CadastroScreen'
@@ -12,6 +12,11 @@ import { ResultPage } from './pages/Simulado/result_simulado.page'
 import { HistoryPage } from './pages/Simulado/historico_simulados.page'
 import { PainelDesempenhoPage } from './pages/PainelDesempenho.page'
 import { DashboardPage } from './pages/Dashboard.page'
+import { GerarSimulado } from './pages/Simulado/GerarSimulado'
+import { FazerSimulado } from './pages/Simulado/FazerSimulado'
+import { HistoricoSimulados } from './pages/Simulado/HistoricoSimulados'
+import { PerfilScreen } from './screens/PerfilScreen'
+import { ConfiguracoesScreen } from './screens/ConfiguracoesScreen'
 
 type Screen =
   | 'home'
@@ -26,6 +31,11 @@ type Screen =
   | 'comunidade'
   | 'chat'
   | 'post-detalhe'
+  | 'gerar-simulado'
+  | 'fazer-simulado'
+  | 'historico'
+  | 'perfil'
+  | 'configuracoes'
 
 function telaInicial(): Screen {
   if (typeof window !== 'undefined' && window.location.pathname === '/verificar-email') {
@@ -44,12 +54,21 @@ function App() {
   const [emailToken] = useState<string | null>(tokenDaUrl())
   const [usuario, setUsuario] = useState<UsuarioLogado | null>(null)
   const [postSelecionado, setPostSelecionado] = useState<string | null>(null)
-
-  const [currentAttemptId, setCurrentAttemptId] = useState<string>("769e855b-4a27-4a5b-a48c-170be35004d2") //ID de teste
-
-  useEffect(() => setCurrentAttemptId("769e855b-4a27-4a5b-a48c-170be35004d2"), [])
+  const [attemptAtivo, setAttemptAtivo] = useState<string | null>(null)
 
   const estaLogado = usuario !== null
+
+  function logout() {
+    localStorage.removeItem('usuarioLogado')
+    setUsuario(null)
+    setScreen('home')
+  }
+
+  const menuProps = {
+    onPerfil: () => setScreen('perfil'),
+    onConfiguracoes: () => setScreen('configuracoes'),
+    onLogout: logout,
+  }
 
   if (screen === 'verificar-email') {
     return (
@@ -87,15 +106,20 @@ function App() {
       <ComunidadePostScreen
         isLoggedIn={estaLogado}
         userName={usuario?.full_name}
+        userId={usuario?.id}
         onBack={() => setScreen('home')}
         onChat={() => setScreen('chat')}
+        onSimulados={() => setScreen('gerar-simulado')}
         onViewPost={(postId: string) => { setPostSelecionado(postId); setScreen('post-detalhe') }}
+        onPerfil={menuProps.onPerfil}
+        onConfiguracoes={menuProps.onConfiguracoes}
+        onLogout={menuProps.onLogout}
       />
     )
   }
 
   if (screen === 'chat') {
-    return <Mensagens userName={usuario?.full_name} onComunidade={() => setScreen('comunidade')} onBack={() => setScreen('comunidade')} />
+    return <Mensagens userName={usuario?.full_name} onComunidade={() => setScreen('comunidade')} onSimulados={() => setScreen('gerar-simulado')} onBack={() => setScreen('comunidade')} onPerfil={menuProps.onPerfil} onConfiguracoes={menuProps.onConfiguracoes} onLogout={menuProps.onLogout} />
   }
 
   if (screen === 'post-detalhe' && postSelecionado) {
@@ -104,8 +128,12 @@ function App() {
         postId={postSelecionado}
         isLoggedIn={estaLogado}
         userName={usuario?.full_name}
+        userId={usuario?.id}
         onBack={() => setScreen('comunidade')}
         onChat={() => setScreen('chat')}
+        onPerfil={menuProps.onPerfil}
+        onConfiguracoes={menuProps.onConfiguracoes}
+        onLogout={menuProps.onLogout}
       />
     )
   }
@@ -123,19 +151,70 @@ function App() {
     )
   }
 
-  if (screen === 'result') {
+  // --- Fluxo de simulado (apenas aluno logado) ---
+  if (screen === 'gerar-simulado') {
+    if (!usuario) { setScreen('login'); return null }
+    return (
+      <GerarSimulado
+        userId={usuario.id}
+        onBack={() => setScreen('home')}
+        onIniciar={(attemptId) => { setAttemptAtivo(attemptId); setScreen('fazer-simulado') }}
+      />
+    )
+  }
+
+  if (screen === 'fazer-simulado' && attemptAtivo) {
+    return (
+      <FazerSimulado
+        attemptId={attemptAtivo}
+        onFinalizar={(attemptId) => { setAttemptAtivo(attemptId); setScreen('result') }}
+      />
+    )
+  }
+
+  if (screen === 'historico') {
+    if (!usuario) { setScreen('login'); return null }
+    return (
+      <HistoricoSimulados
+        userId={usuario.id}
+        onBack={() => setScreen('comunidade')}
+        onVerResultado={(attemptId) => { setAttemptAtivo(attemptId); setScreen('result') }}
+      />
+    )
+  }
+
+  if (screen === 'perfil') {
+    if (!usuario) { setScreen('login'); return null }
+    return <PerfilScreen userId={usuario.id} onBack={() => setScreen('comunidade')} />
+  }
+
+  if (screen === 'configuracoes') {
+    return <ConfiguracoesScreen onBack={() => setScreen('comunidade')} />
+  }
+
+  if (screen === 'result' && attemptAtivo) {
     return (
       <div>
-        <button onClick={() => setScreen('home')} style={{ margin: '10px' }}>
-          Voltar para Home
+        <button onClick={() => setScreen(estaLogado ? 'comunidade' : 'home')} style={{ margin: '10px' }}>
+          Voltar
         </button>
-        <ResultPage attemptId={currentAttemptId} />
+        {estaLogado && (
+          <button onClick={() => setScreen('historico')} style={{ margin: '10px' }}>
+            Ver histórico de simulados
+          </button>
+        )}
+        <ResultPage attemptId={attemptAtivo} />
       </div>
     )
   }
 
   // Tela padrão (Home)
-  return <HomeScreen onCadastro={() => setScreen('cadastro')} onLogin={() => setScreen('login')} />
+  return (
+    <HomeScreen
+      onCadastro={() => setScreen('cadastro')}
+      onLogin={() => setScreen('login')}
+    />
+  )
 }
 
 export default App

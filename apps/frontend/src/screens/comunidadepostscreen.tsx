@@ -3,10 +3,8 @@ import iconContainer from './icons/icon-container.png';
 import {
   ArrowLeft,
   ArrowRight,
-  Bell,
   BookOpen,
   Bookmark,
-  ChevronDown,
   HeartHandshake,
   MessageCircle,
   MessageSquareMore,
@@ -17,6 +15,8 @@ import {
 } from 'lucide-react'
 import { useForumPosts } from '../hooks/useForum';
 import { SUBJECT_LABELS } from '../types/forum.types';
+import { UserMenu } from '../components/UserMenu';
+import { CreatePostModal } from './CreatePostModal';
 
 const RELATED = [
   { category: 'Matemática', title: 'Probabilidade: quando somar e quando multiplicar?', replies: 8 },
@@ -32,11 +32,17 @@ interface Props {
   onChat?: () => void
   onViewPost?: (postId: string) => void
   userName?: string
+  onSimulados?: () => void
+  onPerfil?: () => void
+  onConfiguracoes?: () => void
+  onLogout?: () => void
+  userId?: string
 }
 
-export default function ComunidadePostScreen({ onBack, isLoggedIn = false, onChat, onViewPost, userName }: Props) {
+export default function ComunidadePostScreen({ onBack, isLoggedIn = false, onChat, onViewPost, userName, onSimulados, onPerfil, onConfiguracoes, onLogout, userId }: Props) {
   // BUSCAR POSTS DO BACKEND
-  const { posts, loading, error } = useForumPosts();
+  const { posts, loading, error, refetch } = useForumPosts();
+  const [modalAberto, setModalAberto] = useState(false);
   const [saved, setSaved] = useState<Set<string>>(new Set())
 
   // Função para obter iniciais do nome
@@ -60,6 +66,7 @@ export default function ComunidadePostScreen({ onBack, isLoggedIn = false, onCha
   const avatar = 'inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xs font-extrabold'
 
   return (
+    <>
     <div className="min-h-screen bg-[#f7f9fc] text-slate-700">
       <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4 shadow-sm sm:px-10 lg:px-[8%]">
         <div className="flex items-center gap-2">
@@ -67,7 +74,9 @@ export default function ComunidadePostScreen({ onBack, isLoggedIn = false, onCha
           <span className="font-[Sora] text-base font-extrabold"><span className="text-orange-500">Revoada</span><span className="text-indigo-900">Digital</span></span>
         </div>
         <nav className="hidden items-stretch gap-7 text-xs font-semibold text-indigo-900 md:flex">
-          {NAV.map((item) => item === 'Chat' && !isLoggedIn ? null : item === 'Chat' ? (
+          {NAV.map((item) => item === 'Chat' && !isLoggedIn ? null : item === 'Simulados' ? (
+            <button key={item} type="button" onClick={onSimulados} className="flex items-center border-b-2 border-transparent transition hover:text-orange-500">Simulados</button>
+          ) : item === 'Chat' ? (
             <button key={item} type="button" onClick={onChat} className="flex items-center border-b-2 border-transparent transition hover:text-orange-500">Chat</button>
           ) : (
             <a key={item} href={item === 'Início' ? '/' : '#'} className={`flex items-center border-b-2 transition hover:text-orange-500 ${item === 'Comunidade' ? 'border-orange-500 font-extrabold' : 'border-transparent'}`}>
@@ -75,9 +84,7 @@ export default function ComunidadePostScreen({ onBack, isLoggedIn = false, onCha
             </a>
           ))}
         </nav>
-        <div className="flex items-center gap-2 text-xs font-bold text-indigo-900">
-          <Bell size={14} /><span className="h-5 w-px bg-slate-200" /><span className={`${avatar} h-7 w-7 bg-indigo-50 text-indigo-700`}>{userName ? getInitials(userName) : 'JL'}</span><span className="hidden sm:inline">{userName ?? 'Visitante'}</span><ChevronDown size={12} className="text-slate-400" />
-        </div>
+        <UserMenu userName={userName} onPerfil={onPerfil} onConfiguracoes={onConfiguracoes} onLogout={onLogout} />
       </header>
 
       <main className="mx-auto max-w-[1280px] px-4 py-5 sm:px-10 lg:px-[8%]">
@@ -211,7 +218,7 @@ export default function ComunidadePostScreen({ onBack, isLoggedIn = false, onCha
                     <span className="text-[8px] text-slate-500">posts criados</span>
                   </div>
                 </div>
-                <button className="inline-flex items-center justify-center gap-1 rounded-md border border-indigo-200 px-3 py-2 text-[8px] font-bold text-indigo-700 hover:bg-indigo-50">
+                <button type="button" onClick={() => setModalAberto(true)} className="inline-flex items-center justify-center gap-1 rounded-md border border-indigo-200 px-3 py-2 text-[8px] font-bold text-indigo-700 hover:bg-indigo-50">
                   <Plus size={11} /> Criar um post
                 </button>
               </section>
@@ -265,5 +272,12 @@ export default function ComunidadePostScreen({ onBack, isLoggedIn = false, onCha
         <span>Central de ajuda　·　Termos de uso　·　Privacidade</span>
       </footer>
     </div>
+      <CreatePostModal
+        isOpen={modalAberto}
+        onClose={() => setModalAberto(false)}
+        authorId={userId}
+        onCreated={() => refetch()}
+      />
+    </>
   )
 }

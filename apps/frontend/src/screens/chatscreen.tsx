@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
-  ArrowLeft, ArrowUpRight, Bell, BookOpen, CheckCheck, ChevronDown, Ellipsis,
+  ArrowLeft, ArrowUpRight, BookOpen, CheckCheck, Ellipsis,
   HeartHandshake, MessagesSquare, Paperclip, Search, Send, Smile, SquarePen,
 } from 'lucide-react'
 import iconContainer from './icons/icon-container.png'
+import { UserMenu } from '../components/UserMenu'
 
 
 const S = { strokeWidth: 1.7 }
@@ -67,12 +68,6 @@ const INITIAL_MESSAGES: Record<number, Message[]> = {
 }
 
 const NAV = ['Início', 'Disciplinas', 'Simulados', 'Comunidade', 'Chat', 'FAQ']
-const avatarCls = 'inline-flex shrink-0 items-center justify-center rounded-full font-extrabold'
-const getInitials = (name: string) => {
-  const parts = name.trim().split(' ')
-  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase()
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-}
 const container = 'mx-auto w-full max-w-[1200px] px-5 sm:px-10 xl:px-0'
 const focus = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FE7F2D]'
 const sora = "font-['Sora']"
@@ -83,6 +78,10 @@ interface Props {
   onBack?: () => void
   userName?: string
   onComunidade?: () => void
+  onSimulados?: () => void
+  onPerfil?: () => void
+  onConfiguracoes?: () => void
+  onLogout?: () => void
 }
 
 function Avatar({ c, size = 44, big = false }: { c: Conversation; size?: number; big?: boolean }) {
@@ -99,7 +98,7 @@ function Avatar({ c, size = 44, big = false }: { c: Conversation; size?: number;
   )
 }
 
-export default function Mensagens({ userName, onComunidade, onBack }: Props) {
+export default function Mensagens({ userName, onComunidade, onSimulados, onBack, onPerfil, onConfiguracoes, onLogout }: Props) {
   const [convs, setConvs] = useState<Conversation[]>(CONVERSATIONS)
   const [messages, setMessages] = useState<Record<number, Message[]>>(INITIAL_MESSAGES)
   const [activeId, setActiveId] = useState(1)
@@ -161,7 +160,9 @@ export default function Mensagens({ userName, onComunidade, onBack }: Props) {
           <span className="font-[Sora] text-base font-extrabold"><span className="text-orange-500">Revoada</span><span className="text-indigo-900">Digital</span></span>
         </div>
         <nav className="hidden items-stretch gap-7 text-xs font-semibold text-indigo-900 md:flex">
-          {NAV.map((item) => item === 'Comunidade' ? (
+          {NAV.map((item) => item === 'Simulados' ? (
+            <button key={item} type="button" onClick={onSimulados} className="flex items-center border-b-2 border-transparent transition hover:text-orange-500">Simulados</button>
+          ) : item === 'Comunidade' ? (
             <button key={item} type="button" onClick={onComunidade} className="flex items-center border-b-2 border-transparent transition hover:text-orange-500">Comunidade</button>
           ) : item === 'Chat' ? (
             <span key={item} className="flex items-center border-b-2 border-orange-500 font-extrabold">Chat</span>
@@ -169,9 +170,7 @@ export default function Mensagens({ userName, onComunidade, onBack }: Props) {
             <a key={item} href={item === 'Início' ? '/' : '#'} className="flex items-center border-b-2 border-transparent transition hover:text-orange-500">{item}</a>
           ))}
         </nav>
-        <div className="flex items-center gap-2 text-xs font-bold text-indigo-900">
-          <Bell size={14} /><span className="h-5 w-px bg-slate-200" /><span className={`${avatarCls} h-7 w-7 bg-indigo-50 text-[11px] text-indigo-700`}>{userName ? getInitials(userName) : 'JL'}</span><span className="hidden sm:inline">{userName ?? 'Visitante'}</span><ChevronDown size={12} className="text-slate-400" />
-        </div>
+        <UserMenu userName={userName} onPerfil={onPerfil} onConfiguracoes={onConfiguracoes} onLogout={onLogout} />
       </header>
 
       {/* Contexto das mensagens */}
