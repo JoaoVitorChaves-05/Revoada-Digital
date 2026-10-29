@@ -164,8 +164,8 @@ model Question {
   id         String @id @default(uuid())
   text       String @unique
   difficulty Int
-  subject    String
-  concept    String
+  subject    String[]
+  concept    String[]
   image   String?
 
   mockExams    MockExamQuestion[]

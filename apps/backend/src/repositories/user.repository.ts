@@ -1,23 +1,5 @@
 import { prisma } from '../lib/prisma';
 import { CreateUserInput, UpdateUserInput } from '../schemas/user.schema';
-import type { Prisma } from '@prisma/client';
-
-async function findSchoolId(tx: Prisma.TransactionClient, schoolName: string | undefined) {
-	if (!schoolName) {
-		throw new Error('Escola é obrigatória para este perfil');
-	}
-
-	const school = await tx.school.findUnique({
-		where: { school_name: schoolName },
-		select: { id: true },
-	});
-
-	if (!school) {
-		throw new Error('Escola não cadastrada');
-	}
-
-	return school.id;
-}
 
 export class UserRepository {
 	async findByEmail(email: string) {
@@ -49,14 +31,12 @@ export class UserRepository {
 			});
 
 			if (data.profileType === 'STUDENT') {
-				const schoolId = await findSchoolId(tx, data.school);
 				await tx.studentProfile.create({
-					data: { userId: user.id, schoolId },
+					data: { userId: user.id, school: data.school as string },
 				});
 			} else if (data.profileType === 'TEACHER') {
-				const schoolId = await findSchoolId(tx, data.school);
 				await tx.teacherProfile.create({
-					data: { userId: user.id, schoolId },
+					data: { userId: user.id, school: data.school as string },
 				});
 			} else {
 				await tx.adminProfile.create({ data: { userId: user.id } });
@@ -96,20 +76,16 @@ export class UserRepository {
 				await tx.adminProfile.deleteMany({ where: { userId: id } });
 
 				if (profileType === 'STUDENT') {
-					const schoolId = await findSchoolId(tx, data.school);
-					await tx.studentProfile.create({ data: { userId: id, schoolId } });
+					await tx.studentProfile.create({ data: { userId: id, school: data.school as string } });
 				} else if (profileType === 'TEACHER') {
-					const schoolId = await findSchoolId(tx, data.school);
-					await tx.teacherProfile.create({ data: { userId: id, schoolId } });
+					await tx.teacherProfile.create({ data: { userId: id, school: data.school as string } });
 				} else {
 					await tx.adminProfile.create({ data: { userId: id } });
 				}
 			} else if (data.school && profileType === 'STUDENT') {
-				const schoolId = await findSchoolId(tx, data.school);
-				await tx.studentProfile.update({ where: { userId: id }, data: { schoolId } });
+				await tx.studentProfile.update({ where: { userId: id }, data: { school: data.school } });
 			} else if (data.school && profileType === 'TEACHER') {
-				const schoolId = await findSchoolId(tx, data.school);
-				await tx.teacherProfile.update({ where: { userId: id }, data: { schoolId } });
+				await tx.teacherProfile.update({ where: { userId: id }, data: { school: data.school } });
 			}
 
 			return tx.user.findUnique({
