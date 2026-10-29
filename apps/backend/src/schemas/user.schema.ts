@@ -11,7 +11,11 @@ const userFieldsSchema = z.object({
 	school: z.string().trim().min(1, 'Escola é obrigatória').optional(),
 });
 
-export const createUserSchema = userFieldsSchema.superRefine((data, context) => {
+export const createUserSchema = userFieldsSchema
+	.extend({
+		password: z.string().min(1, 'Senha é obrigatória'),
+	})
+	.superRefine((data, context) => {
 	if (data.profileType !== 'ADMIN' && !data.school) {
 		context.addIssue({
 			code: 'custom',

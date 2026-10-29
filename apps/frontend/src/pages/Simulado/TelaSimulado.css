@@ -1,0 +1,129 @@
+.simulado-container {
+  background-color: #F8F9FA;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+.simulado-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.logo-revoada {
+  color: #F97316;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.logo-digital {
+  color: #1E3A8A;
+  font-weight: 900;
+  font-size: 1.2rem;
+}
+
+.cronometro {
+  background-color: #1E3A8A;
+  color: #FFFFFF;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.simulado-main {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.questao-card {
+  background-color: #FFFFFF;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.questao-header {
+  color: #1E3A8A;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.questao-enunciado {
+  font-size: 1.15rem;
+  color: #333333;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.alternativas-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.alternativa-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.alternativa-item:hover {
+  border-color: #1E3A8A;
+  background-color: #F3F6FF;
+}
+
+.alternativa-item.selecionada {
+  border-color: #1E3A8A;
+  background-color: #EFF6FF;
+}
+
+.alternativa-item input[type="radio"] {
+  display: none;
+}
+
+.alternativa-letra {
+  font-weight: 700;
+  color: #1E3A8A;
+  margin-right: 1rem;
+}
+
+.alternativa-texto {
+  color: #4B5563;
+}
+
+.acoes-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.btn-proxima {
+  background-color: #1E3A8A;
+  color: #FFFFFF;
+  border: none;
+  padding: 0.75rem 2.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-proxima:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.btn-proxima:disabled {
+  background-color: #9CA3AF;
+  cursor: not-allowed;
+}
