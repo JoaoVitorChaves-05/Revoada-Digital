@@ -6,8 +6,9 @@ import { LoginScreen } from './screens/LoginScreen'
 import { RedefinirScreen } from './screens/RedefinirScreen'
 import { ResultPage } from './pages/result_simulado.page'
 import { PainelDesempenhoPage } from './pages/PainelDesempenho.page'
+import { DashboardPage } from './pages/Dashboard.page'
 
-type Screen = 'home' | 'cadastro' | 'login' | 'redefinir' | 'result' | 'desempenho'
+type Screen = 'home' | 'cadastro' | 'login' | 'redefinir' | 'result' | 'desempenho' | 'dashboard'
 
 function App() {
   const [screen, setScreen] = useState<Screen>('home')
@@ -22,6 +23,15 @@ function App() {
 
   if (screen === 'desempenho') {
     return <PainelDesempenhoPage onBack={() => setScreen('home')} />
+  }
+
+  if (screen === 'dashboard') {
+    return (
+      <DashboardPage
+        onBack={() => setScreen('home')}
+        onVerEstatisticas={() => setScreen('desempenho')}
+      />
+    )
   }
 
   if (screen === 'result') {
