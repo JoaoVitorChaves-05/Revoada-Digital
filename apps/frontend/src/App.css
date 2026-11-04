@@ -758,3 +758,22 @@ button {
     flex-direction: column;
   }
 }
+
+.btn-voltar-laranja {
+  background-color: #f97316;
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-voltar-laranja:hover {
+  background-color: #ea580c;
+}
+
+.btn-voltar-laranja:active {
+  color: #fed7aa;
+}
