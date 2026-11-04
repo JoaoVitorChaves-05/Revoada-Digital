@@ -11,7 +11,7 @@ const baseUser = {
 
 describe('createUserSchema', () => {
 	it('aceita estudante com escola', () => {
-		const result = createUserSchema.safeParse({ ...baseUser, profileType: 'STUDENT', school: 'Escola A' });
+		const result = createUserSchema.safeParse({ ...baseUser, profileType: 'STUDENT', school: 'Escola A', year: 1 });
 
 		expect(result.success).toBe(true);
 	});
@@ -22,6 +22,17 @@ describe('createUserSchema', () => {
 		expect(result.success).toBe(false);
 	});
 
+it('rejeita estudante sem serie (year)', () => {
+const result = createUserSchema.safeParse({ ...baseUser, profileType: 'STUDENT', school: 'Escola A' });
+
+expect(result.success).toBe(false);
+});
+
+it('rejeita serie fora do intervalo de 1 a 3', () => {
+const result = createUserSchema.safeParse({ ...baseUser, profileType: 'STUDENT', school: 'Escola A', year: 5 });
+
+expect(result.success).toBe(false);
+});
 	it('aceita administrador sem escola', () => {
 		const result = createUserSchema.safeParse({ ...baseUser, profileType: 'ADMIN' });
 

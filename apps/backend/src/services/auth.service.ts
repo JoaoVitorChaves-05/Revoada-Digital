@@ -2,34 +2,46 @@ import type { LoginInput } from '../schemas/auth.schema';
 import { UserRepository } from '../repositories/user.repository';
 
 type AuthUser = {
-	id: string;
-	email: string;
-	password: string | null;
-	full_name: string;
-	profileType: 'STUDENT' | 'TEACHER' | 'ADMIN';
+id: string;
+email: string;
+password: string | null;
+full_name: string;
+profileType: 'STUDENT' | 'TEACHER' | 'ADMIN';
+emailVerified: boolean;
 };
 
+export class EmailNotVerifiedError extends Error {
+constructor() {
+super('Confirme seu email antes de entrar');
+this.name = 'EmailNotVerifiedError';
+}
+}
+
 export interface AuthRepository {
-	findByEmail(email: string): Promise<AuthUser | null>;
+findByEmail(email: string): Promise<AuthUser | null>;
 }
 
 export class AuthService {
-	constructor(private readonly authRepository: AuthRepository) {}
+constructor(private readonly authRepository: AuthRepository) {}
 
-	async login(data: LoginInput) {
-		const user = await this.authRepository.findByEmail(data.email);
+async login(data: LoginInput) {
+const user = await this.authRepository.findByEmail(data.email);
 
-		if (!user || user.password !== data.password) {
-			throw new Error('Email ou senha inválidos');
-		}
+if (!user || user.password !== data.password) {
+throw new Error('Email ou senha inválidos');
+}
 
-		return {
-			id: user.id,
-			email: user.email,
-			full_name: user.full_name,
-			profileType: user.profileType,
-		};
-	}
+if (!user.emailVerified) {
+throw new EmailNotVerifiedError();
+}
+
+return {
+id: user.id,
+email: user.email,
+full_name: user.full_name,
+profileType: user.profileType,
+};
+}
 }
 
 export const authService = new AuthService(new UserRepository());
