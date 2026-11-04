@@ -1,5 +1,6 @@
 import { CreateUserInput, UpdateUserInput } from '../schemas/user.schema';
 import { UserRepository } from '../repositories/user.repository';
+import { hash } from 'bcrypt';
 
 export class UserService {
 	constructor(private readonly userRepository = new UserRepository()) {}
@@ -18,7 +19,20 @@ export class UserService {
 			throw new Error('RG já cadastrado');
 		}
 
-		return this.userRepository.createWithProfileAndApproval(data);
+		const passwordHash = await hash(data.password, 10);
+
+		const result =
+			await this.userRepository.createWithProfileAndApproval({
+				...data,
+				password: passwordHash,
+			});
+
+		const { password: _password, ...safeUser } = result.user;
+
+		return {
+			...result,
+			user: safeUser,
+		};
 	}
 
 	async readUser(id: string) {
