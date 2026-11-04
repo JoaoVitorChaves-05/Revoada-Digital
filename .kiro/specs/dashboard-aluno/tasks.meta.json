@@ -1,0 +1,564 @@
+{
+  "pbtResults": {
+    "4.2 Escrever teste de propriedade para `contarQuestoesResolvidas` (requer runner — ver tarefa 13)": {
+      "status": "failed",
+      "failingExample": "RangeError: Invalid time value — em derivadorMetricas.property.test.ts:21, o gerador `fc.date().map((d) => d.toISOString())` produz uma Date invalida (fast-check pode gerar datas fora do intervalo valido), quebrando `.toISOString()`. Isto afeta a geracao de `answerArb`/`attemptArb`, nao a funcao sob teste. Correcao sugerida (fora do escopo da tarefa 2.2): restringir `fc.date({ min, max })` ou usar `fc.date({ noInvalidDate: true })`.",
+      "lastRunTimestamp": 1793822716003
+    },
+    "4.6 Escrever teste de propriedade para `calcularFrequencia7Dias` (requer runner — ver tarefa 13)": {
+      "status": "passed",
+      "lastRunTimestamp": 1793823252316
+    }
+  },
+  "executionHistory": {
+    "1. Criar tipos de dados da camada de dados": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821183017
+      },
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821199604
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821904305
+      }
+    ],
+    "2.1 Criar `src/utils/sessao.ts` com a interface de sessão desacoplada": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821183232
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822240484
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822351926
+      }
+    ],
+    "2.2 Escrever testes de exemplo do Serviço_Sessão (requer runner — ver tarefa 13)": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821183349
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822646150
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822909819
+      }
+    ],
+    "3.1 Criar `src/utils/attemptsClient.ts` com `buscarAttempts(userId, token?)`": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821183476
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822241838
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822350495
+      }
+    ],
+    "3.2 Escrever testes de exemplo do Cliente_Attempts com `fetch` mockado (requer runner — ver tarefa 13)": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821183577
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822647525
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822911222
+      }
+    ],
+    "4.1 Implementar o utilitário interno de data e as métricas de contagem/taxa": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821183701
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822242779
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822353310
+      }
+    ],
+    "4.2 Escrever teste de propriedade para `contarQuestoesResolvidas` (requer runner — ver tarefa 13)": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821183821
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822498724
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822636778
+      }
+    ],
+    "4.3 Escrever teste de propriedade para `calcularTaxaAcerto` (requer runner — ver tarefa 13)": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821184023
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822648975
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793823057449
+      }
+    ],
+    "4.4 Implementar `calcularStreak` e `calcularFrequencia7Dias`": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821184151
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822361752
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822484411
+      }
+    ],
+    "4.5 Escrever teste de propriedade para `calcularStreak` (requer runner — ver tarefa 13)": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821184299
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793823062138
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793823400118
+      }
+    ],
+    "4.6 Escrever teste de propriedade para `calcularFrequencia7Dias` (requer runner — ver tarefa 13)": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821184437
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793823063511
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793823399168
+      }
+    ],
+    "5. Checkpoint da camada de dados": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821184601
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793824354436
+      }
+    ],
+    "6. Centralizar novas cores em `src/utils/colors.ts`": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821184744
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822244177
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822349146
+      }
+    ],
+    "7.1 Criar `src/components/dashboard/Placeholder.tsx`": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821184928
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822245101
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822354068
+      }
+    ],
+    "7.2 Escrever teste de exemplo do Placeholder (requer runner — ver tarefa 13)": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821185110
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822649874
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822912264
+      }
+    ],
+    "8.1 Implementar `Saudacao.tsx`": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821185365
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822362668
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822485344
+      }
+    ],
+    "8.2 Implementar `CardMetrica.tsx`": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821185597
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822363568
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822486309
+      }
+    ],
+    "8.3 Implementar `GraficoFrequencia.tsx`": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821185832
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822365029
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822487708
+      }
+    ],
+    "9.1 Implementar `ContinueDeOndeParou.tsx`": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821186074
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822365836
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822488620
+      }
+    ],
+    "9.2 Implementar `BlocoDesempenhoAreas.tsx`": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821186242
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822494110
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822637701
+      }
+    ],
+    "9.3 Implementar `BlocoDisciplinas.tsx`": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821186420
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822495478
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822639097
+      }
+    ],
+    "9.4 Implementar `BlocoRadar.tsx`": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821186619
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822496451
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822640059
+      }
+    ],
+    "9.5 Implementar `RodapeInstitucional.tsx`": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821186797
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822497810
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822641184
+      }
+    ],
+    "10. Checkpoint dos componentes de bloco": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821187025
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793824357819
+      }
+    ],
+    "11.1 Criar `src/pages/Dashboard.page.tsx` com orquestração de dados e estados": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821187208
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793823064561
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793823401210
+      }
+    ],
+    "11.2 Criar `src/pages/Dashboard.css`": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821187438
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793823407015
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793824254790
+      }
+    ],
+    "11.3 Escrever testes de exemplo da página (requer runner — ver tarefa 13)": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821187544
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793823406096
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793824256041
+      }
+    ],
+    "12. Integrar o Dashboard na navegação de `src/App.tsx`": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821187672
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793824261321
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793824334446
+      }
+    ],
+    "13. Checkpoint final": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821187818
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793824434678
+      }
+    ],
+    "14. (Opcional) Configurar runner de testes do frontend — pré-requisito das tarefas de teste": [
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821187950
+      },
+      {
+        "executionId": "f8f36016-b243-4ffb-9fb7-5da816450217",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821200435
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793821920026
+      },
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822226519
+      }
+    ],
+    "8. Implementar componentes de bloco de dados reais": [
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822487835
+      }
+    ],
+    "9. Implementar componentes de bloco placeholder e rodapé": [
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822641311
+      }
+    ],
+    "2. Implementar o Serviço_Sessão": [
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822909997
+      }
+    ],
+    "3. Implementar o Cliente_Attempts (único ponto de fetch)": [
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822911399
+      }
+    ],
+    "7. Implementar o componente Placeholder reutilizável": [
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793822912433
+      }
+    ],
+    "4. Implementar o Derivador_Metricas (funções puras)": [
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793823400264
+      }
+    ],
+    "11. Implementar a página Dashboard e seus estados": [
+      {
+        "executionId": "5cf1261c-b554-4c95-919a-22742210ebe5",
+        "chatSessionId": "sess_d015b18a-13ec-47ca-884c-0ff4a08a7277",
+        "timestamp": 1793824256179
+      }
+    ]
+  }
+}
