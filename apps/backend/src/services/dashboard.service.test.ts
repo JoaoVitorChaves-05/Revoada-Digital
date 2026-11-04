@@ -86,22 +86,22 @@ describe('DashboardService.getClassPerformance', () => {
     dashboardRepository.findSubmittedAnswersBySchoolId.mockResolvedValue([
       {
         isCorrect: true,
-        question: { subject: 'Matemática' },
+        question: { subject: ['Matemática'] },
         attempt: { mockExam: { studentId: 'student-1' } },
       },
       {
         isCorrect: false,
-        question: { subject: 'Biologia' },
+        question: { subject: ['Biologia'] },
         attempt: { mockExam: { studentId: 'student-1' } },
       },
       {
         isCorrect: null,
-        question: { subject: 'Matemática' },
+        question: { subject: ['Matemática'] },
         attempt: { mockExam: { studentId: 'student-2' } },
       },
       {
         isCorrect: false,
-        question: { subject: 'Matemática' },
+        question: { subject: ['Matemática'] },
         attempt: { mockExam: { studentId: 'student-2' } },
       },
     ]);

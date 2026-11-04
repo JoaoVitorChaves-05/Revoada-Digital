@@ -8,7 +8,9 @@ export class SimuladoGenerationRepository {
         count: number,
     ): Promise<string[]> {
         const matches = await prisma.question.findMany({
-            where: { subject, concept }, //n def ainda 
+            // subject/concept sao arrays (String[]): usa 'has' para
+            // trazer questoes que CONTENHAM a materia e o conceito pedidos.
+            where: { subject: { has: subject }, concept: { has: concept } },
             select: { id: true },
         }); //embaralha e pega 8
 
