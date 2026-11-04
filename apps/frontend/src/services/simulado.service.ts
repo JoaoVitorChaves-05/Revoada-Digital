@@ -11,8 +11,9 @@ export interface AlternativaApi {
 export interface QuestaoApi {
   id: string;
   text: string;
-  subject: string;
-  concept: string;
+  // subject/concept sao listas no backend (uma questao pode ser multi-materia).
+  subject: string[];
+  concept: string[];
   alternatives: AlternativaApi[];
 }
 
@@ -59,10 +60,15 @@ class SimuladoService {
   async listarConceitos(subject: string): Promise<string[]> {
     const resp = await api.get('/questions', { params: { page: 1, limit: 1000 } });
     const corpo = resp.data;
-    const questoes = (Array.isArray(corpo) ? corpo : corpo?.data ?? []) as Array<{ subject: string; concept: string }>;
+    // subject/concept sao arrays (String[]): a questao entra se a lista de
+    // materias contiver a materia pedida; os conceitos sao achatados numa lista.
+    const questoes = (Array.isArray(corpo) ? corpo : corpo?.data ?? []) as Array<{
+      subject?: string[];
+      concept?: string[];
+    }>;
     const conceitos = questoes
-      .filter((q) => q.subject === subject && q.concept)
-      .map((q) => q.concept);
+      .filter((q) => Array.isArray(q.subject) && q.subject.includes(subject))
+      .flatMap((q) => (Array.isArray(q.concept) ? q.concept : []));
     return Array.from(new Set(conceitos)).sort((a, b) => a.localeCompare(b, 'pt-BR'));
   }
 
