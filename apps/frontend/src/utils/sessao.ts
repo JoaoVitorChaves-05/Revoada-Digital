@@ -31,20 +31,39 @@ export interface ConfigSessao {
  */
 const USER_ID_FALLBACK = '769e855b-4a27-4a5b-a48c-170be35004d2';
 
+type UsuarioLogadoMinimo = { id: string; full_name?: string };
+
+/**
+ * Le o usuario logado gravado pelo LoginScreen no localStorage.
+ * Nunca lanca: retorna null se ausente, invalido ou fora do browser.
+ */
+function lerUsuarioLogado(): UsuarioLogadoMinimo | null {
+  if (typeof window === 'undefined' || !window.localStorage) return null;
+  try {
+    const raw = window.localStorage.getItem('usuarioLogado');
+    if (!raw) return null;
+    const dados = JSON.parse(raw) as UsuarioLogadoMinimo;
+    return dados && typeof dados.id === 'string' && dados.id ? dados : null;
+  } catch {
+    return null;
+  }
+}
+
 export function criarSessao(config: ConfigSessao): SessaoAluno {
   return {
     getUserId() {
-      // Ordem de resolucao (ponto de extensao Fase 2):
-      // fonte de sessao real (inexistente na Fase 1) -> config.userIdFallback.
-      return config.userIdFallback;
+      // Ordem de resolucao: usuario logado (localStorage) -> fallback.
+      // O LoginScreen grava "usuarioLogado" apos o login (fase sem JWT).
+      const logado = lerUsuarioLogado();
+      return logado?.id ?? config.userIdFallback;
     },
     getAuthToken() {
-      // Ponto de extensao Fase 2: ainda nao ha JWT emitido.
+      // Ainda nao ha JWT emitido nesta fase.
       return null;
     },
     getNomeAluno() {
-      // Nesta fase o nome nao esta disponivel; a saudacao usa placeholder (R4.2).
-      return null;
+      // Usa o nome do usuario logado quando disponivel; senao, placeholder.
+      return lerUsuarioLogado()?.full_name ?? null;
     },
   };
 }
