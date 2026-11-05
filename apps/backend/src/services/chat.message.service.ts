@@ -28,7 +28,7 @@ export interface SendMessageParams extends SendMessageInput {
 export class ChatMessageService {
 	constructor(
 		private readonly chatRepository = new ChatRepository(),
-	) {}
+	) { }
 
 	async enviar(params: SendMessageParams) {
 		const { senderId, receiverId, content } = params;
@@ -52,30 +52,30 @@ export class ChatMessageService {
 			);
 		}
 
-		try {
-			const conversationId =
-				await this.chatRepository.findOrCreateDirectConversation(
+		let persistenceError: unknown;
+		for (let attempt = 0; attempt < 2; attempt++) {
+			try {
+				const message = await this.chatRepository.createMessageInDirectConversation({
+					userA: senderId,
+					userB: receiverId,
 					senderId,
+					content,
+				});
+
+				return {
+					...message,
 					receiverId,
-				);
-
-			const message = await this.chatRepository.createMessage({
-				conversationId,
-				senderId,
-				content,
-			});
-
-			return {
-				...message,
-				receiverId,
-			};
-		} catch (error) {
-			throw new ChatSendError(
-				'PERSISTENCE_ERROR',
-				'Erro ao salvar a mensagem',
-				{ cause: error },
-			);
+				};
+			} catch (error) {
+				persistenceError = error;
+			}
 		}
+
+		throw new ChatSendError(
+			'PERSISTENCE_ERROR',
+			'Erro ao salvar a mensagem',
+			{ cause: persistenceError },
+		);
 	}
 }
 

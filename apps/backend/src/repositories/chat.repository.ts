@@ -1,5 +1,5 @@
 import { prisma } from '../lib/prisma';
-import type { Prisma } from '@prisma/client';
+import type { Prisma, PrismaClient } from '@prisma/client';
 
 export const CHAT_MESSAGE_SENDER_SELECT = {
 	id: true,
@@ -8,8 +8,50 @@ export const CHAT_MESSAGE_SENDER_SELECT = {
 } satisfies Prisma.UserSelect;
 
 export class ChatRepository {
+	constructor(private readonly client: PrismaClient = prisma) {}
+
+	private canonicalDirectPair(userA: string, userB: string) {
+		return userA < userB
+			? { directUserAId: userA, directUserBId: userB }
+			: { directUserAId: userB, directUserBId: userA };
+	}
+
+	private isDirectPairUniqueConflict(error: unknown): boolean {
+		if (typeof error !== 'object' || error === null || !('code' in error)) {
+			return false;
+		}
+
+		const prismaError = error as {
+			code?: string;
+			meta?: { target?: unknown };
+		};
+		const target = prismaError.meta?.target;
+		const targetText = Array.isArray(target)
+			? target.join(' ')
+			: typeof target === 'string'
+				? target
+				: '';
+
+		return (
+			prismaError.code === 'P2002' &&
+			(targetText.includes('directUserAId') ||
+				targetText.includes('direct_user_a_id')) &&
+			(targetText.includes('directUserBId') ||
+				targetText.includes('direct_user_b_id'))
+		);
+	}
+
+	private findDirectConversationByPair(
+		pair: ReturnType<ChatRepository['canonicalDirectPair']>,
+	) {
+		return this.client.conversation.findFirst({
+			where: pair,
+			select: { id: true },
+		});
+	}
+
 	async findUserById(id: string) {
-		return prisma.user.findUnique({
+		return this.client.user.findUnique({
 			where: { id },
 			select: {
 				id: true,
@@ -19,71 +61,72 @@ export class ChatRepository {
 		});
 	}
 
-	/**
-	 * Procura a conversa DIRECT entre os dois usuários e, se não existir,
-	 * cria a conversa + os dois participantes numa única transação.
-	 * Retorna o id da conversa (nova ou existente).
-	 */
-	async findOrCreateDirectConversation(
-		userA: string,
-		userB: string,
-	): Promise<string> {
-		return prisma.$transaction(async (tx) => {
-			const existing = await tx.conversation.findFirst({
-				where: {
-					type: 'DIRECT',
-					AND: [
-						{ participants: { some: { userId: userA } } },
-						{ participants: { some: { userId: userB } } },
-						{
-							participants: {
-								every: { userId: { in: [userA, userB] } },
-							},
-						},
-					],
-				},
-				select: { id: true },
-			});
-
-			if (existing) {
-				return existing.id;
-			}
-
-			const conversation = await tx.conversation.create({
-				data: {
-					type: 'DIRECT',
-					participants: {
-						create: [{ userId: userA }, { userId: userB }],
-					},
-				},
-				select: { id: true },
-			});
-
-			return conversation.id;
-		});
-	}
-
-	async createMessage(data: {
-		conversationId: string;
+	/** Localiza ou cria a conversa direta e grava a mensagem na mesma transação. */
+	private createMessageInDirectConversationAttempt(data: {
+		userA: string;
+		userB: string;
 		senderId: string;
 		content: string;
 	}) {
-		return prisma.chatMessage.create({
-			data: {
-				conversationId: data.conversationId,
-				senderId: data.senderId,
-				content: data.content,
-			},
-			select: {
-				id: true,
-				conversationId: true,
-				content: true,
-				createdAt: true,
-				sender: {
-					select: CHAT_MESSAGE_SENDER_SELECT,
+		const pair = this.canonicalDirectPair(data.userA, data.userB);
+
+		return this.client.$transaction(async (tx) => {
+			const existing = await tx.conversation.findFirst({
+				where: pair,
+				select: { id: true },
+			});
+
+			const conversation = existing
+				? existing
+				: await tx.conversation.create({
+					data: {
+						type: 'DIRECT',
+						...pair,
+						participants: {
+							create: [
+								{ userId: data.userA },
+								{ userId: data.userB },
+							],
+						},
+					},
+					select: { id: true },
+				});
+
+			return tx.chatMessage.create({
+				data: {
+					conversationId: conversation.id,
+					senderId: data.senderId,
+					content: data.content,
 				},
-			},
+				select: {
+					id: true,
+					conversationId: true,
+					content: true,
+					createdAt: true,
+					sender: {
+						select: CHAT_MESSAGE_SENDER_SELECT,
+					},
+				},
+			});
 		});
+	}
+
+	async createMessageInDirectConversation(data: {
+		userA: string;
+		userB: string;
+		senderId: string;
+		content: string;
+	}) {
+		try {
+			return await this.createMessageInDirectConversationAttempt(data);
+		} catch (error) {
+			if (!this.isDirectPairUniqueConflict(error)) {
+				throw error;
+			}
+
+			// A concorrente já criou o par; repetir a transação agora grava a mensagem nela.
+			return this.createMessageInDirectConversationAttempt(data);
+		}
 	}
 
 	async isConversationParticipant(
@@ -91,7 +134,7 @@ export class ChatRepository {
 		userId: string,
 	): Promise<boolean> {
 		const participant =
-			await prisma.conversationParticipant.findUnique({
+			await this.client.conversationParticipant.findUnique({
 				where: {
 					conversationId_userId: { conversationId, userId },
 				},
@@ -109,7 +152,7 @@ export class ChatRepository {
 		conversationId: string,
 		userId: string,
 	): Promise<string[]> {
-		const messages = await prisma.chatMessage.findMany({
+		const messages = await this.client.chatMessage.findMany({
 			where: {
 				conversationId,
 				senderId: { not: userId },
@@ -130,7 +173,7 @@ export class ChatRepository {
 			return 0;
 		}
 
-		const result = await prisma.messageRead.createMany({
+		const result = await this.client.messageRead.createMany({
 			data: messageIds.map((messageId) => ({ messageId, userId })),
 			skipDuplicates: true,
 		});
@@ -140,7 +183,7 @@ export class ChatRepository {
 
 	/** Conversas do usuário com a última mensagem (preview) e participantes. */
 	async findUserConversations(userId: string) {
-		return prisma.conversation.findMany({
+		return this.client.conversation.findMany({
 			where: {
 				participants: { some: { userId } },
 			},
@@ -176,7 +219,7 @@ export class ChatRepository {
 		conversationId: string,
 		userId: string,
 	): Promise<number> {
-		return prisma.chatMessage.count({
+		return this.client.chatMessage.count({
 			where: {
 				conversationId,
 				senderId: { not: userId },
@@ -189,7 +232,7 @@ export class ChatRepository {
 		currentUserId: string,
 		userId: string,
 	) {
-		return prisma.conversation.findFirst({
+		return this.client.conversation.findFirst({
 			where: {
 				type: 'DIRECT',
 				AND: [
