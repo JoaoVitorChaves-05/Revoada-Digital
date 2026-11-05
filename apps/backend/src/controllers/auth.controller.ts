@@ -1,5 +1,5 @@
-import {Request, Response} from 'express';
-import {authService} from '../services/auth.service';
+import { Request, Response } from 'express';
+import { authService, EmailNotVerifiedError } from '../services/auth.service';
 
 export async function login(req: Request, res: Response) {
     try {
@@ -22,4 +22,11 @@ export async function login(req: Request, res: Response) {
         error: 'Ocorreu um erro ao processar a solicitação de login',
     });
 }
-
+if (error instanceof Error && error.message === 'Email ou senha inválidos') {
+return res.status(401).json({ message: error.message });
+}
+return res.status(500).json({
+error: 'Ocorreu um erro ao processar a solicitação de login',
+});
+}
+}

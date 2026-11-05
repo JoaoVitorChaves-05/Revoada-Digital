@@ -45,22 +45,27 @@ export class DashboardService {
 
     for (const answer of answers) {
       const studentId = answer.attempt.mockExam.studentId;
-      const subject = answer.question.subject;
-      const performance =
-        performanceBySubject.get(subject) ?? {
-          subject,
-          totalAnswers: 0,
-          correctAnswers: 0,
-          studentIds: new Set<string>(),
-        };
+      // subject agora e uma lista (String[]): uma questao pode pertencer a
+      // mais de uma materia, entao ela contribui para cada uma delas.
+      const subjects = answer.question.subject;
 
-      performance.totalAnswers += 1;
-      if (answer.isCorrect) {
-        performance.correctAnswers += 1;
+      for (const subject of subjects) {
+        const performance =
+          performanceBySubject.get(subject) ?? {
+            subject,
+            totalAnswers: 0,
+            correctAnswers: 0,
+            studentIds: new Set<string>(),
+          };
+
+        performance.totalAnswers += 1;
+        if (answer.isCorrect) {
+          performance.correctAnswers += 1;
+        }
+        performance.studentIds.add(studentId);
+
+        performanceBySubject.set(subject, performance);
       }
-      performance.studentIds.add(studentId);
-
-      performanceBySubject.set(subject, performance);
     }
 
     return Array.from(performanceBySubject.values())

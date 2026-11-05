@@ -13,15 +13,15 @@ import type { AuthRepository } from './auth.service';
 import { AuthService } from './auth.service';
 
 vi.mock('../repositories/user.repository', () => ({
-	UserRepository: class {
-		findByEmail = vi.fn();
-	},
+UserRepository: class {
+findByEmail = vi.fn();
+},
 }));
 
 function createRepositoryMock() {
-	return {
-		findByEmail: vi.fn(),
-	};
+return {
+findByEmail: vi.fn(),
+};
 }
 
 // chave fictícia, exclusivo dos testes.

@@ -29,6 +29,8 @@ describe('QuestionService - Criar Questão com Imagem', () => {
         const questionInput = {
             text: 'Qual é a capital do Brasil?',
             difficulty: 1,
+            subject: 'GEOGRAPHY',
+            concept: 'Capitais',
             alternatives: [
                 { text: 'São Paulo', isCorrect: false },
                 { text: 'Brasília', isCorrect: true },
@@ -84,6 +86,8 @@ describe('QuestionService - Criar Questão com Imagem', () => {
         const questionInput = {
             text: 'Quanto é 2 + 2?',
             difficulty: 1,
+            subject: 'GEOGRAPHY',
+            concept: 'Capitais',
             alternatives: [
                 { text: '3', isCorrect: false },
                 { text: '4', isCorrect: true },
@@ -112,6 +116,6 @@ describe('QuestionService - Criar Questão com Imagem', () => {
             })
         );
 
-        expect(result.imageUrl).toBeNull();
+        expect(result.image).toBeNull();
     });
 });

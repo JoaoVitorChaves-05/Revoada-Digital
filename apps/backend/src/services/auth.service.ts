@@ -4,15 +4,23 @@ import { compare } from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 type AuthUser = {
-	id: string;
-	email: string;
-	password: string | null;
-	full_name: string;
-	profileType: 'STUDENT' | 'TEACHER' | 'ADMIN';
+id: string;
+email: string;
+password: string | null;
+full_name: string;
+profileType: 'STUDENT' | 'TEACHER' | 'ADMIN';
+emailVerified: boolean;
 };
 
+export class EmailNotVerifiedError extends Error {
+constructor() {
+super('Confirme seu email antes de entrar');
+this.name = 'EmailNotVerifiedError';
+}
+}
+
 export interface AuthRepository {
-	findByEmail(email: string): Promise<AuthUser | null>;
+findByEmail(email: string): Promise<AuthUser | null>;
 }
 
 export class AuthService {

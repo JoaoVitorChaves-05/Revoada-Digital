@@ -9,10 +9,44 @@ export interface SocketData {
     userId: string;
 }
 
-export type ClientToServerEvents = Record<never, never>;
+export interface ChatMessagePayload {
+    id: string;
+    conversationId: string;
+    content: string;
+    createdAt: string | Date;
+    sender: {
+        id: string;
+        full_name: string;
+        profileType: string;
+    };
+    receiverId: string;
+}
+
+export interface SendMessagePayload {
+    receiverId: string;
+    content: string;
+}
+
+export interface SendMessageErrorPayload {
+    code: string;
+    message: string;
+}
+
+export interface MarkReadPayload {
+    conversationId: string;
+}
+
+export interface ClientToServerEvents {
+    sendMsg: (
+        payload: SendMessagePayload,
+        ack?: (result: { ok: boolean; error?: string }) => void,
+    ) => void;
+    markRead: (payload: MarkReadPayload) => void;
+}
 
 export interface ServerToClientEvents {
-    newMsg: (message: unknown) => void;
+    newMsg: (message: ChatMessagePayload) => void;
+    sendMsgError: (error: SendMessageErrorPayload) => void;
 }
 
 export type InterServerEvents = Record<never, never>;
