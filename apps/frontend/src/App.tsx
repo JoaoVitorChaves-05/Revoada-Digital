@@ -114,6 +114,7 @@ function App() {
         userName={usuario?.full_name}
         userId={usuario?.id}
         onBack={() => setScreen('home')}
+        onInicio={() => setScreen('dashboard')}
         onChat={() => setScreen('chat')}
         onSimulados={() => setScreen('gerar-simulado')}
         onViewPost={(postId: string) => { setPostSelecionado(postId); setScreen('post-detalhe') }}
@@ -143,6 +144,7 @@ function App() {
         userName={usuario?.full_name}
         userId={usuario?.id}
         onBack={() => setScreen('comunidade')}
+        onInicio={() => setScreen('dashboard')}
         onChat={() => setScreen('chat')}
         onPerfil={menuProps.onPerfil}
         onConfiguracoes={menuProps.onConfiguracoes}

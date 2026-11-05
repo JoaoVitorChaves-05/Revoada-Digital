@@ -27,6 +27,7 @@ interface Props {
   onBack: () => void;
   isLoggedIn?: boolean;
   onChat?: () => void;
+  onInicio?: () => void;
   onPerfil?: () => void;
   onConfiguracoes?: () => void;
   onLogout?: () => void;
@@ -34,7 +35,7 @@ interface Props {
   userName?: string;
 }
 
-export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, onChat, userName, onPerfil, onConfiguracoes, onLogout, userId }: Props) {
+export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, onChat, onInicio, userName, onPerfil, onConfiguracoes, onLogout, userId }: Props) {
   // Estados do backend
   const { post, loading, error, refetch } = useForumPost(postId);
   const { createReply, loading: creatingReply } = useCreateReply(postId);
@@ -167,7 +168,16 @@ export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, 
         </div>
         <nav className="hidden items-stretch gap-7 text-xs font-semibold text-indigo-900 md:flex">
           {NAV.map((item) =>
-            item === 'Chat' && !isLoggedIn ? null : item === 'Chat' ? (
+            item === 'Chat' && !isLoggedIn ? null : item === 'Início' ? (
+              <button
+                key={item}
+                type="button"
+                onClick={onInicio}
+                className="flex items-center border-b-2 border-transparent transition hover:text-orange-500"
+              >
+                Início
+              </button>
+            ) : item === 'Chat' ? (
               <button
                 key={item}
                 type="button"
@@ -179,7 +189,7 @@ export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, 
             ) : (
               <a
                 key={item}
-                href={item === 'Início' ? '/' : '#'}
+                href="#"
                 className={`flex items-center border-b-2 transition hover:text-orange-500 ${
                   item === 'Comunidade'
                     ? 'border-orange-500 font-extrabold'
