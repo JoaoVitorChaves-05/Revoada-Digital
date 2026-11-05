@@ -1,11 +1,34 @@
 import { createServer } from 'http';
 import { io as createClient, type Socket as ClientSocket } from 'socket.io-client';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { emitChatMessage } from './handlers/chat';
 import { initializeSocket } from './index';
-import type { ChatServer } from './types';
+import { resetIO } from './instance';
+import type { ChatMessagePayload, ChatServer } from './types';
+
+function buildMessage(
+    overrides: Partial<ChatMessagePayload> = {},
+): ChatMessagePayload {
+    return {
+        id: 'message-1',
+        conversationId: 'conversa-1',
+        content: 'Hello',
+        createdAt: new Date().toISOString(),
+        sender: {
+            id: 'sender-1',
+            full_name: 'Remetente',
+            profileType: 'STUDENT',
+        },
+        receiverId: 'recipient-1',
+        ...overrides,
+    };
+}
 
 describe('initializeSocket', () => {
+    afterEach(() => {
+        resetIO();
+    });
+
     it('rejects a connection without a user id', async () => {
         const { url, close } = await createTestServer();
         const client = createClient(url, clientOptions());
@@ -37,26 +60,43 @@ describe('initializeSocket', () => {
         }
     });
 
-    it('delivers newMsg only to the client in the receiver room', async () => {
+    it('delivers newMsg to the receiver and the sender, but not to third parties', async () => {
         const { io, url, close } = await createTestServer();
         const recipient = createClient(url, clientOptions({ userId: 'recipient-1' }));
+        const sender = createClient(url, clientOptions({ userId: 'sender-1' }));
         const otherUser = createClient(url, clientOptions({ userId: 'other-1' }));
 
         try {
-            await Promise.all([connect(recipient), connect(otherUser)]);
+            await Promise.all([
+                connect(recipient),
+                connect(sender),
+                connect(otherUser),
+            ]);
 
-            const message = { id: 'message-1', text: 'Hello' };
-            const receivedMessage = new Promise<unknown>((resolve) => {
+            const message = buildMessage({
+                receiverId: 'recipient-1',
+                sender: {
+                    id: 'sender-1',
+                    full_name: 'Remetente',
+                    profileType: 'STUDENT',
+                },
+            });
+
+            const receivedByRecipient = new Promise<unknown>((resolve) => {
                 recipient.once('newMsg', resolve);
+            });
+            const receivedBySender = new Promise<unknown>((resolve) => {
+                sender.once('newMsg', resolve);
             });
             const unexpectedMessage = new Promise<unknown>((resolve) => {
                 otherUser.once('newMsg', resolve);
             });
             const noMessage = Symbol('no message');
 
-            emitChatMessage(io, 'recipient-1', message);
+            emitChatMessage(io, message);
 
-            await expect(receivedMessage).resolves.toEqual(message);
+            await expect(receivedByRecipient).resolves.toEqual(message);
+            await expect(receivedBySender).resolves.toEqual(message);
             await expect(
                 Promise.race([
                     unexpectedMessage,
@@ -65,6 +105,7 @@ describe('initializeSocket', () => {
             ).resolves.toBe(noMessage);
         } finally {
             recipient.disconnect();
+            sender.disconnect();
             otherUser.disconnect();
             await close();
         }

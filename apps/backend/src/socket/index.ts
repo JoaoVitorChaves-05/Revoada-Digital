@@ -9,6 +9,7 @@ import type {
     SocketData,
 } from './types';
 import { identityMiddleware } from './middlewares/identity';
+import { setIO } from './instance';
 
 export function initializeSocket(server: HttpServer): ChatServer {
     const io = new SocketIOServer<
@@ -28,6 +29,8 @@ export function initializeSocket(server: HttpServer): ChatServer {
     io.on('connection', (socket) => {
         registerChatHandlers(socket);
     });
+
+    setIO(io);
 
     return io;
 }
