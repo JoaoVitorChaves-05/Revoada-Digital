@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { CSSProperties } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 // CSS específico da página (layout/espaçamento/responsividade e anéis de foco).
 // As cores continuam vindo de `theme` (colors.ts) via estilos inline.
 import './Dashboard.css';
@@ -17,6 +17,7 @@ import { BlocoDisciplinas } from '../components/dashboard/BlocoDisciplinas';
 import { BlocoRadar } from '../components/dashboard/BlocoRadar';
 import { RodapeInstitucional } from '../components/dashboard/RodapeInstitucional';
 import { Placeholder } from '../components/dashboard/Placeholder';
+import { HeaderApp } from '../components/HeaderApp';
 
 /**
  * Dashboard do Aluno ("Início"), página rica com `fetch` espelhando o padrão de
@@ -32,26 +33,18 @@ export interface DashboardPageProps {
   onBack: () => void;
   /** Aciona a navegação para o painel de estatísticas/desempenho (R12.4). */
   onVerEstatisticas: () => void;
+  /** Nome do aluno logado (exibido no menu de usuário do cabeçalho). */
+  userName?: string;
+  /** Navegação do cabeçalho padrão (mesmo das demais telas logadas). */
+  onSimulados?: () => void;
+  onComunidade?: () => void;
+  onChat?: () => void;
+  onPerfil?: () => void;
+  onConfiguracoes?: () => void;
+  onLogout?: () => void;
 }
 
-const containerStyle: CSSProperties = {
-  maxWidth: 960,
-  margin: '0 auto',
-  padding: '24px',
-  fontFamily: 'sans-serif',
-  color: theme.text.title,
-};
 
-const voltarStyle: CSSProperties = {
-  background: theme.button.bgDefault,
-  border: `1px solid ${theme.button.border}`,
-  color: theme.button.text,
-  padding: '8px 14px',
-  borderRadius: 8,
-  cursor: 'pointer',
-  fontSize: 14,
-  marginBottom: 20,
-};
 
 const statusStyle: CSSProperties = {
   color: theme.text.subtitle,
@@ -94,25 +87,44 @@ const colunasStyle: CSSProperties = {
   gap: '1rem',
 };
 
-function BotaoVoltar({ onBack }: { onBack: () => void }) {
-  return (
-    <button
-      type="button"
-      className="dashboard__voltar"
-      style={voltarStyle}
-      onClick={onBack}
-      aria-label="Voltar para a tela anterior"
-    >
-      ← Voltar
-    </button>
-  );
-}
 
-export function DashboardPage({ onBack, onVerEstatisticas }: DashboardPageProps) {
+export function DashboardPage({
+  onVerEstatisticas,
+  userName,
+  onSimulados,
+  onComunidade,
+  onChat,
+  onPerfil,
+  onConfiguracoes,
+  onLogout,
+}: DashboardPageProps) {
   const [metricas, setMetricas] = useState<MetricasDashboard | null>(null);
   const [totalTentativas, setTotalTentativas] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Layout padrao do site: fundo claro + cabecalho padrao. Envolve todos os
+  // estados da pagina (carregando/erro/vazio/sucesso) para manter a mesma cara.
+  function Layout({ children }: { children: ReactNode }) {
+    return (
+      <div className="min-h-screen bg-[#f7f9fc] text-slate-700">
+        <HeaderApp
+          ativo="Início"
+          userName={userName}
+          onInicio={() => { /* ja esta no inicio */ }}
+          onSimulados={onSimulados}
+          onComunidade={onComunidade}
+          onChat={onChat}
+          onPerfil={onPerfil}
+          onConfiguracoes={onConfiguracoes}
+          onLogout={onLogout}
+        />
+        <main className="mx-auto max-w-[1100px] px-4 py-8 sm:px-10 lg:px-[6%]">
+          {children}
+        </main>
+      </div>
+    );
+  }
 
   async function carregar() {
     setLoading(true);
@@ -135,26 +147,24 @@ export function DashboardPage({ onBack, onVerEstatisticas }: DashboardPageProps)
 
   if (loading) {
     return (
-      <div className="dashboard" style={containerStyle}>
-        <BotaoVoltar onBack={onBack} />
+      <Layout>
         <p className="dashboard__status" style={statusStyle} role="status" aria-live="polite">
           Carregando seu painel...
         </p>
-      </div>
+      </Layout>
     );
   }
 
   if (error) {
     return (
-      <div className="dashboard" style={containerStyle}>
-        <BotaoVoltar onBack={onBack} />
+      <Layout>
         <p className="dashboard__erro" style={erroStyle} role="alert">
           Erro: {error}
         </p>
         <button type="button" className="dashboard__botao" style={botaoStyle} onClick={carregar}>
           Tentar novamente
         </button>
-      </div>
+      </Layout>
     );
   }
 
@@ -171,9 +181,7 @@ export function DashboardPage({ onBack, onVerEstatisticas }: DashboardPageProps)
     );
 
   return (
-    <div className="dashboard" style={containerStyle}>
-      <BotaoVoltar onBack={onBack} />
-
+    <Layout>
       <Saudacao nome={sessao.getNomeAluno()} agora={new Date()} />
 
       {estadoVazio ? (
@@ -225,6 +233,6 @@ export function DashboardPage({ onBack, onVerEstatisticas }: DashboardPageProps)
       </div>
 
       <RodapeInstitucional />
-    </div>
+    </Layout>
   );
 }
