@@ -10,23 +10,20 @@ export async function login(req: Request, res: Response) {
             user: result.user,
         });
     } catch (error) {
-        if(
+        if (error instanceof EmailNotVerifiedError) {
+            return res.status(403).json({ message: error.message });
+        }
+
+        if (
             error instanceof Error &&
             error.message === 'Email ou senha inválidos'
         ) {
             return res.status(401).json({ message: error.message });
-        };
-    }
+        }
 
-    return res.status(500).json({
-        error: 'Ocorreu um erro ao processar a solicitação de login',
-    });
-}
-if (error instanceof Error && error.message === 'Email ou senha inválidos') {
-return res.status(401).json({ message: error.message });
-}
-return res.status(500).json({
-error: 'Ocorreu um erro ao processar a solicitação de login',
-});
-}
+        console.error('Erro inesperado no login:', error);
+        return res.status(500).json({
+            error: 'Ocorreu um erro ao processar a solicitação de login',
+        });
+    }
 }
