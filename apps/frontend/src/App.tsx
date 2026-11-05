@@ -157,7 +157,7 @@ function App() {
     return (
       <GerarSimulado
         userId={usuario.id}
-        onBack={() => setScreen('home')}
+        onBack={() => setScreen('comunidade')}
         onIniciar={(attemptId) => { setAttemptAtivo(attemptId); setScreen('fazer-simulado') }}
       />
     )
