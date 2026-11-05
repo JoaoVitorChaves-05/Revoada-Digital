@@ -156,4 +156,43 @@ describe('UserService', () => {
         expect(result).toEqual({ id: 'user-1' });
         expect(repository.findById).toHaveBeenCalledWith('user-1');
     });
+
+	it('não retorna o hash ao consultar usuário', async () => {
+		repository.findById.mockResolvedValue({
+			id: 'user-1',
+			email: userInput.email,
+			password: 'hash-de-teste',
+		});
+
+		const result = await service.readUser('user-1');
+
+		expect(result).toEqual({
+			id: 'user-1',
+			email: userInput.email,
+		});
+	});
+
+	it('não retorna o hash ao atualizar usuário', async () => {
+		repository.findById.mockResolvedValue({
+			id: 'user-1',
+			email: userInput.email,
+			rg: userInput.rg,
+			password: 'hash-de-teste',
+		});
+
+		repository.update.mockResolvedValue({
+			id: 'user-1',
+			full_name: 'Nome Atualizado',
+			password: 'hash-de-teste',
+		});
+
+		const result = await service.updateUser('user-1', {
+			full_name: 'Nome Atualizado',
+		});
+
+		expect(result).toEqual({
+			id: 'user-1',
+			full_name: 'Nome Atualizado',
+		});
+	});
 });

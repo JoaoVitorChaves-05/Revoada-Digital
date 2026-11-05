@@ -41,7 +41,8 @@ export class UserService {
 			throw new Error('Usuário não encontrado');
 		}
 
-		return user;
+		const { password: _password, ...safeUser } = user;
+		return safeUser;
 	}
 
 	async updateUser(id: string, data: UpdateUserInput) {
@@ -64,7 +65,14 @@ export class UserService {
 			}
 		}
 
-		return this.userRepository.update(id, data);
+		const updatedUser = await this.userRepository.update(id, data);
+
+		if (!updatedUser) {
+			throw new Error('Usuário não encontrado');
+		}
+
+		const { password: _password, ...safeUser } = updatedUser;
+		return safeUser;
 	}
 
 	async deleteUser(id: string) {
