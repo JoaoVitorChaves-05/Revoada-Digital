@@ -10,6 +10,14 @@ const dirname = path.dirname(fileURLToPath(import.meta.url))
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  // No monorepo, apps/frontend fixa react/react-dom 19.2.8 enquanto a raiz
+  // resolve 19.3.0 (hoisted por @testing-library/react). Bibliotecas como
+  // lucide-react podem acabar resolvendo a copia da raiz, gerando duas copias
+  // de React no bundle ("Invalid hook call"). O dedupe garante uma unica copia
+  // no dev e no build.
+  resolve: {
+    dedupe: ['react', 'react-dom'],
+  },
   server: {
     host: true,
     port: 5173,
@@ -21,12 +29,8 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
-    // No monorepo, apps/frontend fixa react/react-dom 19.2.8 enquanto a raiz
-    // resolve 19.3.0 (hoisted por @testing-library/react). Duas copias de React
-    // quebram os hooks nos testes de componente ("Invalid hook call"). Apenas
-    // nos testes, fixamos ambos na copia da raiz (a mesma usada pelo react-dom
-    // de @testing-library) para garantir uma unica instancia pareada; o build
-    // de producao segue usando a copia do app, sem alteracao.
+    // Apenas nos testes, fixamos ambos na copia da raiz (a mesma usada pelo
+    // react-dom de @testing-library) para garantir uma unica instancia pareada.
     alias: {
       react: path.resolve(dirname, '../../node_modules/react'),
       'react-dom': path.resolve(dirname, '../../node_modules/react-dom'),
