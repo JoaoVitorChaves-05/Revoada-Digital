@@ -8,14 +8,23 @@ type GerarSimuladoProps = {
   onBack?: () => void;
 };
 
+// O value precisa bater com o nome da materia gravado nas questoes (por extenso,
+// em portugues) — e esse valor que vai para /questions e /simulados/generate.
 const MATERIAS = [
-  { value: 'MATH', label: 'Matemática' },
-  { value: 'PORTUGUESE', label: 'Português' },
-  { value: 'PHYSICS', label: 'Física' },
-  { value: 'CHEMICAL', label: 'Química' },
-  { value: 'HISTORY', label: 'História' },
-  { value: 'GEOGRAPHY', label: 'Geografia' },
-  { value: 'ENGLISH', label: 'Inglês' },
+  { value: 'Matemática', label: 'Matemática' },
+  { value: 'Língua Portuguesa', label: 'Língua Portuguesa' },
+  { value: 'Literatura', label: 'Literatura' },
+  { value: 'Física', label: 'Física' },
+  { value: 'Química', label: 'Química' },
+  { value: 'Biologia', label: 'Biologia' },
+  { value: 'História', label: 'História' },
+  { value: 'Geografia', label: 'Geografia' },
+  { value: 'Filosofia', label: 'Filosofia' },
+  { value: 'Sociologia', label: 'Sociologia' },
+  { value: 'Artes', label: 'Artes' },
+  { value: 'Educação Física', label: 'Educação Física' },
+  { value: 'Inglês', label: 'Inglês' },
+  { value: 'Espanhol', label: 'Espanhol' },
 ];
 
 export function GerarSimulado({ userId, onIniciar, onBack }: GerarSimuladoProps) {
