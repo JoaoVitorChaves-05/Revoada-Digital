@@ -1,10 +1,81 @@
+import { useState } from 'react';
 import iconContainer from './icons/icon-container.png';
 
 type CadastroScreenProps = {
-  onBack: () => void
-}
+  onBack: () => void;
+};
+
+// Enquanto nao houver variavel de ambiente, mantem o padrao do projeto.
+const API_BASE = 'http://localhost:3000';
+
+type Status = 'idle' | 'enviando' | 'sucesso' | 'erro';
 
 export function CadastroScreen({ onBack }: CadastroScreenProps) {
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [confirmEmail, setConfirmEmail] = useState('');
+  const [cpf, setCpf] = useState('');
+  const [rg, setRg] = useState('');
+  const [school, setSchool] = useState('');
+  const [year, setYear] = useState('1');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const [status, setStatus] = useState<Status>('idle');
+  const [mensagem, setMensagem] = useState<string | null>(null);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setMensagem(null);
+
+    // Validacoes de cliente (o backend tambem valida)
+    if (email !== confirmEmail) {
+      setStatus('erro');
+      setMensagem('Os emails nao coincidem.');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setStatus('erro');
+      setMensagem('As senhas nao coincidem.');
+      return;
+    }
+
+    setStatus('enviando');
+    try {
+      const response = await fetch(`${API_BASE}/users`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          full_name: fullName,
+          email,
+          cpf,
+          rg,
+          password,
+          profileType: 'STUDENT',
+          school,
+          year: Number(year),
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        const detalhe =
+          typeof data?.details === 'string'
+            ? data.details
+            : Array.isArray(data?.details)
+              ? data.details.map((d: { message: string }) => d.message).join('; ')
+              : data?.error ?? 'Nao foi possivel concluir o cadastro.';
+        throw new Error(detalhe);
+      }
+
+      setStatus('sucesso');
+      setMensagem('Cadastro realizado com sucesso! Aguardando aprovacao.');
+    } catch (err: unknown) {
+      setStatus('erro');
+      setMensagem(err instanceof Error ? err.message : 'Erro inesperado.');
+    }
+  }
+
   return (
     <div className="cadastro-page">
       <div className="cadastro-card">
@@ -37,45 +108,64 @@ export function CadastroScreen({ onBack }: CadastroScreenProps) {
             <h1>Faça seu cadastro</h1>
             <p>Faça login ou registre-se para começar a estudar ainda hoje</p>
 
-            <form className="cadastro-form">
+            <form className="cadastro-form" onSubmit={handleSubmit}>
               <div className="field">
                 <label htmlFor="nome">Nome Completo</label>
-                <input id="nome" type="text" />
-              </div>
-              <div className="field">
-                <label htmlFor="faculdade">Faculdade desejada</label>
-                <input id="faculdade" type="text" />
+                <input id="nome" type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
               </div>
               <div className="field">
                 <label htmlFor="email">Email</label>
-                <input id="email" type="email" />
+                <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
               </div>
               <div className="field">
                 <label htmlFor="confirm-email">Confirmar email</label>
-                <input id="confirm-email" type="email" />
+                <input id="confirm-email" type="email" value={confirmEmail} onChange={(e) => setConfirmEmail(e.target.value)} required />
               </div>
               <div className="field">
-                <label htmlFor="cpf">CPF</label>
-                <input id="cpf" type="text" />
+                <label htmlFor="cpf">CPF (apenas números)</label>
+                <input id="cpf" type="text" inputMode="numeric" value={cpf} onChange={(e) => setCpf(e.target.value)} required />
               </div>
               <div className="field">
-                <label htmlFor="telefone">Telefone</label>
-                <input id="telefone" type="tel" />
+                <label htmlFor="rg">RG (apenas números)</label>
+                <input id="rg" type="text" inputMode="numeric" value={rg} onChange={(e) => setRg(e.target.value)} required />
+              </div>
+              <div className="field">
+                <label htmlFor="escola">Escola</label>
+                <input id="escola" type="text" value={school} onChange={(e) => setSchool(e.target.value)} placeholder="Nome da escola cadastrada" required />
+              </div>
+              <div className="field">
+                <label htmlFor="serie">Série</label>
+                <select id="serie" value={year} onChange={(e) => setYear(e.target.value)} required>
+                  <option value="1">1º ano</option>
+                  <option value="2">2º ano</option>
+                  <option value="3">3º ano</option>
+                </select>
               </div>
               <div className="field">
                 <label htmlFor="senha">Criar senha</label>
-                <input id="senha" type="password" />
+                <input id="senha" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
               </div>
               <div className="field">
                 <label htmlFor="confirm-senha">Repetir Senha</label>
-                <input id="confirm-senha" type="password" />
+                <input id="confirm-senha" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
               </div>
 
-              <button type="submit" className="cadastro-submit">Criar Conta</button>
+              {mensagem && (
+                <p
+                  role="status"
+                  style={{ color: status === 'sucesso' ? '#166534' : '#b91c1c', fontWeight: 600 }}
+                >
+                  {mensagem}
+                </p>
+              )}
+
+              <button type="submit" className="cadastro-submit" disabled={status === 'enviando'}>
+                {status === 'enviando' ? 'Enviando...' : 'Criar Conta'}
+              </button>
             </form>
           </div>
         </main>
       </div>
     </div>
-  )
+  );
 }

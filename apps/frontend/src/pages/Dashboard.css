@@ -1,0 +1,92 @@
+/*
+ * Estilos específicos da página Dashboard do Aluno ("Início").
+ *
+ * Par Dashboard.page.tsx + Dashboard.css, seguindo o mesmo padrão de
+ * PainelDesempenho.page.tsx + PainelDesempenho.css (nomenclatura BEM).
+ *
+ * Escopo deste arquivo: layout, espaçamento e responsividade dos blocos da
+ * página (grid de métricas, empilhamento de blocos, fluidez do container) e os
+ * anéis de foco (:focus-visible) para acessibilidade por teclado.
+ *
+ * As cores de superfície/texto/variação dos blocos vêm dos componentes via
+ * estilos inline derivados de `src/utils/colors.ts`; este CSS não as duplica.
+ * A única cor usada aqui é o azul de realce do foco, que corresponde a
+ * `theme.accent.primary` (#2563eb) — a mesma paleta consumida pela página.
+ */
+
+.dashboard {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family: sans-serif;
+}
+
+/* Botão de voltar: o padrão de PainelDesempenho. Anel de foco visível. */
+.dashboard__voltar {
+  margin-bottom: 20px;
+}
+
+/* Estados de I/O da página (carregamento / erro / vazio). */
+.dashboard__status,
+.dashboard__erro {
+  line-height: 1.5;
+}
+
+.dashboard__vazio {
+  margin-top: 1.5rem;
+}
+
+.dashboard__vazio-texto {
+  line-height: 1.5;
+  margin: 0 0 1rem;
+}
+
+/*
+ * Grade de cards de métrica: responsiva por auto-fit, acompanhando o
+ * `gridTemplateColumns` inline da página e garantindo o reflow em telas
+ * estreitas (os cards passam a ocupar a largura total).
+ */
+.dashboard__metricas {
+  margin-top: 1.5rem;
+}
+
+.dashboard__metricas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.dashboard__frequencia {
+  margin-top: 1.5rem;
+}
+
+/* Blocos empilhados em coluna, com respiro entre eles. */
+.dashboard__blocos {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/*
+ * Acessibilidade: anel de foco visível e consistente em todos os controles
+ * interativos da página e dos blocos, operáveis por teclado (R17.3).
+ */
+.dashboard__voltar:focus-visible,
+.dashboard__botao:focus-visible,
+.dashboard a:focus-visible,
+.dashboard button:focus-visible {
+  outline: 3px solid #2563eb; /* theme.accent.primary */
+  outline-offset: 2px;
+}
+
+/* Afinar o espaçamento geral da página em telas pequenas. */
+@media (max-width: 640px) {
+  .dashboard {
+    padding: 16px;
+  }
+
+  .dashboard__metricas-grid {
+    grid-template-columns: 1fr;
+  }
+}
