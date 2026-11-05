@@ -9,11 +9,13 @@ vi.mock('../repositories/chat.repository', () => ({
 	ChatRepository: class {},
 }));
 
+// Mock alinhado a API atual do ChatRepository usada pelo ChatMessageService:
+// o service resolve sender/receiver com `findUserById` e grava a mensagem numa
+// unica chamada a `createMessageInDirectConversation` (com retry interno).
 function createRepositoryMock() {
 	return {
 		findUserById: vi.fn(),
-		findOrCreateDirectConversation: vi.fn(),
-		createMessage: vi.fn(),
+		createMessageInDirectConversation: vi.fn(),
 	};
 }
 
@@ -31,14 +33,19 @@ describe('ChatMessageService.enviar', () => {
 		);
 	});
 
+	// O service usa Promise.all([findUserById(sender), findUserById(receiver)]);
+	// resolver por id (em vez de ...Once encadeado) evita dependencia de ordem.
+	function stubUsers(existing: Record<string, boolean>) {
+		repository.findUserById.mockImplementation(async (id: string) =>
+			existing[id] ? { id } : null,
+		);
+	}
+
 	it('persiste a mensagem numa conversa direta e retorna com o sender', async () => {
-		repository.findUserById
-			.mockResolvedValueOnce({ id: senderId })
-			.mockResolvedValueOnce({ id: receiverId });
-		repository.findOrCreateDirectConversation.mockResolvedValue('conversa-1');
+		stubUsers({ [senderId]: true, [receiverId]: true });
 
 		const createdAt = new Date();
-		repository.createMessage.mockResolvedValue({
+		repository.createMessageInDirectConversation.mockResolvedValue({
 			id: 'mensagem-1',
 			conversationId: 'conversa-1',
 			content: 'Olá!',
@@ -66,10 +73,13 @@ describe('ChatMessageService.enviar', () => {
 		});
 
 		expect(
-			repository.findOrCreateDirectConversation,
-		).toHaveBeenCalledWith(senderId, receiverId);
-		expect(repository.createMessage).toHaveBeenCalledWith({
-			conversationId: 'conversa-1',
+			repository.createMessageInDirectConversation,
+		).toHaveBeenCalledTimes(1);
+		expect(
+			repository.createMessageInDirectConversation,
+		).toHaveBeenCalledWith({
+			userA: senderId,
+			userB: receiverId,
 			senderId,
 			content: 'Olá!',
 		});
@@ -88,34 +98,32 @@ describe('ChatMessageService.enviar', () => {
 	});
 
 	it('rejeita quando o destinatário não existe com USER_NOT_FOUND', async () => {
-		repository.findUserById
-			.mockResolvedValueOnce({ id: senderId })
-			.mockResolvedValueOnce(null);
+		stubUsers({ [senderId]: true, [receiverId]: false });
 
 		await expect(
 			service.enviar({ senderId, receiverId, content: 'Olá!' }),
 		).rejects.toMatchObject({ code: 'USER_NOT_FOUND' });
 
 		expect(
-			repository.findOrCreateDirectConversation,
+			repository.createMessageInDirectConversation,
 		).not.toHaveBeenCalled();
 	});
 
 	it('rejeita quando o remetente não existe com USER_NOT_FOUND', async () => {
-		repository.findUserById
-			.mockResolvedValueOnce(null)
-			.mockResolvedValueOnce({ id: receiverId });
+		stubUsers({ [senderId]: false, [receiverId]: true });
 
 		await expect(
 			service.enviar({ senderId, receiverId, content: 'Olá!' }),
 		).rejects.toMatchObject({ code: 'USER_NOT_FOUND' });
+
+		expect(
+			repository.createMessageInDirectConversation,
+		).not.toHaveBeenCalled();
 	});
 
 	it('mapeia falha de persistência para PERSISTENCE_ERROR', async () => {
-		repository.findUserById
-			.mockResolvedValueOnce({ id: senderId })
-			.mockResolvedValueOnce({ id: receiverId });
-		repository.findOrCreateDirectConversation.mockRejectedValue(
+		stubUsers({ [senderId]: true, [receiverId]: true });
+		repository.createMessageInDirectConversation.mockRejectedValue(
 			new Error('db down'),
 		);
 
@@ -125,5 +133,9 @@ describe('ChatMessageService.enviar', () => {
 
 		expect(error).toBeInstanceOf(ChatSendError);
 		expect(error.code).toBe('PERSISTENCE_ERROR');
+		// O service tenta persistir duas vezes antes de desistir.
+		expect(
+			repository.createMessageInDirectConversation,
+		).toHaveBeenCalledTimes(2);
 	});
 });

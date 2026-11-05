@@ -232,30 +232,17 @@ export class ChatRepository {
 		currentUserId: string,
 		userId: string,
 	) {
+		// Usa o par canonico (directUserAId/BId) — a mesma chave usada na criacao
+		// (createMessageInDirectConversation) e no indice unico do banco. A ordem
+		// e definida por `canonicalDirectPair` (JS `<`, ordem binaria), que casa
+		// com o backfill/CHECK em COLLATE "C". Isso unifica os dois caminhos de
+		// busca e elimina a divergencia com a antiga busca por participantes.
+		const pair = this.canonicalDirectPair(currentUserId, userId);
+
 		return this.client.conversation.findFirst({
 			where: {
 				type: 'DIRECT',
-				AND: [
-					{
-						participants: {
-							some: { userId: currentUserId },
-						},
-					},
-					{
-						participants: {
-							some: { userId },
-						},
-					},
-					{
-						participants: {
-							every: {
-								userId: {
-									in: [currentUserId, userId],
-								},
-							},
-						},
-					},
-				],
+				...pair,
 			},
 			select: {
 				id: true,
