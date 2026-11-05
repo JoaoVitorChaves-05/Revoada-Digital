@@ -191,6 +191,7 @@ if (screen === 'disciplinas') {
       <DashboardPage
         onBack={() => setScreen('comunidade')}
         onVerEstatisticas={() => setScreen('desempenho')}
+        onNavigate={navegarMenu}
       />
     )
   }
