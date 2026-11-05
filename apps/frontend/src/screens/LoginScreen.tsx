@@ -1,5 +1,6 @@
 import iconContainer from './icons/icon-container.png';
 import { useState } from 'react'
+import { API_BASE_URL } from '../utils/apiBase'
 
 export type UsuarioLogado = {
   id: string
@@ -14,9 +15,8 @@ type LoginScreenProps = {
   onLoginSuccess: (user: UsuarioLogado) => void
 }
 
-// Usa VITE_API_URL (ex.: http://localhost:3000 em dev). Remove barra final
-// para evitar '//auth/login'. Fallback para o backend local.
-const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/+$/, '')
+// Resolve a URL da API conforme o ambiente (dev/producao). Ver utils/apiBase.
+const API_BASE = API_BASE_URL
 
 export function LoginScreen({ onBack, onForgot, onLoginSuccess }: LoginScreenProps) {
   const [email, setEmail] = useState('')

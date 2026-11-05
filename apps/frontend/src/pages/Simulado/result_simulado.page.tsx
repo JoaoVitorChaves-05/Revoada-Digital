@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { AttemptResult } from '../../types/resultado_simulado.types';
 import { ResultQuestionCard } from '../../components/ResultQuestionCard';
+import { API_BASE_URL } from '../../utils/apiBase';
 
 interface ResultPageProps {
   attemptId: string;
@@ -14,7 +15,7 @@ export function ResultPage({ attemptId }: ResultPageProps) {
   useEffect(() => {
     async function fetchResult() {
       try {
-        const response = await fetch(`http://localhost:3000/attempts/${attemptId}`);
+        const response = await fetch(`${API_BASE_URL}/attempts/${attemptId}`);
         
         if (!response.ok) {
           throw new Error('Não foi possível carregar os resultados do simulado.');

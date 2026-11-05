@@ -1,8 +1,7 @@
 import type { Attempt } from '../types/attempts.types';
+import { API_BASE_URL } from './apiBase';
 
-// Alinhado a PainelDesempenho.page.tsx.
-// TODO Fase 2: mover para import.meta.env.
-const URL_BASE_API = 'http://localhost:3000';
+const URL_BASE_API = API_BASE_URL;
 
 const MENSAGEM_ERRO = 'Não foi possível carregar seu painel.';
 
