@@ -56,6 +56,7 @@ out/
 lib/
 !apps/backend/src/lib/
 !apps/backend/src/lib/prisma.ts
+!apps/frontend/src/lib/
 # Cache incremental do TypeScript
 *.tsbuildinfo
 # ==========================================

@@ -3,8 +3,12 @@ import { chatService } from '../services/chat.list.service';
 
 export async function listUserConversations(req: Request, res: Response) {
     try {
-        // Assume que o middleware de auth adicionou o id do usuário logado em req.user
-        const userId = req.user?.id || (req as any).userId; 
+        // Identidade provisória unificada (1=a): mesmo esquema do histórico.
+        // No Bloco B (JWT) isto volta a ser req.user.id via ensureAuthenticated.
+        const userId =
+            req.user?.id ||
+            (req as any).userId ||
+            req.header('x-user-id');
 
         if (!userId) {
             return res.status(401).json({ error: 'Usuário não autenticado' });
