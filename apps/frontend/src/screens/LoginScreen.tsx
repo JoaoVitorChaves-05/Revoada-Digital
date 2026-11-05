@@ -14,7 +14,7 @@ type LoginScreenProps = {
   onLoginSuccess: (user: UsuarioLogado) => void
 }
 
-const API_BASE = 'https://revoada-digital-backend.vercel.app/'
+const API_BASE = 'https://revoada-digital-backend.vercel.app'
 
 export function LoginScreen({ onBack, onForgot, onLoginSuccess }: LoginScreenProps) {
   const [email, setEmail] = useState('')
