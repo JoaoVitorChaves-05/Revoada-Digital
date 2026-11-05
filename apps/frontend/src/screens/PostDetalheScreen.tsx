@@ -14,8 +14,9 @@ import {
   Share2,
   ThumbsUp,
   Users,
+  Trash2,
 } from 'lucide-react';
-import { useForumPost, useCreateReply } from '../hooks/useForum';
+import { useForumPost, useCreateReply, useDeletePost } from '../hooks/useForum';
 import { SUBJECT_LABELS, PROFILE_LABELS } from '../types/forum.types';
 import type { ForumReply } from '../types/forum.types';
 import { UserMenu } from '../components/UserMenu';
@@ -32,12 +33,14 @@ interface Props {
   onLogout?: () => void;
   userId?: string;
   userName?: string;
+  userProfileType?: string;
 }
 
-export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, onChat, userName, onPerfil, onConfiguracoes, onLogout, userId }: Props) {
+export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, onChat, userName, onPerfil, onConfiguracoes, onLogout, userId, userProfileType }: Props) {
   // Estados do backend
   const { post, loading, error, refetch } = useForumPost(postId);
   const { createReply, loading: creatingReply } = useCreateReply(postId);
+  const { deletePost, loading: isDeleting } = useDeletePost();
 
   // Estados locais (UI)
   const [postLiked, setPostLiked] = useState(false);
@@ -78,6 +81,9 @@ export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, 
       minute: '2-digit',
     });
   };
+
+  // O botão aparece se for o autor exato do post OU se o cargo for professor
+  const canDelete = post && (userId === post.author.id || userProfileType === 'TEACHER');
 
   // Função para mapear cor do perfil
   const getProfileTone = (profileType: string): 'indigo' | 'green' | 'peach' => {
@@ -234,9 +240,11 @@ export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, 
                 </span>
                 <span className="rounded bg-slate-50 px-2 py-1 text-slate-600">Dúvida</span>
               </div>
+              
               <h2 className="text-xl font-extrabold leading-tight text-indigo-950 sm:text-2xl">
                 {post.title}
               </h2>
+              
               <div className="flex items-center gap-2">
                 <span
                   className={`${avatar} h-5 w-5 ${
@@ -255,13 +263,37 @@ export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, 
                     {formatDate(post.createdAt)} · {PROFILE_LABELS[post.author.profileType]}
                   </small>
                 </div>
+                
+                {/* BOTÃO DE EXCLUSÃO ADICIONADO AQUI */}
+                {canDelete && (
+                  <button 
+                    className={`${iconButton} h-5 w-5 hover:bg-red-50 hover:text-red-600 disabled:opacity-50`} 
+                    aria-label="Excluir post"
+                    disabled={isDeleting}
+                    onClick={async () => {
+                      if(window.confirm('Tem certeza que deseja excluir este post?')) {
+                        const success = await deletePost(post.id);
+                        if (success) {
+                          onBack(); // Sai da tela se a exclusão der certo
+                        } else {
+                          alert('Ocorreu um erro ao tentar excluir o post.');
+                        }
+                      }
+                    }}
+                  >
+                    <Trash2 size={11} />
+                  </button>
+                )}
+
                 <button className={`${iconButton} h-5 w-5`} aria-label="Mais opções">
                   <Ellipsis size={11} />
                 </button>
               </div>
+              
               <div className="space-y-3 text-[11px] leading-5 text-slate-600 sm:text-xs">
                 <p>{post.content}</p>
               </div>
+              
               <div className="flex flex-col justify-between gap-2 border-t border-slate-100 pt-2 sm:flex-row sm:items-center">
                 <div className="flex flex-wrap items-center gap-1">
                   <button
