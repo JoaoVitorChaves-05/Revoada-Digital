@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { authService, EmailNotVerifiedError } from '../services/auth.service';
+import { authService } from '../services/auth.service';
 
 export async function login(req: Request, res: Response) {
     try {
@@ -10,10 +10,6 @@ export async function login(req: Request, res: Response) {
             user: result.user,
         });
     } catch (error) {
-        if (error instanceof EmailNotVerifiedError) {
-            return res.status(403).json({ message: error.message });
-        }
-
         if (
             error instanceof Error &&
             error.message === 'Email ou senha inválidos'
