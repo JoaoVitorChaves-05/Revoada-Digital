@@ -6,7 +6,7 @@ import { LoginScreen } from './screens/LoginScreen'
 import { RedefinirScreen } from './screens/RedefinirScreen'
 import { ResultPage } from './pages/result_simulado.page'
 import { PainelDesempenhoPage } from './pages/PainelDesempenho.page'
-import { DisciplinasScreen } from './Pages/DisciplinasScreen'
+import { DisciplinasScreen } from './screens/DisciplinasScreen'
 
 type Screen = 'home' | 'cadastro' | 'login' | 'redefinir' | 'result' | 'desempenho' | 'disciplinas'
 
