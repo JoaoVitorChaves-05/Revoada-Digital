@@ -14,7 +14,9 @@ type LoginScreenProps = {
   onLoginSuccess: (user: UsuarioLogado) => void
 }
 
-const API_BASE = 'https://revoada-digital-backend.vercel.app/'
+// Usa VITE_API_URL (ex.: http://localhost:3000 em dev). Remove barra final
+// para evitar '//auth/login'. Fallback para o backend local.
+const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/+$/, '')
 
 export function LoginScreen({ onBack, onForgot, onLoginSuccess }: LoginScreenProps) {
   const [email, setEmail] = useState('')
