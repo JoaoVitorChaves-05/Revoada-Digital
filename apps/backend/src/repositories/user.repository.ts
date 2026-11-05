@@ -51,7 +51,7 @@ export class UserRepository {
 			if (data.profileType === 'STUDENT') {
 				const schoolId = await findSchoolId(tx, data.school);
 				await tx.studentProfile.create({
-					data: { userId: user.id, schoolId },
+					data: { userId: user.id, schoolId, yearId: data.year as number },
 				});
 			} else if (data.profileType === 'TEACHER') {
 				const schoolId = await findSchoolId(tx, data.school);
@@ -97,7 +97,7 @@ export class UserRepository {
 
 				if (profileType === 'STUDENT') {
 					const schoolId = await findSchoolId(tx, data.school);
-					await tx.studentProfile.create({ data: { userId: id, schoolId } });
+					await tx.studentProfile.create({ data: { userId: id, schoolId, yearId: data.year as number } });
 				} else if (profileType === 'TEACHER') {
 					const schoolId = await findSchoolId(tx, data.school);
 					await tx.teacherProfile.create({ data: { userId: id, schoolId } });
