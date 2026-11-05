@@ -1,56 +1,114 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { Request, Response, NextFunction } from 'express';
-import { ensureAuthenticated } from './auth.middleware';
+import {
+	afterEach,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	vi,
+} from 'vitest';
+import type { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
+import { ensureAuthenticated } from './auth.middleware';
 
-describe('Auth Middleware - Teste de Ambiente (.env) e Token Real', () => {
-    let mockReq: Partial<Request>;
-    let mockRes: Partial<Response>;
-    let nextFunction: NextFunction;
-    const originalEnv = process.env.JWT_SECRET;
+const JWT_SECRET_TEST = 'chave-jwt-apenas-para-testes';
 
-    beforeEach(() => {
-        mockReq = { headers: {} };
-        mockRes = {
-            status: vi.fn().mockReturnThis(),
-            json: vi.fn(),
-        };
-        nextFunction = vi.fn();
-        vi.clearAllMocks();
-    });
+function executeMiddleware(authorization?: string) {
+	const req = {
+		headers: { authorization },
+	} as Request;
 
-    afterEach(() => {
-        // Restaura a variável original do ambiente após cada teste
-        process.env.JWT_SECRET = originalEnv;
-    });
+	const res = {
+		status: vi.fn().mockReturnThis(),
+		json: vi.fn(),
+	};
 
-    it('deve falhar e retornar erro 500 ou lançar exceção se o JWT_SECRET não estiver configurado no .env', () => {
-        // Remove propositalmente a variável de ambiente para testar a falta dela
-        delete process.env.JWT_SECRET;
+	const next = vi.fn();
 
-        // Gera um token válido só para passar da verificação do header
-        const token = jwt.sign({ sub: '123' }, 'qualquer-chave');
-        mockReq.headers = { authorization: `Bearer ${token}` };
+	ensureAuthenticated(
+		req,
+		res as unknown as Response,
+		next,
+	);
 
-        ensureAuthenticated(mockReq as Request, mockRes as Response, nextFunction);
+	return { req, res, next };
+}
 
-        // Garante que o middleware barrou a requisição por falta da chave no .env
-        expect(mockRes.status).toHaveBeenCalledWith(401); 
-        expect(nextFunction).not.toHaveBeenCalled();
-    });
+describe('ensureAuthenticated', () => {
+	beforeEach(() => {
+		vi.stubEnv('JWT_SECRET', JWT_SECRET_TEST);
+	});
 
-    it('deve autenticar com sucesso usando a secret real definida no ambiente', () => {
-        // Define explicitamente uma secret de teste no ambiente
-        process.env.JWT_SECRET = 'minha-secret-super-segura-do-env';
+	afterEach(() => {
+		vi.unstubAllEnvs();
+	});
 
-        // Cria um token real assinado com essa exata secret
-        const token = jwt.sign({ sub: 'user-xyz' }, process.env.JWT_SECRET);
-        mockReq.headers = { authorization: `Bearer ${token}` };
+	it('identifica o usuário e libera acesso com token válido', () => {
+		const token = jwt.sign({}, JWT_SECRET_TEST, {
+			subject: 'user-1',
+			expiresIn: '24h',
+			algorithm: 'HS256',
+		});
 
-        ensureAuthenticated(mockReq as Request, mockRes as Response, nextFunction);
+		const { req, res, next } =
+			executeMiddleware(`Bearer ${token}`);
 
-        // Garante que o .env foi lido com sucesso, validou o token, injetou o usuário e chamou o next()
-        expect(mockReq.user).toEqual({ id: 'user-xyz' });
-        expect(nextFunction).toHaveBeenCalledTimes(1);
-    });
+		expect(req.user).toEqual({ id: 'user-1' });
+		expect(next).toHaveBeenCalledTimes(1);
+		expect(res.status).not.toHaveBeenCalled();
+	});
+
+	it.each([
+		['header ausente', () => undefined],
+		['formato incorreto', () => 'Basic qualquer-valor'],
+		['token inválido', () => 'Bearer token-invalido'],
+		[
+			'token expirado',
+			() => `Bearer ${jwt.sign({}, JWT_SECRET_TEST, {
+				subject: 'user-1',
+				expiresIn: -1,
+			})}`,
+		],
+		[
+			'assinatura incorreta',
+			() => `Bearer ${jwt.sign({}, 'outra-chave', {
+				subject: 'user-1',
+				expiresIn: '24h',
+			})}`,
+		],
+		[
+			'token sem identificação do usuário',
+			() => `Bearer ${jwt.sign({}, JWT_SECRET_TEST, {
+				expiresIn: '24h',
+			})}`,
+		],
+		[
+			'token sem expiração',
+			() => `Bearer ${jwt.sign({}, JWT_SECRET_TEST, {
+				subject: 'user-1',
+			})}`,
+		],
+	])('retorna 401 para %s', (_, createHeader) => {
+		const { req, res, next } =
+			executeMiddleware(createHeader());
+
+		expect(res.status).toHaveBeenCalledWith(401);
+		expect(req.user).toBeUndefined();
+		expect(next).not.toHaveBeenCalled();
+	});
+
+	it.each([undefined, '   '])(
+		'retorna 500 quando JWT_SECRET é %s',
+		(secret) => {
+			vi.stubEnv('JWT_SECRET', secret);
+
+			const { res, next } =
+				executeMiddleware('Bearer token-de-teste');
+
+			expect(res.status).toHaveBeenCalledWith(500);
+			expect(res.json).toHaveBeenCalledWith({
+				error: 'Erro na configuração de autenticação',
+			});
+			expect(next).not.toHaveBeenCalled();
+		},
+	);
 });
