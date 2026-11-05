@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { UserRepository } from '../repositories/user.repository';
 import { UserService } from './user.service';
+import { compare } from 'bcrypt';
 
 vi.mock('../repositories/user.repository', () => ({
 	UserRepository: class {},
@@ -36,16 +37,53 @@ describe('UserService', () => {
 		service = new UserService(repository as unknown as UserRepository);
 	});
 
-	it('cria usuário quando email e RG ainda não existem', async () => {
-		const createdUser = { id: 'user-1', ...userInput };
+	it('cria usuário com hash e não devolve a senha', async () => {
 		repository.findByEmail.mockResolvedValue(null);
 		repository.findByRg.mockResolvedValue(null);
-		repository.createWithProfileAndApproval.mockResolvedValue({ user: createdUser });
+
+		repository.createWithProfileAndApproval.mockImplementation(
+			async (data) => ({
+				user: {
+					id: 'user-1',
+					...data,
+				},
+				approvalRequest: {
+					id: 'approval-1',
+				},
+			}),
+		);
 
 		const result = await service.createUser(userInput);
 
-		expect(result).toEqual({ user: createdUser });
-		expect(repository.createWithProfileAndApproval).toHaveBeenCalledWith(userInput);
+		expect(repository.createWithProfileAndApproval)
+			.toHaveBeenCalledTimes(1);
+
+		const savedData =
+			repository.createWithProfileAndApproval.mock.calls[0]![0];
+
+		expect(savedData).toEqual({
+			...userInput,
+			password: expect.any(String),
+		});
+
+		expect(savedData.password).not.toBe(userInput.password);
+
+		expect(
+			await compare(userInput.password, savedData.password),
+		).toBe(true);
+
+		expect(
+			await compare('senha-incorreta', savedData.password),
+		).toBe(false);
+
+		expect(result.user).not.toHaveProperty('password');
+		expect(result.user.id).toBe('user-1');
+		expect(result.user.email).toBe(userInput.email);
+		expect(result.approvalRequest).toEqual({
+			id: 'approval-1',
+		});
+
+		expect(userInput.password).toBe('senha123');
 	});
 
 	it('impede cadastro com email já utilizado', async () => {
@@ -118,4 +156,43 @@ describe('UserService', () => {
         expect(result).toEqual({ id: 'user-1' });
         expect(repository.findById).toHaveBeenCalledWith('user-1');
     });
+
+	it('não retorna o hash ao consultar usuário', async () => {
+		repository.findById.mockResolvedValue({
+			id: 'user-1',
+			email: userInput.email,
+			password: 'hash-de-teste',
+		});
+
+		const result = await service.readUser('user-1');
+
+		expect(result).toEqual({
+			id: 'user-1',
+			email: userInput.email,
+		});
+	});
+
+	it('não retorna o hash ao atualizar usuário', async () => {
+		repository.findById.mockResolvedValue({
+			id: 'user-1',
+			email: userInput.email,
+			rg: userInput.rg,
+			password: 'hash-de-teste',
+		});
+
+		repository.update.mockResolvedValue({
+			id: 'user-1',
+			full_name: 'Nome Atualizado',
+			password: 'hash-de-teste',
+		});
+
+		const result = await service.updateUser('user-1', {
+			full_name: 'Nome Atualizado',
+		});
+
+		expect(result).toEqual({
+			id: 'user-1',
+			full_name: 'Nome Atualizado',
+		});
+	});
 });
