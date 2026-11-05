@@ -14,7 +14,6 @@ import { ChatPage } from './pages/Chat/ChatPage'
 import { DashboardPage } from './pages/Dashboard.page'
 import { GerarSimulado } from './pages/Simulado/GerarSimulado'
 import { FazerSimulado } from './pages/Simulado/FazerSimulado'
-import { HistoricoSimulados } from './pages/Simulado/HistoricoSimulados'
 import { PerfilScreen } from './screens/PerfilScreen'
 import { ConfiguracoesScreen } from './screens/ConfiguracoesScreen'
 
@@ -34,7 +33,6 @@ type Screen =
   | 'result'
   | 'desempenho'
   | 'dashboard'
-  | 'history'
   | 'verificar-email'
   | 'comunidade'
   | 'chat'
@@ -101,13 +99,12 @@ function App() {
         onForgot={() => setScreen('redefinir')}
         onLoginSuccess={(user) => {
           setUsuario(user)
-          setScreen('comunidade')
+          setScreen('dashboard')
         }}
       />
     )
   }
   if (screen === 'redefinir') return <RedefinirScreen onBack={() => setScreen('login')} />
-  if (screen === 'history') return <HistoryPage onBack={() => setScreen('home')} />
 
   // --- Area logada: Comunidade / Chat / Detalhe do post ---
   if (screen === 'comunidade') {
@@ -155,13 +152,13 @@ function App() {
   }
 
   if (screen === 'desempenho') {
-    return <PainelDesempenhoPage onBack={() => setScreen('home')} />
+    return <PainelDesempenhoPage onBack={() => setScreen('dashboard')} />
   }
 
   if (screen === 'dashboard') {
     return (
       <DashboardPage
-        onBack={() => setScreen('home')}
+        onBack={() => setScreen('comunidade')}
         onVerEstatisticas={() => setScreen('desempenho')}
       />
     )
@@ -190,13 +187,9 @@ function App() {
 
   if (screen === 'historico') {
     if (!usuario) { setScreen('login'); return null }
-    return (
-      <HistoricoSimulados
-        userId={usuario.id}
-        onBack={() => setScreen('comunidade')}
-        onVerResultado={(attemptId) => { setAttemptAtivo(attemptId); setScreen('result') }}
-      />
-    )
+    // Usa a tela de historico da feature Dashboard (HistoryPage), que resolve o
+    // aluno via Servico_Sessao (agora conectado ao usuario logado).
+    return <HistoryPage onBack={() => setScreen('dashboard')} />
   }
 
   if (screen === 'perfil') {
