@@ -6,14 +6,17 @@ import { LoginScreen, type UsuarioLogado } from './screens/LoginScreen'
 import { RedefinirScreen } from './screens/RedefinirScreen'
 import { VerificarEmailScreen } from './screens/VerificarEmailScreen'
 import ComunidadePostScreen from './screens/comunidadepostscreen'
-import Mensagens from './screens/chatscreen'
 import PostDetalheScreen from './screens/PostDetalheScreen'
 import { ResultPage } from './pages/Simulado/result_simulado.page'
 import { HistoryPage } from './pages/Simulado/historico_simulados.page'
 import { PainelDesempenhoPage } from './pages/PainelDesempenho.page'
 import { ChatPage } from './pages/Chat/ChatPage'
-
-type Screen = 'home' | 'cadastro' | 'login' | 'redefinir' | 'result' | 'desempenho' | 'chat'
+import { DashboardPage } from './pages/Dashboard.page'
+import { GerarSimulado } from './pages/Simulado/GerarSimulado'
+import { FazerSimulado } from './pages/Simulado/FazerSimulado'
+import { HistoricoSimulados } from './pages/Simulado/HistoricoSimulados'
+import { PerfilScreen } from './screens/PerfilScreen'
+import { ConfiguracoesScreen } from './screens/ConfiguracoesScreen'
 
 // Identidade de teste do chat (6=a): usuários fixos para simular as duas pontas
 // na demo. Substituir pelo usuário autenticado (JWT) no Bloco B (6=b).
@@ -22,12 +25,6 @@ const CHAT_TEST_USERS = [
   { id: '00000000-0000-0000-0000-000000000001', label: 'Usuário de teste 1' },
   { id: '00000000-0000-0000-0000-000000000002', label: 'Usuário de teste 2' },
 ]
-import { DashboardPage } from './pages/Dashboard.page'
-import { GerarSimulado } from './pages/Simulado/GerarSimulado'
-import { FazerSimulado } from './pages/Simulado/FazerSimulado'
-import { HistoricoSimulados } from './pages/Simulado/HistoricoSimulados'
-import { PerfilScreen } from './screens/PerfilScreen'
-import { ConfiguracoesScreen } from './screens/ConfiguracoesScreen'
 
 type Screen =
   | 'home'
@@ -66,11 +63,10 @@ function App() {
   const [usuario, setUsuario] = useState<UsuarioLogado | null>(null)
   const [postSelecionado, setPostSelecionado] = useState<string | null>(null)
   const [attemptAtivo, setAttemptAtivo] = useState<string | null>(null)
+  const [chatUserId, setChatUserId] = useState<string>(CHAT_TEST_USERS[0].id)
 
   const estaLogado = usuario !== null
 
-  const [currentAttemptId, setCurrentAttemptId] = useState<string>("769e855b-4a27-4a5b-a48c-170be35004d2") //ID de teste
-  const [chatUserId, setChatUserId] = useState<string>(CHAT_TEST_USERS[0].id)
   function logout() {
     localStorage.removeItem('usuarioLogado')
     setUsuario(null)
@@ -132,7 +128,14 @@ function App() {
   }
 
   if (screen === 'chat') {
-    return <Mensagens userName={usuario?.full_name} onComunidade={() => setScreen('comunidade')} onSimulados={() => setScreen('gerar-simulado')} onBack={() => setScreen('comunidade')} onPerfil={menuProps.onPerfil} onConfiguracoes={menuProps.onConfiguracoes} onLogout={menuProps.onLogout} />
+    return (
+      <ChatPage
+        onBack={() => setScreen('comunidade')}
+        currentUserId={chatUserId}
+        testUsers={CHAT_TEST_USERS}
+        onSwitchUser={setChatUserId}
+      />
+    )
   }
 
   if (screen === 'post-detalhe' && postSelecionado) {
@@ -155,18 +158,6 @@ function App() {
     return <PainelDesempenhoPage onBack={() => setScreen('home')} />
   }
 
-  if (screen === 'chat') {
-    return (
-      <ChatPage
-        onBack={() => setScreen('home')}
-        currentUserId={chatUserId}
-        testUsers={CHAT_TEST_USERS}
-        onSwitchUser={setChatUserId}
-      />
-    )
-  }
-
-  if (screen === 'result') {
   if (screen === 'dashboard') {
     return (
       <DashboardPage
