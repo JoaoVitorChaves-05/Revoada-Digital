@@ -1,48 +1,38 @@
 import { useState, useEffect } from 'react';
 import './FazerSimulado.css';
+import { simuladoService, type AttemptApi } from '../../services/simulado.service';
 
-// Interfaces para tipagem dos dados
-interface Alternativa {
-  id: string;
-  text: string;
-}
+type FazerSimuladoProps = {
+  attemptId: string;
+  onFinalizar: (attemptId: string) => void;
+};
 
-interface Questao {
-  id: string;
-  statement: string;
-  alternatives: Alternativa[];
-}
+export function FazerSimulado({ attemptId, onFinalizar }: FazerSimuladoProps) {
+  const [attempt, setAttempt] = useState<AttemptApi | null>(null);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState<string | null>(null);
+  const [enviando, setEnviando] = useState(false);
 
-// Simulando questões que virão do seu endpoint /api/v1/questions no futuro
-const mockQuestoes: Questao[] = [
-  {
-    id: 'q1',
-    statement: "O desenvolvimento sustentável envolve o atendimento das necessidades atuais sem comprometer as gerações futuras. Qual alternativa representa uma prática alinhada a esse conceito?",
-    alternatives: [
-      { id: 'A', text: "O uso intensivo de combustíveis fósseis para acelerar o crescimento." },
-      { id: 'B', text: "A implementação de sistemas de reciclagem e reuso na indústria." },
-      { id: 'C', text: "O descarte de resíduos em rios para reduzir custos." },
-      { id: 'D', text: "O desmatamento de áreas nativas para agricultura." }
-    ]
-  },
-  {
-    id: 'q2',
-    statement: "Na matemática financeira, os juros compostos são calculados sobre o montante acumulado. Qual é a principal diferença em relação aos juros simples?",
-    alternatives: [
-      { id: 'A', text: "Juros simples crescem exponencialmente." },
-      { id: 'B', text: "Juros compostos são calculados apenas sobre o capital inicial." },
-      { id: 'C', text: "Juros compostos geram o efeito de 'juros sobre juros'." },
-      { id: 'D', text: "Não há diferença matemática entre os dois." }
-    ]
-  }
-];
-
-export function FazerSimulado() {
   const [indiceQuestaoAtual, setIndiceQuestaoAtual] = useState(0);
   const [respostas, setRespostas] = useState<Record<string, string>>({});
   const [tempoSegundos, setTempoSegundos] = useState(0);
 
-  // Cronômetro da prova
+  // Carrega a tentativa (questoes reais) ao montar
+  useEffect(() => {
+    async function carregar() {
+      try {
+        const dados = await simuladoService.getTentativa(attemptId);
+        setAttempt(dados);
+      } catch (err: any) {
+        setErro(err?.response?.data?.error || 'Não foi possível carregar o simulado.');
+      } finally {
+        setCarregando(false);
+      }
+    }
+    carregar();
+  }, [attemptId]);
+
+  // Cronometro
   useEffect(() => {
     const timer = setInterval(() => setTempoSegundos((prev) => prev + 1), 1000);
     return () => clearInterval(timer);
@@ -54,28 +44,42 @@ export function FazerSimulado() {
     return `${min}:${seg}`;
   };
 
-  const questaoAtual = mockQuestoes[indiceQuestaoAtual];
-  const totalQuestoes = mockQuestoes.length;
-  const isUltimaQuestao = indiceQuestaoAtual === totalQuestoes - 1;
+  if (carregando) return <div style={{ padding: 30 }}>Carregando simulado...</div>;
+  if (erro) return <div style={{ padding: 30, color: '#b91c1c' }}>Erro: {erro}</div>;
+  if (!attempt || attempt.mockExam.questions.length === 0) {
+    return <div style={{ padding: 30 }}>Este simulado não possui questões.</div>;
+  }
 
-  const handleSelecionarAlternativa = (alternativaId: string) => {
-    setRespostas({
-      ...respostas,
-      [questaoAtual.id]: alternativaId
-    });
+  const questoes = [...attempt.mockExam.questions].sort((a, b) => a.position - b.position);
+  const total = questoes.length;
+  const atual = questoes[indiceQuestaoAtual].question;
+  const isUltima = indiceQuestaoAtual === total - 1;
+  const marcada = respostas[atual.id];
+
+  const selecionar = (alternativaId: string) => {
+    setRespostas({ ...respostas, [atual.id]: alternativaId });
   };
 
-  const handleProxima = () => {
-    if (isUltimaQuestao) {
-      alert("Simulado finalizado! Enviando respostas para o servidor...");
-      console.log("Respostas do aluno:", respostas);
-      // Aqui no futuro chamaremos a rota POST /api/v1/simulations/:id/submit
-    } else {
-      setIndiceQuestaoAtual((prev) => prev + 1);
+  async function handleProxima() {
+    if (!isUltima) {
+      setIndiceQuestaoAtual((p) => p + 1);
+      return;
     }
-  };
-
-  const alternativaMarcada = respostas[questaoAtual.id];
+    // Finalizar: envia todas as respostas
+    setEnviando(true);
+    setErro(null);
+    try {
+      const answers = questoes.map((mq) => ({
+        questionId: mq.question.id,
+        selectedAlternativeId: respostas[mq.question.id] ?? null,
+      }));
+      await simuladoService.submeter(attemptId, answers);
+      onFinalizar(attemptId);
+    } catch (err: any) {
+      setErro(err?.response?.data?.error || 'Não foi possível enviar o simulado.');
+      setEnviando(false);
+    }
+  }
 
   return (
     <div className="fazer-simulado-container">
@@ -84,52 +88,45 @@ export function FazerSimulado() {
           <span className="logo-revoada">Revoada</span>
           <span className="logo-digital">Digital</span>
         </div>
-        <div className="cronometro">
-          Tempo: {formatarTempo(tempoSegundos)}
-        </div>
+        <div className="cronometro">Tempo: {formatarTempo(tempoSegundos)}</div>
       </header>
 
       <main className="fazer-simulado-main">
         <div className="progresso-container">
-          <span>Progresso: {indiceQuestaoAtual + 1} de {totalQuestoes}</span>
+          <span>Progresso: {indiceQuestaoAtual + 1} de {total}</span>
           <div className="barra-fundo">
-            <div 
-              className="barra-preenchimento" 
-              style={{ width: `${((indiceQuestaoAtual + 1) / totalQuestoes) * 100}%` }}
-            ></div>
+            <div className="barra-preenchimento" style={{ width: `${((indiceQuestaoAtual + 1) / total) * 100}%` }}></div>
           </div>
         </div>
 
         <div className="questao-card">
           <h2 className="questao-header">Questão {indiceQuestaoAtual + 1}</h2>
-          <p className="questao-enunciado">{questaoAtual.statement}</p>
-          
+          <p className="questao-enunciado">{atual.text}</p>
+
           <div className="alternativas-container">
-            {questaoAtual.alternatives.map((alt) => (
-              <label 
-                key={alt.id} 
-                className={`alternativa-item ${alternativaMarcada === alt.id ? 'selecionada' : ''}`}
-              >
-                <input 
-                  type="radio" 
-                  name={`questao-${questaoAtual.id}`} 
-                  value={alt.id}
-                  checked={alternativaMarcada === alt.id}
-                  onChange={() => handleSelecionarAlternativa(alt.id)}
-                />
-                <span className="alternativa-letra">{alt.id})</span>
-                <span className="alternativa-texto">{alt.text}</span>
-              </label>
-            ))}
+            {atual.alternatives.map((alt, i) => {
+              const letra = String.fromCharCode(65 + i);
+              return (
+                <label key={alt.id} className={`alternativa-item ${marcada === alt.id ? 'selecionada' : ''}`}>
+                  <input
+                    type="radio"
+                    name={`questao-${atual.id}`}
+                    value={alt.id}
+                    checked={marcada === alt.id}
+                    onChange={() => selecionar(alt.id)}
+                  />
+                  <span className="alternativa-letra">{letra})</span>
+                  <span className="alternativa-texto">{alt.text}</span>
+                </label>
+              );
+            })}
           </div>
 
+          {erro && <p style={{ color: '#b91c1c', marginTop: 10 }}>{erro}</p>}
+
           <div className="acoes-container">
-            <button 
-              className="btn-proxima" 
-              onClick={handleProxima}
-              disabled={!alternativaMarcada}
-            >
-              {isUltimaQuestao ? 'Finalizar Simulado' : 'Próxima Questão'}
+            <button className="btn-proxima" onClick={handleProxima} disabled={!marcada || enviando}>
+              {enviando ? 'Enviando...' : isUltima ? 'Finalizar Simulado' : 'Próxima Questão'}
             </button>
           </div>
         </div>
