@@ -1,4 +1,5 @@
 import iconContainer from './icons/icon-container.png'
+import type { ReactNode } from 'react'
 
 const css = `
 /* Tela Disciplinas — ajuste as variáveis para os tokens reais do seu Figma / CSS global */
@@ -384,13 +385,17 @@ type Disciplina = {
   resolvidas: number
   acerto: number
   niveis: Nivel[]
-  icone: JSX.Element
+  icone: ReactNode
 }
 
 type DisciplinasScreenProps = {
+  userName?: string
   onNavigate?: (destino: string) => void
   onEstudar?: (disciplinaId: string) => void
   onPraticarRedacao?: () => void
+  onPerfil?: () => void
+  onConfiguracoes?: () => void
+  onLogout?: () => void
 }
 
 const stroke = {

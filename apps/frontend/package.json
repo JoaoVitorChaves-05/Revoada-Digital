@@ -11,13 +11,16 @@
     "test": "vitest --run"
   },
   "dependencies": {
+    "@react-three/drei": "^10.0.0",
+    "@react-three/fiber": "^9.0.0",
     "@tailwindcss/vite": "^4.3.3",
     "axios": "^1.21.0",
     "lucide-react": "^1.63.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "socket.io-client": "^4.8.4",
-    "tailwindcss": "^4.3.3"
+    "tailwindcss": "^4.3.3",
+    "three": "^0.169.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

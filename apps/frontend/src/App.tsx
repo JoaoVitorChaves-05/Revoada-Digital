@@ -191,6 +191,14 @@ if (screen === 'disciplinas') {
       <DashboardPage
         onBack={() => setScreen('comunidade')}
         onVerEstatisticas={() => setScreen('desempenho')}
+        userName={usuario?.full_name}
+        onSimulados={() => setScreen('gerar-simulado')}
+        onComunidade={() => setScreen('comunidade')}
+        onChat={() => setScreen('chat')}
+        onDisciplinas={() => setScreen('disciplinas')}
+        onPerfil={menuProps.onPerfil}
+        onConfiguracoes={menuProps.onConfiguracoes}
+        onLogout={menuProps.onLogout}
         onNavigate={navegarMenu}
       />
     )

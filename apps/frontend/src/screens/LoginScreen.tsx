@@ -1,5 +1,6 @@
 import iconContainer from './icons/icon-container.png';
 import { useState } from 'react'
+import { API_BASE_URL } from '../utils/apiBase'
 
 export type UsuarioLogado = {
   id: string
@@ -14,7 +15,8 @@ type LoginScreenProps = {
   onLoginSuccess: (user: UsuarioLogado) => void
 }
 
-const API_BASE = 'https://revoada-digital-backend.vercel.app'
+// Resolve a URL da API conforme o ambiente (dev/producao). Ver utils/apiBase.
+const API_BASE = API_BASE_URL
 
 export function LoginScreen({ onBack, onForgot, onLoginSuccess }: LoginScreenProps) {
   const [email, setEmail] = useState('')
