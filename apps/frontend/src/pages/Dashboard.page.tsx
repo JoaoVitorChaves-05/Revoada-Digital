@@ -39,9 +39,12 @@ export interface DashboardPageProps {
   onSimulados?: () => void;
   onComunidade?: () => void;
   onChat?: () => void;
+  onDisciplinas?: () => void;
   onPerfil?: () => void;
   onConfiguracoes?: () => void;
   onLogout?: () => void;
+  /** Navegação do bloco de disciplinas (clique no card). */
+  onNavigate?: (destino: string) => void;
 }
 
 
@@ -94,9 +97,11 @@ export function DashboardPage({
   onSimulados,
   onComunidade,
   onChat,
+  onDisciplinas,
   onPerfil,
   onConfiguracoes,
   onLogout,
+  onNavigate,
 }: DashboardPageProps) {
   const [metricas, setMetricas] = useState<MetricasDashboard | null>(null);
   const [totalTentativas, setTotalTentativas] = useState<number>(0);
@@ -115,6 +120,7 @@ export function DashboardPage({
           onSimulados={onSimulados}
           onComunidade={onComunidade}
           onChat={onChat}
+          onDisciplinas={onDisciplinas}
           onPerfil={onPerfil}
           onConfiguracoes={onConfiguracoes}
           onLogout={onLogout}
@@ -228,7 +234,7 @@ export function DashboardPage({
       <div className="dashboard__blocos" style={{ ...colunasStyle, marginTop: '1.5rem' }}>
         <ContinueDeOndeParou />
         <BlocoDesempenhoAreas onVerEstatisticas={onVerEstatisticas} />
-        <BlocoDisciplinas />
+        <BlocoDisciplinas onVerDisciplinas={() => onNavigate?.('disciplinas')} />
         <BlocoRadar />
       </div>
 

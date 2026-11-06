@@ -10,6 +10,7 @@ type HeaderAppProps = {
   userName?: string;
   isLoggedIn?: boolean;
   onInicio?: () => void;
+  onDisciplinas?: () => void;
   onSimulados?: () => void;
   onComunidade?: () => void;
   onChat?: () => void;
@@ -25,6 +26,7 @@ export function HeaderApp({
   userName,
   isLoggedIn = true,
   onInicio,
+  onDisciplinas,
   onSimulados,
   onComunidade,
   onChat,
@@ -34,6 +36,7 @@ export function HeaderApp({
 }: HeaderAppProps) {
   const handlers: Record<string, (() => void) | undefined> = {
     'Início': onInicio,
+    'Disciplinas': onDisciplinas,
     'Simulados': onSimulados,
     'Comunidade': onComunidade,
     'Chat': onChat,
