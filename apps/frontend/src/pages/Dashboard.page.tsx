@@ -32,6 +32,7 @@ export interface DashboardPageProps {
   onBack: () => void;
   /** Aciona a navegação para o painel de estatísticas/desempenho (R12.4). */
   onVerEstatisticas: () => void;
+  onNavigate?: (destino: string) => void;
 }
 
 const containerStyle: CSSProperties = {
@@ -108,7 +109,7 @@ function BotaoVoltar({ onBack }: { onBack: () => void }) {
   );
 }
 
-export function DashboardPage({ onBack, onVerEstatisticas }: DashboardPageProps) {
+export function DashboardPage({ onBack, onVerEstatisticas, onNavigate }: DashboardPageProps) {
   const [metricas, setMetricas] = useState<MetricasDashboard | null>(null);
   const [totalTentativas, setTotalTentativas] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
@@ -220,7 +221,7 @@ export function DashboardPage({ onBack, onVerEstatisticas }: DashboardPageProps)
       <div className="dashboard__blocos" style={{ ...colunasStyle, marginTop: '1.5rem' }}>
         <ContinueDeOndeParou />
         <BlocoDesempenhoAreas onVerEstatisticas={onVerEstatisticas} />
-        <BlocoDisciplinas />
+        <BlocoDisciplinas onClick={() => onNavigate?.('disciplinas')} />
         <BlocoRadar />
       </div>
 

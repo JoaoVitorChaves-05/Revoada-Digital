@@ -16,6 +16,8 @@ import { GerarSimulado } from './pages/Simulado/GerarSimulado'
 import { FazerSimulado } from './pages/Simulado/FazerSimulado'
 import { PerfilScreen } from './screens/PerfilScreen'
 import { ConfiguracoesScreen } from './screens/ConfiguracoesScreen'
+import { DisciplinasScreen } from './screens/DisciplinasScreen'
+
 
 // Identidade de teste do chat (6=a): usuários fixos para simular as duas pontas
 // na demo. Substituir pelo usuário autenticado (JWT) no Bloco B (6=b).
@@ -42,6 +44,7 @@ type Screen =
   | 'historico'
   | 'perfil'
   | 'configuracoes'
+  | 'disciplinas'
 
 function telaInicial(): Screen {
   if (typeof window !== 'undefined' && window.location.pathname === '/verificar-email') {
@@ -76,6 +79,17 @@ function App() {
     onConfiguracoes: () => setScreen('configuracoes'),
     onLogout: logout,
   }
+
+  function navegarMenu(destino: string) {
+  const rotas: Record<string, Screen> = {
+    inicio: 'dashboard',
+    disciplinas: 'disciplinas',
+    simulados: 'gerar-simulado',
+    comunidade: 'comunidade',
+  }
+  const proxima = rotas[destino]
+  if (proxima) setScreen(proxima)
+}
 
   if (screen === 'verificar-email') {
     return (
@@ -156,12 +170,28 @@ function App() {
   if (screen === 'desempenho') {
     return <PainelDesempenhoPage onBack={() => setScreen('dashboard')} />
   }
+  
+if (screen === 'disciplinas') {
+  if (!usuario) { setScreen('login'); return null }
+  return (
+    <DisciplinasScreen
+      userName={usuario.full_name}
+      onNavigate={navegarMenu}
+      onEstudar={(disciplinaId) => console.log('estudar', disciplinaId)} // ligar à tela de questões depois
+      onPraticarRedacao={() => console.log('redação')}                   // idem
+      onPerfil={menuProps.onPerfil}
+      onConfiguracoes={menuProps.onConfiguracoes}
+      onLogout={menuProps.onLogout}
+    />
+  )
+}
 
   if (screen === 'dashboard') {
     return (
       <DashboardPage
         onBack={() => setScreen('comunidade')}
         onVerEstatisticas={() => setScreen('desempenho')}
+        onNavigate={navegarMenu}
       />
     )
   }
