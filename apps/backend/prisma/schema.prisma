@@ -285,14 +285,17 @@ enum ConversationType {
 }
 
 model Conversation {
-  id        String           @id @default(uuid())
-  type      ConversationType
-  name      String?
-  createdAt DateTime         @default(now()) @map("created_at")
+  id            String           @id @default(uuid())
+  type          ConversationType
+  name          String?
+  directUserAId String?          @map("direct_user_a_id")
+  directUserBId String?          @map("direct_user_b_id")
+  createdAt     DateTime         @default(now()) @map("created_at")
 
   participants ConversationParticipant[]
   messages     ChatMessage[]
 
+  @@unique([directUserAId, directUserBId])
   @@map("chat_conversations")
 }
 

@@ -6,17 +6,26 @@ import { LoginScreen, type UsuarioLogado } from './screens/LoginScreen'
 import { RedefinirScreen } from './screens/RedefinirScreen'
 import { VerificarEmailScreen } from './screens/VerificarEmailScreen'
 import ComunidadePostScreen from './screens/comunidadepostscreen'
-import Mensagens from './screens/chatscreen'
 import PostDetalheScreen from './screens/PostDetalheScreen'
 import { ResultPage } from './pages/Simulado/result_simulado.page'
 import { HistoryPage } from './pages/Simulado/historico_simulados.page'
 import { PainelDesempenhoPage } from './pages/PainelDesempenho.page'
+import { ChatPage } from './pages/Chat/ChatPage'
 import { DashboardPage } from './pages/Dashboard.page'
 import { GerarSimulado } from './pages/Simulado/GerarSimulado'
 import { FazerSimulado } from './pages/Simulado/FazerSimulado'
-import { HistoricoSimulados } from './pages/Simulado/HistoricoSimulados'
 import { PerfilScreen } from './screens/PerfilScreen'
 import { ConfiguracoesScreen } from './screens/ConfiguracoesScreen'
+import { DisciplinasScreen } from './screens/DisciplinasScreen'
+
+
+// Identidade de teste do chat (6=a): usuários fixos para simular as duas pontas
+// na demo. Substituir pelo usuário autenticado (JWT) no Bloco B (6=b).
+// IMPORTANTE: trocar pelos UUIDs reais de usuários existentes no banco local.
+const CHAT_TEST_USERS = [
+  { id: '00000000-0000-0000-0000-000000000001', label: 'Usuário de teste 1' },
+  { id: '00000000-0000-0000-0000-000000000002', label: 'Usuário de teste 2' },
+]
 
 type Screen =
   | 'home'
@@ -26,7 +35,6 @@ type Screen =
   | 'result'
   | 'desempenho'
   | 'dashboard'
-  | 'history'
   | 'verificar-email'
   | 'comunidade'
   | 'chat'
@@ -36,6 +44,7 @@ type Screen =
   | 'historico'
   | 'perfil'
   | 'configuracoes'
+  | 'disciplinas'
 
 function telaInicial(): Screen {
   if (typeof window !== 'undefined' && window.location.pathname === '/verificar-email') {
@@ -55,6 +64,7 @@ function App() {
   const [usuario, setUsuario] = useState<UsuarioLogado | null>(null)
   const [postSelecionado, setPostSelecionado] = useState<string | null>(null)
   const [attemptAtivo, setAttemptAtivo] = useState<string | null>(null)
+  const [chatUserId, setChatUserId] = useState<string>(CHAT_TEST_USERS[0].id)
 
   const estaLogado = usuario !== null
 
@@ -69,6 +79,17 @@ function App() {
     onConfiguracoes: () => setScreen('configuracoes'),
     onLogout: logout,
   }
+
+  function navegarMenu(destino: string) {
+  const rotas: Record<string, Screen> = {
+    inicio: 'dashboard',
+    disciplinas: 'disciplinas',
+    simulados: 'gerar-simulado',
+    comunidade: 'comunidade',
+  }
+  const proxima = rotas[destino]
+  if (proxima) setScreen(proxima)
+}
 
   if (screen === 'verificar-email') {
     return (
@@ -92,13 +113,12 @@ function App() {
         onForgot={() => setScreen('redefinir')}
         onLoginSuccess={(user) => {
           setUsuario(user)
-          setScreen('comunidade')
+          setScreen('dashboard')
         }}
       />
     )
   }
   if (screen === 'redefinir') return <RedefinirScreen onBack={() => setScreen('login')} />
-  if (screen === 'history') return <HistoryPage onBack={() => setScreen('home')} />
 
   // --- Area logada: Comunidade / Chat / Detalhe do post ---
   if (screen === 'comunidade') {
@@ -108,6 +128,7 @@ function App() {
         userName={usuario?.full_name}
         userId={usuario?.id}
         onBack={() => setScreen('home')}
+        onInicio={() => setScreen('dashboard')}
         onChat={() => setScreen('chat')}
         onSimulados={() => setScreen('gerar-simulado')}
         onViewPost={(postId: string) => { setPostSelecionado(postId); setScreen('post-detalhe') }}
@@ -119,7 +140,14 @@ function App() {
   }
 
   if (screen === 'chat') {
-    return <Mensagens userName={usuario?.full_name} onComunidade={() => setScreen('comunidade')} onSimulados={() => setScreen('gerar-simulado')} onBack={() => setScreen('comunidade')} onPerfil={menuProps.onPerfil} onConfiguracoes={menuProps.onConfiguracoes} onLogout={menuProps.onLogout} />
+    return (
+      <ChatPage
+        onBack={() => setScreen('comunidade')}
+        currentUserId={chatUserId}
+        testUsers={CHAT_TEST_USERS}
+        onSwitchUser={setChatUserId}
+      />
+    )
   }
 
   if (screen === 'post-detalhe' && postSelecionado) {
@@ -130,6 +158,7 @@ function App() {
         userName={usuario?.full_name}
         userId={usuario?.id}
         onBack={() => setScreen('comunidade')}
+        onInicio={() => setScreen('dashboard')}
         onChat={() => setScreen('chat')}
         onPerfil={menuProps.onPerfil}
         onConfiguracoes={menuProps.onConfiguracoes}
@@ -139,14 +168,38 @@ function App() {
   }
 
   if (screen === 'desempenho') {
-    return <PainelDesempenhoPage onBack={() => setScreen('home')} />
+    return <PainelDesempenhoPage onBack={() => setScreen('dashboard')} />
   }
+  
+if (screen === 'disciplinas') {
+  if (!usuario) { setScreen('login'); return null }
+  return (
+    <DisciplinasScreen
+      userName={usuario.full_name}
+      onNavigate={navegarMenu}
+      onEstudar={(disciplinaId) => console.log('estudar', disciplinaId)} // ligar à tela de questões depois
+      onPraticarRedacao={() => console.log('redação')}                   // idem
+      onPerfil={menuProps.onPerfil}
+      onConfiguracoes={menuProps.onConfiguracoes}
+      onLogout={menuProps.onLogout}
+    />
+  )
+}
 
   if (screen === 'dashboard') {
     return (
       <DashboardPage
-        onBack={() => setScreen('home')}
+        onBack={() => setScreen('comunidade')}
         onVerEstatisticas={() => setScreen('desempenho')}
+        userName={usuario?.full_name}
+        onSimulados={() => setScreen('gerar-simulado')}
+        onComunidade={() => setScreen('comunidade')}
+        onChat={() => setScreen('chat')}
+        onDisciplinas={() => setScreen('disciplinas')}
+        onPerfil={menuProps.onPerfil}
+        onConfiguracoes={menuProps.onConfiguracoes}
+        onLogout={menuProps.onLogout}
+        onNavigate={navegarMenu}
       />
     )
   }
@@ -157,7 +210,7 @@ function App() {
     return (
       <GerarSimulado
         userId={usuario.id}
-        onBack={() => setScreen('home')}
+        onBack={() => setScreen('comunidade')}
         onIniciar={(attemptId) => { setAttemptAtivo(attemptId); setScreen('fazer-simulado') }}
       />
     )
@@ -174,13 +227,9 @@ function App() {
 
   if (screen === 'historico') {
     if (!usuario) { setScreen('login'); return null }
-    return (
-      <HistoricoSimulados
-        userId={usuario.id}
-        onBack={() => setScreen('comunidade')}
-        onVerResultado={(attemptId) => { setAttemptAtivo(attemptId); setScreen('result') }}
-      />
-    )
+    // Usa a tela de historico da feature Dashboard (HistoryPage), que resolve o
+    // aluno via Servico_Sessao (agora conectado ao usuario logado).
+    return <HistoryPage onBack={() => setScreen('dashboard')} />
   }
 
   if (screen === 'perfil') {

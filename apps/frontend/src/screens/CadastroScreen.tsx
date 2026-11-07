@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import iconContainer from './icons/icon-container.png';
+import { API_BASE_URL } from '../utils/apiBase';
 
 type CadastroScreenProps = {
   onBack: () => void;
 };
 
-// Enquanto nao houver variavel de ambiente, mantem o padrao do projeto.
-const API_BASE = 'http://localhost:3000';
+const API_BASE = API_BASE_URL;
 
 type Status = 'idle' | 'enviando' | 'sucesso' | 'erro';
 

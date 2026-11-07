@@ -30,6 +30,7 @@ interface Props {
   onBack?: () => void
   isLoggedIn?: boolean
   onChat?: () => void
+  onInicio?: () => void
   onViewPost?: (postId: string) => void
   userName?: string
   onSimulados?: () => void
@@ -39,7 +40,7 @@ interface Props {
   userId?: string
 }
 
-export default function ComunidadePostScreen({ onBack, isLoggedIn = false, onChat, onViewPost, userName, onSimulados, onPerfil, onConfiguracoes, onLogout, userId }: Props) {
+export default function ComunidadePostScreen({ onBack, isLoggedIn = false, onChat, onInicio, onViewPost, userName, onSimulados, onPerfil, onConfiguracoes, onLogout, userId }: Props) {
   // BUSCAR POSTS DO BACKEND
   const { posts, loading, error, refetch } = useForumPosts();
   const [modalAberto, setModalAberto] = useState(false);
@@ -74,12 +75,14 @@ export default function ComunidadePostScreen({ onBack, isLoggedIn = false, onCha
           <span className="font-[Sora] text-base font-extrabold"><span className="text-orange-500">Revoada</span><span className="text-indigo-900">Digital</span></span>
         </div>
         <nav className="hidden items-stretch gap-7 text-xs font-semibold text-indigo-900 md:flex">
-          {NAV.map((item) => item === 'Chat' && !isLoggedIn ? null : item === 'Simulados' ? (
+          {NAV.map((item) => item === 'Chat' && !isLoggedIn ? null : item === 'Início' ? (
+            <button key={item} type="button" onClick={onInicio} className="flex items-center border-b-2 border-transparent transition hover:text-orange-500">Início</button>
+          ) : item === 'Simulados' ? (
             <button key={item} type="button" onClick={onSimulados} className="flex items-center border-b-2 border-transparent transition hover:text-orange-500">Simulados</button>
           ) : item === 'Chat' ? (
             <button key={item} type="button" onClick={onChat} className="flex items-center border-b-2 border-transparent transition hover:text-orange-500">Chat</button>
           ) : (
-            <a key={item} href={item === 'Início' ? '/' : '#'} className={`flex items-center border-b-2 transition hover:text-orange-500 ${item === 'Comunidade' ? 'border-orange-500 font-extrabold' : 'border-transparent'}`}>
+            <a key={item} href="#" className={`flex items-center border-b-2 transition hover:text-orange-500 ${item === 'Comunidade' ? 'border-orange-500 font-extrabold' : 'border-transparent'}`}>
               {item}
             </a>
           ))}

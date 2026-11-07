@@ -1,5 +1,6 @@
 import { CreateUserInput, UpdateUserInput } from '../schemas/user.schema';
 import { UserRepository } from '../repositories/user.repository';
+import { hash } from 'bcrypt';
 
 export class UserService {
 	constructor(private readonly userRepository = new UserRepository()) {}
@@ -18,7 +19,20 @@ export class UserService {
 			throw new Error('RG já cadastrado');
 		}
 
-		return this.userRepository.createWithProfileAndApproval(data);
+		const passwordHash = await hash(data.password, 10);
+
+		const result =
+			await this.userRepository.createWithProfileAndApproval({
+				...data,
+				password: passwordHash,
+			});
+
+		const { password: _password, ...safeUser } = result.user;
+
+		return {
+			...result,
+			user: safeUser,
+		};
 	}
 
 	async readUser(id: string) {
@@ -27,7 +41,8 @@ export class UserService {
 			throw new Error('Usuário não encontrado');
 		}
 
-		return user;
+		const { password: _password, ...safeUser } = user;
+		return safeUser;
 	}
 
 	async updateUser(id: string, data: UpdateUserInput) {
@@ -50,7 +65,14 @@ export class UserService {
 			}
 		}
 
-		return this.userRepository.update(id, data);
+		const updatedUser = await this.userRepository.update(id, data);
+
+		if (!updatedUser) {
+			throw new Error('Usuário não encontrado');
+		}
+
+		const { password: _password, ...safeUser } = updatedUser;
+		return safeUser;
 	}
 
 	async deleteUser(id: string) {
