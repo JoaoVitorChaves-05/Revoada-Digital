@@ -12,8 +12,7 @@
     "start:backend": "npm run start -w apps/backend",
     "start:frontend": "npm run start -w apps/frontend",
     "prisma:push": "npx prisma db push --config apps/backend/prisma.config.ts",
-    "prisma:seed": "npm run prisma:seed -w apps/backend",
-    "postinstall": "npx prisma generate --config apps/backend/prisma.config.ts"
+    "prisma:seed": "npm run prisma:seed -w apps/backend"
   },
   "repository": {
     "type": "git",
