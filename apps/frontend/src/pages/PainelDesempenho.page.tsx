@@ -3,13 +3,13 @@ import './PainelDesempenho.css';
 import { BarraMateria } from '../components/BarraMateria';
 import { MapaDefasagem } from '../components/MapaDefasagem';
 import type { RespostaDefasagem } from '../types/desempenho.types';
+import { API_BASE_URL } from '../utils/apiBase';
 
 interface PainelDesempenhoPageProps {
   onBack: () => void;
 }
 
-// TODO(CHA-30): extrair a URL base para import.meta.env em iteracao futura.
-const URL_BASE_API = 'http://localhost:3000';
+const URL_BASE_API = API_BASE_URL;
 
 export function PainelDesempenhoPage({ onBack }: PainelDesempenhoPageProps) {
   const [dados, setDados] = useState<RespostaDefasagem | null>(null);

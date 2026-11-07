@@ -1,0 +1,156 @@
+.landing {
+  color: #1e293b;
+}
+
+/* HERO */
+.landing-hero {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  align-items: center;
+  gap: 2rem;
+  min-height: 82vh;
+  padding: 3rem clamp(1.5rem, 8%, 8rem);
+  background: radial-gradient(1200px 600px at 80% -10%, #e0e7ff 0%, transparent 60%), #ffffff;
+}
+
+.landing-hero__copy h1 {
+  font-size: clamp(2rem, 4.5vw, 3.4rem);
+  line-height: 1.05;
+  font-weight: 800;
+  color: #1e1b4b;
+  margin: 0 0 1rem;
+}
+
+.landing-hero__copy p {
+  font-size: 1.05rem;
+  color: #475569;
+  max-width: 540px;
+  margin: 0 0 1.75rem;
+}
+
+.landing-hero__dica {
+  margin-top: 1.5rem !important;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  animation: dica-pulse 2s ease-in-out infinite;
+}
+
+.landing-hero__livro {
+  height: min(70vh, 520px);
+  width: 100%;
+}
+
+.landing-hero__livro-fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #e0e7ff, #f8fafc);
+}
+
+/* SOBRE */
+.landing-sobre {
+  padding: 5rem clamp(1.5rem, 10%, 10rem);
+  text-align: center;
+  background: #f8fafc;
+}
+.landing-sobre h2 {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 800;
+  color: #1e1b4b;
+  margin: 0 0 1rem;
+}
+.landing-sobre p {
+  max-width: 680px;
+  margin: 0 auto;
+  color: #475569;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+/* DIFERENCIAIS */
+.landing-diferenciais {
+  padding: 5rem clamp(1.5rem, 8%, 8rem);
+}
+.landing-diferenciais h2 {
+  text-align: center;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 800;
+  color: #1e1b4b;
+  margin: 0 0 2.5rem;
+}
+.landing-diferenciais__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.landing-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.75rem;
+  box-shadow: 0 12px 30px -20px rgba(30, 27, 75, 0.45);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.landing-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -22px rgba(30, 27, 75, 0.5);
+}
+.landing-card h3 {
+  color: #f97316;
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin: 0 0 0.6rem;
+}
+.landing-card p {
+  color: #475569;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* NUMEROS */
+.landing-numeros {
+  padding: 4rem clamp(1.5rem, 8%, 8rem);
+  background: #1e1b4b;
+}
+.landing-numeros__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+.landing-numeros__grid strong {
+  display: block;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800;
+  color: #fb923c;
+}
+.landing-numeros__grid span {
+  color: #c7d2fe;
+  font-size: 0.95rem;
+}
+
+@keyframes dica-pulse {
+  0%, 100% { opacity: 0.5; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(4px); }
+}
+
+/* Responsivo */
+@media (max-width: 860px) {
+  .landing-hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+    min-height: auto;
+    padding-top: 2rem;
+  }
+  .landing-hero__copy p { margin-left: auto; margin-right: auto; }
+  .landing-hero__livro { height: 46vh; order: -1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-hero__dica { animation: none; }
+  .landing-card { transition: none; }
+}
