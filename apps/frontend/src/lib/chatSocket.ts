@@ -5,8 +5,9 @@ import type {
   SendMessagePayload,
 } from '../types/chat.types';
 
-// TODO(CHA-30 / Task 19): extrair a URL base para import.meta.env (VITE_*).
-const SOCKET_URL = 'http://localhost:3000';
+// URL do servidor Socket.IO. Em produção aponta para o backend persistente
+// (ex.: Railway) via VITE_SOCKET_URL; em dev, cai no backend local.
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL ?? 'http://localhost:3000';
 
 // Eventos que o servidor envia ao cliente.
 interface ServerToClientEvents {

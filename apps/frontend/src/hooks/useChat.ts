@@ -9,8 +9,9 @@ import type {
   MessageHistory,
 } from '../types/chat.types';
 
-// TODO(CHA-30 / Task 19): extrair a URL base para import.meta.env (VITE_*).
-const URL_BASE_API = 'http://localhost:3000';
+// URL base da API REST do chat. Em produção aponta para o backend persistente
+// (ex.: Railway) via VITE_API_URL; em dev, cai no backend local.
+const URL_BASE_API = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
 
 type Status = 'loading' | 'error' | 'ready';
 
