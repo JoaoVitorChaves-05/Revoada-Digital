@@ -4,6 +4,8 @@ import { createQuestionSchema, updateQuestionSchema } from './question.schema';
 const baseQuestion = {
     text: 'Qual a capital do Brasil?',
     difficulty: 1,
+    subject: ['Geografia'],
+    concept: ['Capitais do Brasil'],
     alternatives: [
         { text: 'Brasília', isCorrect: true },
         { text: 'Rio de Janeiro', isCorrect: false }
@@ -31,6 +33,24 @@ describe('createQuestionSchema', () => {
         expect(result.success).toBe(false);
     });
 
+    it('aceita questão com múltiplas matérias e conceitos', () => {
+        const result = createQuestionSchema.safeParse({
+            ...baseQuestion,
+            subject: ['Matemática', 'Física'],
+            concept: ['Função Afim', 'Cinemática'],
+        });
+        expect(result.success).toBe(true);
+    });
+
+    it('rejeita questão sem nenhuma matéria', () => {
+        const result = createQuestionSchema.safeParse({ ...baseQuestion, subject: [] });
+        expect(result.success).toBe(false);
+    });
+
+    it('rejeita questão sem nenhum conceito', () => {
+        const result = createQuestionSchema.safeParse({ ...baseQuestion, concept: [] });
+        expect(result.success).toBe(false);
+    });
     it('rejeita questão onde todas as alternativas são falsas', () => {
         const result = createQuestionSchema.safeParse({ 
             ...baseQuestion, 

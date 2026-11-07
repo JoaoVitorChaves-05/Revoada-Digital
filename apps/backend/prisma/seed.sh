@@ -34,7 +34,7 @@ for file in "$@"; do
   if [ -f "$file" ]; then
     bash "$file"
   else
-    echo "File Not Found -> "$file""
+    echo "Arquivo nao encontrado -> $file"
     exit 1
   fi
 done

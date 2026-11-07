@@ -1,0 +1,156 @@
+.forum-container {
+  background-color: #F8F9FA;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+.forum-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 4rem;
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.logo-revoada { color: #F97316; font-weight: 700; font-size: 1.2rem; }
+.logo-digital { color: #1E3A8A; font-weight: 900; font-size: 1.2rem; }
+
+.header-nav { display: flex; gap: 2rem; }
+.header-nav a { text-decoration: none; color: #4B5563; font-weight: 500; }
+.header-nav a.ativo { color: #1E3A8A; font-weight: 700; }
+
+.forum-main {
+  max-width: 1100px;
+  margin: 3rem auto;
+  padding: 0 2rem;
+}
+
+.forum-cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 2.5rem;
+}
+
+.forum-titulo {
+  font-size: 2.2rem;
+  color: #1F2937;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.forum-subtitulo {
+  color: #4B5563;
+  font-size: 1.1rem;
+}
+
+.forum-subtitulo strong {
+  color: #1E3A8A;
+}
+
+.btn-novo-post {
+  background-color: #F97316;
+  color: #FFFFFF;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-novo-post:hover {
+  background-color: #EA580C;
+}
+
+/* O Grid de Posts */
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.post-card {
+  background-color: #FFFFFF;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+
+.post-card:hover {
+  border-color: #1E3A8A;
+  box-shadow: 0 10px 15px -3px rgba(30, 58, 138, 0.1);
+}
+
+.post-titulo {
+  color: #1E3A8A;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+}
+
+.post-infos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.info-item {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.info-label {
+  color: #6B7280;
+  font-weight: 600;
+}
+
+.info-valor {
+  color: #374151;
+}
+
+.post-rodape {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #F3F4F6;
+}
+
+.badge-respostas {
+  background-color: #EFF6FF;
+  color: #1E3A8A;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.badge-respostas.sem-resposta {
+  background-color: #FEF2F2;
+  color: #DC2626;
+}
+
+.btn-ler-mais {
+  background: none;
+  border: none;
+  color: #4B5563;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.btn-ler-mais:hover {
+  color: #1E3A8A;
+}

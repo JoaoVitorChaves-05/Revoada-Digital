@@ -10,6 +10,21 @@ export async function createAttempt(req: Request, res: Response) {
   }
 }
 
+export async function getAttemptsFromUser(req: Request, res: Response) {
+  try {
+    const userId = req.query.userId as string | undefined;
+
+    if (userId) {
+      const attempts = await attemptService.getUserAttempts(userId);
+      return res.status(200).json(attempts);
+    }
+    
+    return res.status(400).json({ error: 'Parâmetro userId é obrigatório' });
+  } catch (error: any) {
+    return res.status(400).json({ error: 'Erro ao buscar tentativas', details: error.message });
+  }
+}
+
 export async function readAttempt(req: Request, res: Response) {
   const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 

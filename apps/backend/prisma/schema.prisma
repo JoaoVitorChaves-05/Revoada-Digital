@@ -44,6 +44,7 @@ model User {
   rg          String?     @unique
   cpf         String      @unique
   profileType ProfileType
+  emailVerified Boolean  @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -67,13 +68,27 @@ model User {
   chatParticipants ConversationParticipant[]
   sentMessages     ChatMessage[] @relation("ChatMessageSender")
   messageReads     MessageRead[]
-
+  emailTokens      EmailVerificationToken[]
   @@map("users")
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("email_verification_tokens")
 }
 
 model StudentProfile {
   id     String @id @default(uuid())
   points Int    @default(0) // Pontuação do Learn-to-Earn
+  yearId Int    // Ano escolar do estudante
 
   userId    String     @unique
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -171,7 +186,6 @@ model Question {
   answers      AttemptAnswer[]
   alternatives Alternative[]
 
-  @@index([subject, concept])
   @@map("questions")
 }
 
@@ -271,14 +285,17 @@ enum ConversationType {
 }
 
 model Conversation {
-  id        String           @id @default(uuid())
-  type      ConversationType
-  name      String?
-  createdAt DateTime         @default(now()) @map("created_at")
+  id            String           @id @default(uuid())
+  type          ConversationType
+  name          String?
+  directUserAId String?          @map("direct_user_a_id")
+  directUserBId String?          @map("direct_user_b_id")
+  createdAt     DateTime         @default(now()) @map("created_at")
 
   participants ConversationParticipant[]
   messages     ChatMessage[]
 
+  @@unique([directUserAId, directUserBId])
   @@map("chat_conversations")
 }
 

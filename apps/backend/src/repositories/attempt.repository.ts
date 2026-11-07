@@ -2,6 +2,33 @@ import { prisma } from '../lib/prisma';
 import { AttemptStatus } from '@prisma/client';
 
 export class AttemptRepository {
+  async findByUserId(userId: string) {
+    return prisma.attempt.findMany({
+      where: {
+        mockExam: {
+          student: {
+            userId,
+          },
+        },
+      },
+      include: {
+        answers: true,
+        mockExam: {
+          select: {
+            id: true,
+            name: true,
+            studentId: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+      },
+      orderBy: {
+        startedAt: 'desc',
+      },
+    });
+  }
+
   async create(mockExamId: string) {
     return prisma.attempt.create({
       data: {

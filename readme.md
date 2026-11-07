@@ -72,6 +72,36 @@ O projeto foi desenvolvido como proposta para a disciplina de **Engenharia de So
 - **API Docs ENEM** – pública e gratuita
 - **API de pagamentos** – Mercado Pago ou ASAAS (isentas de taxa para CNPJ ativo como associação sem fins lucrativos ou ONG)
 
+---
+
+## Como rodar localmente
+
+Pré-requisitos: Docker Desktop, Node.js e npm.
+
+1. Instale as dependências na raiz do monorepo:
+   ```bash
+   npm install
+   ```
+2. Crie o arquivo de ambiente do backend a partir do exemplo:
+   ```bash
+   cp .env.docker.example .env.docker
+   ```
+   (Para dev, os valores padrão já apontam para o banco local do `compose.yml`.)
+3. Suba o ambiente (PostgreSQL + backend). As migrations sao aplicadas automaticamente:
+   ```bash
+   docker compose up -d
+   ```
+4. Popule o banco de questões (necessário para gerar simulados):
+   ```bash
+   npm run prisma:seed
+   ```
+   O seed é idempotente: insere ~2.757 questões e pula as que já existem.
+5. Rode o frontend:
+   ```bash
+   npm run dev:frontend
+   ```
+
+> O seed roda de forma não-interativa em CI/containers. Num terminal, ele pede confirmação (y/n) antes de popular.
 ## Diagramas
 
 ##### Diagrama de Implantação

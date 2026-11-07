@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { userService } from '../services/user.service';
+import { emailVerificationService } from '../services/emailVerification.service';
 
 export async function createUser(req: Request, res: Response) {
 	console.log('REQ.BODY:', req.body);
@@ -7,8 +8,15 @@ export async function createUser(req: Request, res: Response) {
   try {
 		const result = await userService.createUser(req.body);
 
+
+try {
+await emailVerificationService.enviarVerificacao(result.user.id, result.user.email);
+} catch (emailError) {
+console.error('[cadastro] falha ao enviar email de verificacao:', emailError);
+}
+
 		return res.status(201).json({
-			message: 'Usuário cadastrado com sucesso! Aguardando aprovação.',
+			message: 'Usuário cadastrado com sucesso! Confirme seu email para ativar a conta.',
 			data: result,
 		});
 	} catch (error: any) {

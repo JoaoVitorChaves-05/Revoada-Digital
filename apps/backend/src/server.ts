@@ -10,6 +10,7 @@ import { schoolsRouter } from './routes/schools.routes';
 import { questionRoutes } from './routes/question.routes';
 import { authRouter } from './routes/auth.routes';
 import { forumRouter } from './routes/forum.routes';
+import dashboardRouter from './routes/dashboard.routes';
 
 export const app = express();
 
@@ -33,3 +34,4 @@ app.use('/auth', authRouter);
 app.use('/attempts', attemptsRouter);
 app.use('/forum', forumRouter);
 app.use('/chat', chatRoutes);
+app.use('/dashboard', dashboardRouter);

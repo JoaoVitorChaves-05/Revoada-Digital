@@ -32,7 +32,7 @@ export class UserRepository {
 
 			if (data.profileType === 'STUDENT') {
 				await tx.studentProfile.create({
-					data: { userId: user.id, school: data.school as string },
+					data: { userId: user.id, schoolId, yearId: data.year as number },
 				});
 			} else if (data.profileType === 'TEACHER') {
 				await tx.teacherProfile.create({
@@ -76,7 +76,8 @@ export class UserRepository {
 				await tx.adminProfile.deleteMany({ where: { userId: id } });
 
 				if (profileType === 'STUDENT') {
-					await tx.studentProfile.create({ data: { userId: id, school: data.school as string } });
+					const schoolId = await findSchoolId(tx, data.school);
+					await tx.studentProfile.create({ data: { userId: id, schoolId, yearId: data.year as number } });
 				} else if (profileType === 'TEACHER') {
 					await tx.teacherProfile.create({ data: { userId: id, school: data.school as string } });
 				} else {

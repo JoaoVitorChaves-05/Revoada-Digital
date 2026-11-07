@@ -28,5 +28,38 @@ export const theme = {
   },
   shadow: {
     card: '0 2px 4px rgba(0,0,0,0.05)'
+  },
+  // Cores de destaque do dashboard ("Início"), seguindo o SVG do Figma.
+  // Azul primario para elementos ativos/realce; laranja de acento.
+  accent: {
+    primary: '#2563eb',      // azul primario (destaque, barra do dia atual)
+    primaryHover: '#1d4ed8', // azul em hover/estado pressionado
+    primarySoft: '#dbeafe',  // azul claro para fundos de realce sutil
+    orange: '#f97316',       // laranja de acento do SVG
+    orangeSoft: '#ffedd5',   // laranja claro para fundos de acento
+  },
+  // Tons neutros para blocos/placeholders "em breve" (desabilitados/atenuados).
+  placeholder: {
+    bg: '#f4f4f5',       // fundo atenuado do bloco placeholder
+    border: '#e4e4e7',   // borda do bloco placeholder
+    text: '#a1a1aa',     // texto atenuado ("em breve")
+    badgeBg: '#e4e4e7',  // fundo do selo textual "em breve"
+    badgeText: '#52525b',// texto do selo "em breve"
   }
 };
+
+// Mapeamento Nivel_De_Defasagem -> cor (CHA-30).
+// Semantica de desempenho traduzida para a paleta de getDificuldadeColors:
+//   defasagem BAIXA = melhor desempenho -> verde ('fácil')
+//   defasagem MÉDIA = intermediario     -> amarelo ('média')
+//   defasagem ALTA  = pior (reforçar)   -> vermelho ('difícil')
+import type { NivelDefasagem } from '../types/desempenho.types';
+
+const NIVEL_PARA_DIFICULDADE: Record<NivelDefasagem, string> = {
+  baixa: 'fácil',
+  'média': 'média',
+  alta: 'difícil',
+};
+
+export const coresDoNivelDefasagem = (nivel: NivelDefasagem) =>
+  getDificuldadeColors(NIVEL_PARA_DIFICULDADE[nivel]);
