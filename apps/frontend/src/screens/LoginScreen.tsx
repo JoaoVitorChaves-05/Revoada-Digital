@@ -21,6 +21,7 @@ const API_BASE = API_BASE_URL
 export function LoginScreen({ onBack, onForgot, onLoginSuccess }: LoginScreenProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  
   const [showPassword, setShowPassword] = useState(false)
   const [enviando, setEnviando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
