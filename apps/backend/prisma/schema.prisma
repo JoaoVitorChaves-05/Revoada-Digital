@@ -145,6 +145,16 @@ model School {
   @@map("schools")
 }
 
+model Reward {
+  id          String  @id @default(uuid())
+  name        String
+  description String
+  pointsCost  Int     @map("points_cost")
+  isAvailable Boolean @default(true) @map("is_available")
+
+  @@map("rewards")
+}
+
 model MockExam {
   id        String @id @default(uuid())
   name      String
