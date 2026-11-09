@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import {
   dashboardService,
   SchoolNotFoundError,
+  StudentNotFoundError,
 } from '../services/dashboard.service';
 
 export async function getDashboard(req: Request, res: Response) {
@@ -51,6 +52,30 @@ export async function getMyDashboard(req: Request, res: Response) {
 
     return res.status(500).json({
       error: 'Erro ao consultar dashboard',
+    });
+  }
+}
+
+export async function getDesempenhoAreas(req: Request, res: Response) {
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res.status(401).json({
+      error: 'Usuário não autenticado',
+    });
+  }
+
+  try {
+    const areas = await dashboardService.getDesempenhoAreas(userId);
+
+    return res.status(200).json({ areas });
+  } catch (error) {
+    if (error instanceof StudentNotFoundError) {
+      return res.status(404).json({ error: error.message });
+    }
+
+    return res.status(500).json({
+      error: 'Erro ao consultar desempenho por área',
     });
   }
 }
