@@ -17,6 +17,8 @@ import { FazerSimulado } from './pages/Simulado/FazerSimulado'
 import { PerfilScreen } from './screens/PerfilScreen'
 import { ConfiguracoesScreen } from './screens/ConfiguracoesScreen'
 import { DisciplinasScreen } from './screens/DisciplinasScreen'
+import { LojaRecompensas } from './pages/Recompensas/LojaRecompensas'
+import { MeusResgates } from './pages/Recompensas/MeusResgates'
 
 
 // Identidade de teste do chat (6=a): usuários fixos para simular as duas pontas
@@ -46,6 +48,8 @@ type Screen =
   | 'perfil'
   | 'configuracoes'
   | 'disciplinas'
+  | 'recompensas'
+  | 'meus-resgates'
 
 function telaInicial(): Screen {
   if (typeof window !== 'undefined' && window.location.pathname === '/verificar-email') {
@@ -78,6 +82,7 @@ function App() {
   const menuProps = {
     onPerfil: () => setScreen('perfil'),
     onConfiguracoes: () => setScreen('configuracoes'),
+    onMeusResgates: () => setScreen('meus-resgates'),
     onLogout: logout,
   }
 
@@ -87,6 +92,8 @@ function App() {
     disciplinas: 'disciplinas',
     simulados: 'gerar-simulado',
     comunidade: 'comunidade',
+    chat: 'chat',
+    recompensas: 'recompensas',
   }
   const proxima = rotas[destino]
   if (proxima) setScreen(proxima)
@@ -130,8 +137,11 @@ function App() {
         userId={usuario?.id}
         onBack={() => setScreen('home')}
         onInicio={() => setScreen('dashboard')}
+        onDisciplinas={() => setScreen('disciplinas')}
         onChat={() => setScreen('chat')}
         onSimulados={() => setScreen('gerar-simulado')}
+        onRecompensas={() => setScreen('recompensas')}
+        onMeusResgates={() => setScreen('meus-resgates')}
         onViewPost={(postId: string) => { setPostSelecionado(postId); setScreen('post-detalhe') }}
         onPerfil={menuProps.onPerfil}
         onConfiguracoes={menuProps.onConfiguracoes}
@@ -160,7 +170,12 @@ function App() {
         userId={usuario?.id}
         onBack={() => setScreen('comunidade')}
         onInicio={() => setScreen('dashboard')}
+        onDisciplinas={() => setScreen('disciplinas')}
+        onSimulados={() => setScreen('gerar-simulado')}
+        onComunidade={() => setScreen('comunidade')}
         onChat={() => setScreen('chat')}
+        onRecompensas={() => setScreen('recompensas')}
+        onMeusResgates={() => setScreen('meus-resgates')}
         onPerfil={menuProps.onPerfil}
         onConfiguracoes={menuProps.onConfiguracoes}
         onLogout={menuProps.onLogout}
@@ -178,6 +193,7 @@ if (screen === 'disciplinas') {
     <DisciplinasScreen
       userName={usuario.full_name}
       onNavigate={navegarMenu}
+      onMeusResgates={() => setScreen('meus-resgates')}
       onEstudar={(disciplinaId) => console.log('estudar', disciplinaId)} // ligar à tela de questões depois
       onPraticarRedacao={() => console.log('redação')}                   // idem
       onPerfil={menuProps.onPerfil}
@@ -186,6 +202,43 @@ if (screen === 'disciplinas') {
     />
   )
 }
+
+  if (screen === 'recompensas') {
+    if (!usuario) { setScreen('login'); return null }
+    return (
+      <LojaRecompensas
+        userName={usuario.full_name}
+        saldoPontos={1250}
+        onMeusResgates={() => setScreen('meus-resgates')}
+        onInicio={() => setScreen('dashboard')}
+        onDisciplinas={() => setScreen('disciplinas')}
+        onSimulados={() => setScreen('gerar-simulado')}
+        onComunidade={() => setScreen('comunidade')}
+        onChat={() => setScreen('chat')}
+        onPerfil={menuProps.onPerfil}
+        onConfiguracoes={menuProps.onConfiguracoes}
+        onLogout={menuProps.onLogout}
+      />
+    )
+  }
+
+  if (screen === 'meus-resgates') {
+    if (!usuario) { setScreen('login'); return null }
+    return (
+      <MeusResgates
+        userName={usuario.full_name}
+        onVoltar={() => setScreen('recompensas')}
+        onInicio={() => setScreen('dashboard')}
+        onDisciplinas={() => setScreen('disciplinas')}
+        onSimulados={() => setScreen('gerar-simulado')}
+        onComunidade={() => setScreen('comunidade')}
+        onChat={() => setScreen('chat')}
+        onPerfil={menuProps.onPerfil}
+        onConfiguracoes={menuProps.onConfiguracoes}
+        onLogout={menuProps.onLogout}
+      />
+    )
+  }
 
   if (screen === 'dashboard') {
     return (
@@ -197,6 +250,8 @@ if (screen === 'disciplinas') {
         onComunidade={() => setScreen('comunidade')}
         onChat={() => setScreen('chat')}
         onDisciplinas={() => setScreen('disciplinas')}
+        onRecompensas={() => setScreen('recompensas')}
+        onMeusResgates={() => setScreen('meus-resgates')}
         onPerfil={menuProps.onPerfil}
         onConfiguracoes={menuProps.onConfiguracoes}
         onLogout={menuProps.onLogout}

@@ -1,5 +1,5 @@
-import iconContainer from './icons/icon-container.png'
 import type { ReactNode } from 'react'
+import { HeaderApp } from '../components/HeaderApp'
 
 const css = `
 /* Tela Disciplinas — ajuste as variáveis para os tokens reais do seu Figma / CSS global */
@@ -393,6 +393,7 @@ type DisciplinasScreenProps = {
   onNavigate?: (destino: string) => void
   onEstudar?: (disciplinaId: string) => void
   onPraticarRedacao?: () => void
+  onMeusResgates?: () => void
   onPerfil?: () => void
   onConfiguracoes?: () => void
   onLogout?: () => void
@@ -438,12 +439,6 @@ const IconLivro = (
 const IconLapis = (
   <svg {...stroke}>
     <path d="M4 20l1-4L16.5 4.5a2 2 0 0 1 3 3L8 19l-4 1Z" />
-  </svg>
-)
-const IconSino = (
-  <svg {...stroke}>
-    <path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7Z" />
-    <path d="M10 20a2 2 0 0 0 4 0" />
   </svg>
 )
 const IconSeta = (
@@ -507,13 +502,6 @@ const disciplinas: Disciplina[] = [
   },
 ]
 
-const links = [
-  { id: 'inicio', label: 'Início' },
-  { id: 'disciplinas', label: 'Disciplinas' },
-  { id: 'simulados', label: 'Simulados' },
-  { id: 'comunidade', label: 'Comunidade' },
-  { id: 'faq', label: 'FAQ' },
-]
 
 function DonutChart({ valor, label }: Nivel) {
   const raio = 20
@@ -541,50 +529,24 @@ function DonutChart({ valor, label }: Nivel) {
   )
 }
 
-export function DisciplinasScreen({ onNavigate, onEstudar, onPraticarRedacao }: DisciplinasScreenProps) {
+export function DisciplinasScreen({ userName, onNavigate, onEstudar, onPraticarRedacao, onMeusResgates, onPerfil, onConfiguracoes, onLogout }: DisciplinasScreenProps) {
   return (
     <div className="site-shell disciplinas-page">
       <style>{css}</style>
-      <header className="topbar topbar-logged">
-        <div className="logo-wrap" aria-label="Revoada Digital">
-          <div className="logo-mark"><img src={iconContainer} alt="Revoada Digital" /></div>
-          <div className="logo-text">
-            <span className="text-orange">Revoada</span>
-            <span className="text-blue">Digital</span>
-          </div>
-        </div>
-
-        <nav className="main-nav">
-          {links.map((link) => (
-            <a
-              key={link.id}
-              href={`#${link.id}`}
-              className={link.id === 'disciplinas' ? 'active' : undefined}
-              aria-current={link.id === 'disciplinas' ? 'page' : undefined}
-              onClick={(e) => {
-                if (onNavigate) {
-                  e.preventDefault()
-                  onNavigate(link.id)
-                }
-              }}
-            >
-              {link.label}
-            </a>
-          ))}
-        </nav>
-
-        <div className="header-actions">
-          <button type="button" className="icon-btn" aria-label="Notificações">{IconSino}</button>
-          <span className="divider-v" />
-          <button type="button" className="user-menu">
-            <span className="avatar">JL</span>
-            <span className="user-name">Júlia</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </button>
-        </div>
-      </header>
+      <HeaderApp
+        ativo="Disciplinas"
+        userName={userName}
+        onInicio={() => onNavigate?.('inicio')}
+        onDisciplinas={() => onNavigate?.('disciplinas')}
+        onSimulados={() => onNavigate?.('simulados')}
+        onComunidade={() => onNavigate?.('comunidade')}
+        onChat={() => onNavigate?.('chat')}
+        onRecompensas={() => onNavigate?.('recompensas')}
+        onMeusResgates={onMeusResgates}
+        onPerfil={onPerfil}
+        onConfiguracoes={onConfiguracoes}
+        onLogout={onLogout}
+      />
 
       <main className="disciplinas-main">
         <h1>Disciplinas</h1>

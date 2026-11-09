@@ -40,6 +40,8 @@ export interface DashboardPageProps {
   onComunidade?: () => void;
   onChat?: () => void;
   onDisciplinas?: () => void;
+  onRecompensas?: () => void;
+  onMeusResgates?: () => void;
   onPerfil?: () => void;
   onConfiguracoes?: () => void;
   onLogout?: () => void;
@@ -98,6 +100,8 @@ export function DashboardPage({
   onComunidade,
   onChat,
   onDisciplinas,
+  onRecompensas,
+  onMeusResgates,
   onPerfil,
   onConfiguracoes,
   onLogout,
@@ -121,6 +125,8 @@ export function DashboardPage({
           onComunidade={onComunidade}
           onChat={onChat}
           onDisciplinas={onDisciplinas}
+          onRecompensas={onRecompensas}
+          onMeusResgates={onMeusResgates}
           onPerfil={onPerfil}
           onConfiguracoes={onConfiguracoes}
           onLogout={onLogout}
