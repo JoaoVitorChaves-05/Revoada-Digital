@@ -56,17 +56,19 @@ export async function getMyDashboard(req: Request, res: Response) {
   }
 }
 
+// Desempenho por área do ENEM. Resolve o aluno pelo userId informado via query
+// param (?userId=), mesmo padrão de GET /attempts usado pelo Dashboard nesta
+// fase (sem JWT). O userId é o id do usuário logado; o service busca o perfil
+// de aluno correspondente.
 export async function getDesempenhoAreas(req: Request, res: Response) {
-  const userId = req.user?.id;
+  const userId = req.query.userId;
 
-  if (!userId) {
-    return res.status(401).json({
-      error: 'Usuário não autenticado',
-    });
+  if (typeof userId !== 'string' || !userId.trim()) {
+    return res.status(400).json({ error: 'Parâmetro userId é obrigatório' });
   }
 
   try {
-    const areas = await dashboardService.getDesempenhoAreas(userId);
+    const areas = await dashboardService.getDesempenhoAreas(userId.trim());
 
     return res.status(200).json({ areas });
   } catch (error) {

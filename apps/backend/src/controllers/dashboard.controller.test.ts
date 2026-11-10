@@ -28,12 +28,6 @@ function createRequestMock(query: Request['query']): Request {
     return { query } as unknown as Request;
 }
 
-function createAuthRequestMock(userId?: string): Request {
-    return {
-        user: userId ? { id: userId } : undefined,
-    } as unknown as Request;
-}
-
 function createResponseMock() {
     return {
         status: vi.fn().mockReturnThis(),
@@ -102,15 +96,18 @@ describe('getDesempenhoAreas', () => {
         vi.clearAllMocks();
     });
 
-    it('retorna 401 quando o usuário não está autenticado', async () => {
+    it('retorna 400 quando userId não foi informado', async () => {
         const response = createResponseMock();
 
         await getDesempenhoAreas(
-            createAuthRequestMock(undefined),
+            createRequestMock({}),
             response as unknown as Response,
         );
 
-        expect(response.status).toHaveBeenCalledWith(401);
+        expect(response.status).toHaveBeenCalledWith(400);
+        expect(response.json).toHaveBeenCalledWith({
+            error: 'Parâmetro userId é obrigatório',
+        });
         expect(dashboardService.getDesempenhoAreas).not.toHaveBeenCalled();
     });
 
@@ -121,7 +118,7 @@ describe('getDesempenhoAreas', () => {
         );
 
         await getDesempenhoAreas(
-            createAuthRequestMock('user-1'),
+            createRequestMock({ userId: 'user-1' }),
             response as unknown as Response,
         );
 
@@ -150,7 +147,7 @@ describe('getDesempenhoAreas', () => {
         );
 
         await getDesempenhoAreas(
-            createAuthRequestMock('user-1'),
+            createRequestMock({ userId: 'user-1' }),
             response as unknown as Response,
         );
 
@@ -166,7 +163,7 @@ describe('getDesempenhoAreas', () => {
         );
 
         await getDesempenhoAreas(
-            createAuthRequestMock('user-1'),
+            createRequestMock({ userId: 'user-1' }),
             response as unknown as Response,
         );
 

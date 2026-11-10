@@ -1,25 +1,26 @@
-import type { CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { theme } from '../../utils/colors';
 import { Placeholder } from './Placeholder';
+import { sessao } from '../../utils/sessao';
+import { buscarDesempenhoAreas } from '../../utils/desempenhoAreasClient';
+import type { DesempenhoArea } from '../../types/desempenhoAreas.types';
 
-// Bloco "Seu desempenho" por area (R12). Nesta fase e apresentacao pura (sem
-// fetch, R18.1): como GET /attempts?userId= nao retorna Question.subject, o
-// desempenho por area nao e derivavel e o bloco e marcado como Placeholder
-// "em breve" (R12.1). Lista as 4 areas como barras de progresso em placeholder
-// (R12.2) e oferece o controle "Ver estatisticas" (R12.3) que aciona o handler
-// recebido por prop (R12.4), operavel por teclado e com rotulo textual (R17.3).
+// Bloco "Seu desempenho" por area (R12). Liga-se ao endpoint
+// GET /dashboard/me/desempenho-areas, que retorna as 4 areas do ENEM com a
+// taxa de acerto geral. Enquanto carrega ou em caso de erro, cai no
+// Placeholder "em breve" preservando o layout das 4 barras.
 
 export interface BlocoDesempenhoAreasProps {
   /** Acionado ao usar o controle "Ver estatisticas" (R12.4). */
   onVerEstatisticas: () => void;
 }
 
-// Areas do conhecimento do ENEM listadas no bloco (R12.2).
-const AREAS = [
+// Ordem fixa de exibicao das areas (espelha a ordem retornada pelo backend).
+const ORDEM_AREAS = [
   'Linguagens',
   'Ciências Humanas',
-  'Matemática',
   'Ciências da Natureza',
+  'Matemática',
 ] as const;
 
 const secaoStyle: CSSProperties = {
@@ -59,6 +60,13 @@ const itemStyle: CSSProperties = {
 };
 
 const rotuloAreaStyle: CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  fontSize: '0.875rem',
+  color: theme.text.subtitle,
+};
+
+const rotuloAreaPlaceholderStyle: CSSProperties = {
   fontSize: '0.875rem',
   color: theme.placeholder.text,
 };
@@ -82,26 +90,90 @@ const linkStyle: CSSProperties = {
   cursor: 'pointer',
 };
 
+function ListaPlaceholder() {
+  return (
+    <Placeholder descricaoAcessivel="Desempenho por área do conhecimento estará disponível em breve.">
+      <ul className="bloco-desempenho-areas__lista" style={listaStyle}>
+        {ORDEM_AREAS.map((area) => (
+          <li key={area} style={itemStyle}>
+            <span style={rotuloAreaPlaceholderStyle}>{area}</span>
+            <div
+              className="bloco-desempenho-areas__barra"
+              role="presentation"
+              style={trilhaBarraStyle}
+            />
+          </li>
+        ))}
+      </ul>
+    </Placeholder>
+  );
+}
+
 export function BlocoDesempenhoAreas({ onVerEstatisticas }: BlocoDesempenhoAreasProps) {
+  const [areas, setAreas] = useState<DesempenhoArea[] | null>(null);
+  const [erro, setErro] = useState(false);
+
+  useEffect(() => {
+    let ativo = true;
+    buscarDesempenhoAreas(sessao.getUserId(), sessao.getAuthToken())
+      .then((dados) => {
+        if (ativo) setAreas(dados);
+      })
+      .catch(() => {
+        if (ativo) setErro(true);
+      });
+    return () => {
+      ativo = false;
+    };
+  }, []);
+
+  // Ordena as areas recebidas na ordem fixa de exibicao.
+  const areasOrdenadas =
+    areas === null
+      ? null
+      : ORDEM_AREAS.flatMap((nome) => {
+          const dado = areas.find((a) => a.area === nome);
+          return dado ? [dado] : [];
+        });
+
   return (
     <section className="bloco-desempenho-areas" aria-label="Seu desempenho por área">
       <h2 style={tituloStyle}>Seu desempenho</h2>
       <div style={secaoStyle}>
         <div style={corpoStyle}>
-          <Placeholder descricaoAcessivel="Desempenho por área do conhecimento estará disponível em breve.">
+          {erro || areasOrdenadas === null ? (
+            <ListaPlaceholder />
+          ) : (
             <ul className="bloco-desempenho-areas__lista" style={listaStyle}>
-              {AREAS.map((area) => (
-                <li key={area} style={itemStyle}>
-                  <span style={rotuloAreaStyle}>{area}</span>
+              {areasOrdenadas.map((a) => (
+                <li key={a.area} style={itemStyle}>
+                  <span style={rotuloAreaStyle}>
+                    <span>{a.area}</span>
+                    <span>
+                      {a.questoesResolvidas > 0
+                        ? `${a.taxaAcerto}%`
+                        : 'Sem dados'}
+                    </span>
+                  </span>
                   <div
                     className="bloco-desempenho-areas__barra"
-                    role="presentation"
+                    role="img"
+                    aria-label={`${a.area}: ${a.taxaAcerto}% de acerto em ${a.questoesResolvidas} questões`}
                     style={trilhaBarraStyle}
-                  />
+                  >
+                    <div
+                      style={{
+                        height: '100%',
+                        width: `${a.taxaAcerto}%`,
+                        backgroundColor: theme.accent.primary,
+                        borderRadius: 999,
+                      }}
+                    />
+                  </div>
                 </li>
               ))}
             </ul>
-          </Placeholder>
+          )}
           <button
             type="button"
             className="bloco-desempenho-areas__ver-estatisticas"

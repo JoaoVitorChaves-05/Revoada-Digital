@@ -11,10 +11,7 @@ const dashboardRouter = Router();
 
 dashboardRouter.get('/director', ensureAuthenticated, ensureAdmin, getDashboard);
 dashboardRouter.get('/me', ensureAuthenticated, getMyDashboard);
-dashboardRouter.get(
-  '/me/desempenho-areas',
-  ensureAuthenticated,
-  getDesempenhoAreas,
-);
+// Resolve o aluno por ?userId= (sem JWT nesta fase), como GET /attempts.
+dashboardRouter.get('/me/desempenho-areas', getDesempenhoAreas);
 
 export default dashboardRouter;
