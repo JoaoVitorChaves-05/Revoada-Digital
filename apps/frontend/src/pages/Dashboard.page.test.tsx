@@ -67,7 +67,7 @@ function criarAttempt(overrides: Partial<Attempt> = {}): Attempt {
 }
 
 /** `fetch` mock tipado como `typeof fetch`. */
-function criarFetchMock(impl: () => Promise<Response>) {
+function criarFetchMock(impl: (input?: RequestInfo | URL) => Promise<Response>) {
   return vi.fn<typeof fetch>(impl);
 }
 
@@ -90,13 +90,20 @@ describe('DashboardPage', () => {
 
   it('exibe mensagem de erro e botão "Tentar novamente"; o retry recarrega com sucesso (R3.3)', async () => {
     // Primeira resposta nao-ok (erro); segunda resposta ok vazia (sucesso vazio).
-    const fetchMock = criarFetchMock(async () =>
-      respostaFalsa({ ok: false }),
-    );
-    fetchMock.mockImplementationOnce(async () => respostaFalsa({ ok: false }));
-    fetchMock.mockImplementationOnce(async () =>
-      respostaFalsa({ ok: true, json: async () => [] }),
-    );
+    let attemptsCalls = 0;
+    const fetchMock = criarFetchMock(async (input?: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.includes('/dashboard/me/coins')) {
+        return respostaFalsa({ ok: true, json: async () => ({ coins: 0 }) });
+      }
+      if (url.includes('/attempts')) {
+        attemptsCalls += 1;
+        return attemptsCalls === 1
+          ? respostaFalsa({ ok: false })
+          : respostaFalsa({ ok: true, json: async () => [] });
+      }
+      return respostaFalsa({ ok: true, json: async () => [] });
+    });
     vi.stubGlobal('fetch', fetchMock);
 
     render(<DashboardPage onBack={vi.fn()} onVerEstatisticas={vi.fn()} />);
@@ -114,7 +121,8 @@ describe('DashboardPage', () => {
     expect(
       screen.getByRole('region', { name: 'Comece seu primeiro simulado' }),
     ).toBeInTheDocument();
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    // Exatamente duas chamadas ao endpoint de tentativas (erro + retry).
+    expect(attemptsCalls).toBe(2);
   });
 
   it('exibe o estado vazio quando a resposta é ok com lista vazia (R3.4)', async () => {
