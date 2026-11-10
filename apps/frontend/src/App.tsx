@@ -208,7 +208,6 @@ if (screen === 'disciplinas') {
     return (
       <LojaRecompensas
         userName={usuario.full_name}
-        saldoPontos={1250}
         onMeusResgates={() => setScreen('meus-resgates')}
         onInicio={() => setScreen('dashboard')}
         onDisciplinas={() => setScreen('disciplinas')}

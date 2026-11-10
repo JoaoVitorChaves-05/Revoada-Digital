@@ -16,6 +16,13 @@ export class SchoolNotFoundError extends Error {
   }
 }
 
+export class StudentNotFoundError extends Error {
+  constructor() {
+    super('Perfil de aluno não encontrado');
+    this.name = 'StudentNotFoundError';
+  }
+}
+
 const BRASILIA_OFFSET_MS = 3 * 60 * 60 * 1000;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -82,6 +89,19 @@ export class DashboardService {
       .sort((a, b) =>
         a.subject.localeCompare(b.subject, 'pt-BR'),
       );
+  }
+
+  // Saldo de coins (Learn-to-Earn) do aluno. Resolve pelo userId e retorna o
+  // StudentProfile.points. Fonte unica do saldo exibido no header/home e na loja.
+  async getCoins(userId: string): Promise<{ coins: number }> {
+    const student =
+      await this.dashboardRepository.findStudentByUserId(userId);
+
+    if (!student) {
+      throw new StudentNotFoundError();
+    }
+
+    return { coins: student.points };
   }
 
   async getMyDashboard(userId: string) {

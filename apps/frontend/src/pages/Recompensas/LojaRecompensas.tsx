@@ -13,6 +13,7 @@ import {
 import { HeaderApp } from '../../components/HeaderApp';
 import { RECOMPENSAS_MOCK } from './recompensasMock';
 import type { CategoriaRecompensa, Recompensa } from './recompensa.types';
+import { useSaldoCoins } from '../../hooks/useSaldoCoins';
 
 type Props = {
   userName?: string;
@@ -59,7 +60,7 @@ function textoDisponibilidade(r: Recompensa): string {
 
 export function LojaRecompensas({
   userName,
-  saldoPontos = 1250,
+  saldoPontos: saldoPontosProp,
   pontosNaSemana = 250,
   onMeusResgates,
   onInicio,
@@ -74,6 +75,11 @@ export function LojaRecompensas({
   const [busca, setBusca] = useState('');
   const [categoria, setCategoria] = useState<'Todas' | CategoriaRecompensa>('Todas');
   const [apenasResgataveis, setApenasResgataveis] = useState(false);
+
+  // Saldo real (Learn-to-Earn). A prop, quando informada, tem prioridade
+  // (util para testes/demo); senao busca o saldo do aluno logado.
+  const { saldo } = useSaldoCoins();
+  const saldoPontos = saldoPontosProp ?? saldo ?? 0;
 
   const recompensas = useMemo(() => {
     return RECOMPENSAS_MOCK.filter((r) => {

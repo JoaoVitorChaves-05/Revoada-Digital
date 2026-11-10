@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Menu, X, Home, BookOpen, FileText, Users, MessageCircle, Gift } from 'lucide-react';
+import { Menu, X, Home, BookOpen, FileText, Users, MessageCircle, Gift, Coins } from 'lucide-react';
 import iconContainer from '../screens/icons/icon-container.png';
 import { UserMenu } from './UserMenu';
+import { useSaldoCoins } from '../hooks/useSaldoCoins';
 
 /**
  * Cabecalho padrao das telas logadas.
@@ -50,6 +51,7 @@ export function HeaderApp({
   onLogout,
 }: HeaderAppProps) {
   const [aberto, setAberto] = useState(false);
+  const { saldo } = useSaldoCoins();
 
   // Fecha o drawer com a tecla Esc (acessibilidade).
   useEffect(() => {
@@ -98,14 +100,26 @@ export function HeaderApp({
           </div>
         </div>
 
-        {/* Direita: menu de conta no avatar (dropdown) */}
-        <UserMenu
+        {/* Direita: saldo de coins (Learn-to-Earn) + menu de conta */}
+        <div className="flex items-center gap-3">
+          {saldo !== null && (
+            <span
+              className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-sm font-bold text-amber-700 ring-1 ring-amber-200"
+              aria-label={`Saldo de pontos: ${saldo.toLocaleString('pt-BR')} pontos`}
+              title="Seus pontos (Learn-to-Earn)"
+            >
+              <Coins size={16} className="text-amber-500" aria-hidden="true" />
+              {saldo.toLocaleString('pt-BR')}
+            </span>
+          )}
+          <UserMenu
           userName={userName}
           onPerfil={onPerfil}
           onMeusResgates={onMeusResgates}
           onConfiguracoes={onConfiguracoes}
           onLogout={onLogout}
-        />
+          />
+        </div>
       </header>
 
       {/* Overlay */}
