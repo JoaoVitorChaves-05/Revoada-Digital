@@ -33,7 +33,7 @@ describe('RewardService.findAvailable', () => {
         id: 'reward-1',
         name: 'Caderno',
         description: 'Caderno de estudos',
-        pointsCost: 150,
+        cost: 150,
       },
     ]);
 
@@ -55,7 +55,7 @@ describe('RewardService.findAvailable', () => {
     });
     rewardRepository.findById.mockResolvedValue({
       id: 'reward-1',
-      pointsCost: 150,
+      cost: 150,
       isAvailable: true,
       stock: 3,
     });
@@ -80,7 +80,7 @@ describe('RewardService.findAvailable', () => {
     expect(rewardRepository.redeemTransaction).toHaveBeenCalledWith({
       studentId: 'student-1',
       rewardId: 'reward-1',
-      pointsCost: 150,
+      cost: 150,
     });
   });
 
@@ -91,7 +91,7 @@ describe('RewardService.findAvailable', () => {
     });
     rewardRepository.findById.mockResolvedValue({
       id: 'reward-1',
-      pointsCost: 150,
+      cost: 150,
       isAvailable: true,
       stock: null,
     });

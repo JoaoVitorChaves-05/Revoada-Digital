@@ -1,5 +1,5 @@
-import { prisma } from '../lib/prisma';
 import type { PrismaClient } from '@prisma/client';
+import { prisma } from '../lib/prisma';
 import { RewardError } from '../errors/reward.error';
 
 export class RewardRepository {
@@ -15,9 +15,9 @@ export class RewardRepository {
         id: true,
         name: true,
         description: true,
-        pointsCost: true,
+        cost: true,
       },
-      orderBy: { pointsCost: 'asc' },
+      orderBy: { cost: 'asc' },
     });
   }
 
@@ -33,7 +33,7 @@ export class RewardRepository {
       where: { id },
       select: {
         id: true,
-        pointsCost: true,
+        cost: true,
         isAvailable: true,
         stock: true,
       },
@@ -43,16 +43,16 @@ export class RewardRepository {
   redeemTransaction(data: {
     studentId: string;
     rewardId: string;
-    pointsCost: number;
+    cost: number;
   }) {
     return this.client.$transaction(async (tx) => {
       const debit = await tx.studentProfile.updateMany({
         where: {
           id: data.studentId,
-          points: { gte: data.pointsCost },
+          points: { gte: data.cost },
         },
         data: {
-          points: { decrement: data.pointsCost },
+          points: { decrement: data.cost },
         },
       });
 
@@ -67,19 +67,19 @@ export class RewardRepository {
         where: { id: data.rewardId },
         select: {
           id: true,
-          pointsCost: true,
+          cost: true,
           isAvailable: true,
           stock: true,
         },
       });
 
-      this.assertRewardCanBeRedeemed(currentReward, data.pointsCost);
+      this.assertRewardCanBeRedeemed(currentReward, data.cost);
 
       const inventory = await tx.reward.updateMany({
         where: {
           id: data.rewardId,
           isAvailable: true,
-          pointsCost: data.pointsCost,
+          cost: data.cost,
           ...(currentReward.stock === null
             ? { stock: null }
             : { stock: { gte: 1 } }),
@@ -95,12 +95,12 @@ export class RewardRepository {
           where: { id: data.rewardId },
           select: {
             id: true,
-            pointsCost: true,
+            cost: true,
             isAvailable: true,
             stock: true,
           },
         });
-        this.assertRewardCanBeRedeemed(latestReward, data.pointsCost);
+        this.assertRewardCanBeRedeemed(latestReward, data.cost);
         throw new RewardError(
           'REWARD_CHANGED',
           'A recompensa foi alterada durante o resgate',
@@ -111,7 +111,7 @@ export class RewardRepository {
         data: {
           studentId: data.studentId,
           rewardId: data.rewardId,
-          pointsSpent: data.pointsCost,
+          pointsSpent: data.cost,
         },
         select: {
           id: true,
@@ -140,7 +140,7 @@ export class RewardRepository {
   private assertRewardCanBeRedeemed(
     reward: {
       id: string;
-      pointsCost: number;
+      cost: number;
       isAvailable: boolean;
       stock: number | null;
     } | null,
@@ -158,7 +158,7 @@ export class RewardRepository {
       throw new RewardError('OUT_OF_STOCK', 'Recompensa sem estoque');
     }
 
-    if (reward.pointsCost !== expectedCost) {
+    if (reward.cost !== expectedCost) {
       throw new RewardError(
         'REWARD_CHANGED',
         'O custo da recompensa foi alterado',

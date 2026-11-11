@@ -14,7 +14,7 @@ export class RewardService {
       id: reward.id,
       name: reward.name,
       description: reward.description,
-      pointsCost: reward.pointsCost,
+      pointsCost: reward.cost,
     }));
   }
 
@@ -40,7 +40,7 @@ export class RewardService {
       throw new RewardError('OUT_OF_STOCK', 'Recompensa sem estoque');
     }
 
-    if (student.points < reward.pointsCost) {
+    if (student.points < reward.cost) {
       throw new RewardError(
         'INSUFFICIENT_POINTS',
         'Saldo de pontos insuficiente',
@@ -50,7 +50,7 @@ export class RewardService {
     return this.rewardRepository.redeemTransaction({
       studentId: student.id,
       rewardId: reward.id,
-      pointsCost: reward.pointsCost,
+      cost: reward.cost,
     });
   }
 }

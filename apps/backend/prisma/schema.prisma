@@ -150,7 +150,7 @@ model Reward {
   id          String  @id @default(uuid())
   name        String
   description String
-  pointsCost  Int     @map("points_cost")
+  cost        Int     @map("points_cost")
   isAvailable Boolean @default(true) @map("is_available")
   stock       Int? // null representa estoque ilimitado
   redemptions Redemption[]
