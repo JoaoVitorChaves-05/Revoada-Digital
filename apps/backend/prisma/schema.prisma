@@ -95,6 +95,7 @@ model StudentProfile {
   schoolId  String
   school    School     @relation(fields: [schoolId], references: [id], onDelete: Restrict)
   mockExams MockExam[]
+  redemptions Redemption[]
 
   @@map("student_profiles")
 }
@@ -349,4 +350,38 @@ model MessageRead {
   @@id([messageId, userId])
   @@index([userId])
   @@map("chat_message_reads")
+}
+
+// ------------------------------------------------------
+// Learn-to-Earn: recompensas (catalogo) e resgates (CHA-42 / US-05)
+// ------------------------------------------------------
+
+model Reward {
+  id          String @id @default(uuid())
+  name        String
+  description String
+  cost        Int // custo em pontos (mesma unidade de StudentProfile.points)
+
+  redemptions Redemption[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("rewards")
+}
+
+model Redemption {
+  id        String @id @default(uuid())
+  studentId String
+  rewardId  String
+
+  student StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  reward  Reward         @relation(fields: [rewardId], references: [id], onDelete: Restrict)
+
+  pointsSpent Int // pontos gastos no momento do resgate (historico fixo)
+  createdAt   DateTime @default(now())
+
+  @@index([studentId])
+  @@index([rewardId])
+  @@map("redemptions")
 }
