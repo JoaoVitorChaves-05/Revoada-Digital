@@ -95,6 +95,7 @@ model StudentProfile {
   schoolId  String
   school    School     @relation(fields: [schoolId], references: [id], onDelete: Restrict)
   mockExams MockExam[]
+  redemptions Redemption[]
 
   @@map("student_profiles")
 }
@@ -151,8 +152,23 @@ model Reward {
   description String
   pointsCost  Int     @map("points_cost")
   isAvailable Boolean @default(true) @map("is_available")
+  stock       Int? // null representa estoque ilimitado
+  redemptions Redemption[]
 
   @@map("rewards")
+}
+
+model Redemption {
+  id          String   @id @default(uuid())
+  studentId   String   @map("student_id")
+  rewardId    String   @map("reward_id")
+  pointsSpent Int      @map("points_spent")
+  createdAt   DateTime @default(now()) @map("created_at")
+  student     StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  reward      Reward @relation(fields: [rewardId], references: [id], onDelete: Restrict)
+
+  @@index([studentId, createdAt])
+  @@map("redemptions")
 }
 
 model MockExam {
