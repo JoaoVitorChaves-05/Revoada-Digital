@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import {
   dashboardService,
   SchoolNotFoundError,
+  StudentNotFoundError,
 } from '../services/dashboard.service';
 
 export async function getDashboard(req: Request, res: Response) {
@@ -51,6 +52,32 @@ export async function getMyDashboard(req: Request, res: Response) {
 
     return res.status(500).json({
       error: 'Erro ao consultar dashboard',
+    });
+  }
+}
+
+// Desempenho por área do ENEM. Resolve o aluno pelo userId informado via query
+// param (?userId=), mesmo padrão de GET /attempts usado pelo Dashboard nesta
+// fase (sem JWT). O userId é o id do usuário logado; o service busca o perfil
+// de aluno correspondente.
+export async function getDesempenhoAreas(req: Request, res: Response) {
+  const userId = req.query.userId;
+
+  if (typeof userId !== 'string' || !userId.trim()) {
+    return res.status(400).json({ error: 'Parâmetro userId é obrigatório' });
+  }
+
+  try {
+    const areas = await dashboardService.getDesempenhoAreas(userId.trim());
+
+    return res.status(200).json({ areas });
+  } catch (error) {
+    if (error instanceof StudentNotFoundError) {
+      return res.status(404).json({ error: error.message });
+    }
+
+    return res.status(500).json({
+      error: 'Erro ao consultar desempenho por área',
     });
   }
 }
