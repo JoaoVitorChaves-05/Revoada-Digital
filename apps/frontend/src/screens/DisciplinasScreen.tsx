@@ -1,5 +1,9 @@
+import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { HeaderApp } from '../components/HeaderApp'
+import type { DesempenhoArea } from '../types/desempenhoAreas.types'
+import { buscarDesempenhoAreas } from '../utils/desempenhoAreasClient'
+import { sessao } from '../utils/sessao'
 
 const css = `
 /* Tela Disciplinas — ajuste as variáveis para os tokens reais do seu Figma / CSS global */
@@ -471,6 +475,37 @@ const META_AREAS: Record<string, { id: string; descricao: string; icone: ReactNo
   },
 }
 
+const ORDEM_AREAS = [
+  'Linguagens',
+  'Ciências Humanas',
+  'Ciências da Natureza',
+  'Matemática',
+] as const
+
+function montarDisciplinas(areas: DesempenhoArea[]): Disciplina[] {
+  const porNome = new Map(areas.map((area) => [area.area, area]))
+
+  return ORDEM_AREAS.flatMap((nome) => {
+    const meta = META_AREAS[nome]
+    const dados = porNome.get(nome)
+    if (!meta || !dados) {
+      return []
+    }
+
+    return [{
+      id: meta.id,
+      nome,
+      descricao: meta.descricao,
+      resolvidas: dados.questoesResolvidas,
+      acerto: dados.taxaAcerto,
+      icone: meta.icone,
+      niveis: dados.porDificuldade.map((faixa) => ({
+        label: faixa.nivel,
+        valor: faixa.taxaAcerto,
+      })),
+    }]
+  })
+}
 
 function DonutChart({ valor, label }: Nivel) {
   const raio = 20
@@ -499,6 +534,37 @@ function DonutChart({ valor, label }: Nivel) {
 }
 
 export function DisciplinasScreen({ userName, onNavigate, onEstudar, onPraticarRedacao, onMeusResgates, onPerfil, onConfiguracoes, onLogout }: DisciplinasScreenProps) {
+  const [disciplinas, setDisciplinas] = useState<Disciplina[]>([])
+  const [carregando, setCarregando] = useState(true)
+  const [erro, setErro] = useState<string | null>(null)
+
+  async function carregar() {
+    setCarregando(true)
+    setErro(null)
+
+    try {
+      const areas = await buscarDesempenhoAreas(
+        sessao.getUserId(),
+        sessao.getAuthToken(),
+      )
+      setDisciplinas(montarDisciplinas(areas))
+    } catch (error: unknown) {
+      setErro(error instanceof Error ? error.message : 'Erro inesperado.')
+    } finally {
+      setCarregando(false)
+    }
+  }
+
+  useEffect(() => {
+    void carregar()
+  }, [])
+
+  const semDados =
+    !carregando &&
+    !erro &&
+    disciplinas.length > 0 &&
+    disciplinas.every((disciplina) => disciplina.resolvidas === 0)
+
   return (
     <div className="site-shell disciplinas-page">
       <style>{css}</style>

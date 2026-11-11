@@ -14,5 +14,6 @@ dashboardRouter.get('/director', ensureAuthenticated, ensureAdmin, getDashboard)
 dashboardRouter.get('/me', ensureAuthenticated, getMyDashboard);
 // Saldo de coins resolvido por ?userId= (sem JWT nesta fase), como GET /attempts.
 dashboardRouter.get('/me/coins', getCoins);
+dashboardRouter.get('/me/desempenho-areas', getDesempenhoAreas);
 
 export default dashboardRouter;

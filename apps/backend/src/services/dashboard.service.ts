@@ -255,6 +255,24 @@ export class DashboardService {
     return { coins: student.points };
   }
 
+  async getDesempenhoAreas(
+    userId: string,
+  ): Promise<DesempenhoArea[]> {
+    const student =
+      await this.dashboardRepository.findStudentByUserId(userId);
+
+    if (!student) {
+      throw new StudentNotFoundError();
+    }
+
+    const answers =
+      await this.dashboardRepository.findAnswersComQuestaoByStudent(
+        student.id,
+      );
+
+    return agregarPorArea(answers);
+  }
+
   async getMyDashboard(userId: string) {
     const student =
       await this.dashboardRepository.findStudentByUserId(userId);
