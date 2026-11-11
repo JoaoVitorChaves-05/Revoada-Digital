@@ -447,60 +447,29 @@ const IconSeta = (
   </svg>
 )
 
-const disciplinas: Disciplina[] = [
-  {
-    id: 'matematica',
-    nome: 'Matemática',
-    descricao: 'Matemática e suas Tecnologias',
-    resolvidas: 340,
-    acerto: 74,
-    icone: IconCalculadora,
-    niveis: [
-      { label: 'Fáceis', valor: 92 },
-      { label: 'Médias', valor: 78 },
-      { label: 'Difíceis', valor: 64 },
-    ],
-  },
-  {
-    id: 'natureza',
-    nome: 'Ciências da Natureza',
-    descricao: 'Biologia, Química e Física',
-    resolvidas: 290,
-    acerto: 70,
-    icone: IconAtomo,
-    niveis: [
-      { label: 'Fáceis', valor: 84 },
-      { label: 'Médias', valor: 68 },
-      { label: 'Difíceis', valor: 56 },
-    ],
-  },
-  {
-    id: 'humanas',
-    nome: 'Ciências Humanas',
-    descricao: 'História, Geografia, Filosofia e Sociologia',
-    resolvidas: 302,
-    acerto: 82,
-    icone: IconGlobo,
-    niveis: [
-      { label: 'Fáceis', valor: 90 },
-      { label: 'Médias', valor: 72 },
-      { label: 'Difíceis', valor: 60 },
-    ],
-  },
-  {
+// Metadados por area (chave = nome da area como retornado pelo backend).
+const META_AREAS: Record<string, { id: string; descricao: string; icone: ReactNode }> = {
+  Linguagens: {
     id: 'linguagens',
-    nome: 'Linguagens',
     descricao: 'Português, Literatura e línguas estrangeiras',
-    resolvidas: 316,
-    acerto: 86,
     icone: IconLivro,
-    niveis: [
-      { label: 'Fáceis', valor: 94 },
-      { label: 'Médias', valor: 82 },
-      { label: 'Difíceis', valor: 66 },
-    ],
   },
-]
+  'Ciências Humanas': {
+    id: 'humanas',
+    descricao: 'História, Geografia, Filosofia e Sociologia',
+    icone: IconGlobo,
+  },
+  'Ciências da Natureza': {
+    id: 'natureza',
+    descricao: 'Biologia, Química e Física',
+    icone: IconAtomo,
+  },
+  Matemática: {
+    id: 'matematica',
+    descricao: 'Matemática e suas Tecnologias',
+    icone: IconCalculadora,
+  },
+}
 
 
 function DonutChart({ valor, label }: Nivel) {
@@ -554,7 +523,30 @@ export function DisciplinasScreen({ userName, onNavigate, onEstudar, onPraticarR
           Acompanhe seu desempenho por área e veja onde você já está forte e onde ainda pode avançar.
         </p>
 
-        <div className="disciplinas-grid">
+        {carregando ? (
+          <p className="disciplinas-sub" role="status" aria-live="polite">
+            Carregando seu desempenho...
+          </p>
+        ) : erro ? (
+          <div role="alert">
+            <p className="disciplinas-sub" style={{ color: '#b91c1c', fontWeight: 600 }}>
+              {erro}
+            </p>
+            <button type="button" className="link-action" onClick={carregar}>
+              Tentar novamente {IconSeta}
+            </button>
+          </div>
+        ) : (
+          <>
+            {semDados ? (
+              <p className="disciplinas-sub">
+                Você ainda não respondeu questões. Faça um simulado para começar a
+                acompanhar seu desempenho por área. Enquanto isso, os números aparecem
+                zerados.
+              </p>
+            ) : null}
+
+            <div className="disciplinas-grid">
           {disciplinas.map((d) => (
             <section key={d.id} className="disc-card" aria-labelledby={`disc-${d.id}`}>
               <div className="disc-head">
@@ -563,7 +555,6 @@ export function DisciplinasScreen({ userName, onNavigate, onEstudar, onPraticarR
                   <h2 id={`disc-${d.id}`}>{d.nome}</h2>
                   <p>{d.descricao}</p>
                 </div>
-                <span className="badge">Exemplo</span>
               </div>
 
               <div className="disc-meta">
@@ -580,7 +571,9 @@ export function DisciplinasScreen({ userName, onNavigate, onEstudar, onPraticarR
               </div>
             </section>
           ))}
-        </div>
+            </div>
+          </>
+        )}
 
         <section className="redacao-card" aria-labelledby="redacao-titulo">
           <div className="redacao-info">

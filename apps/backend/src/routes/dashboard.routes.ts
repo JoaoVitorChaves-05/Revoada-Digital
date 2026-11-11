@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   getCoins,
   getDashboard,
+  getDesempenhoAreas,
   getMyDashboard,
 } from '../controllers/dashboard.controller';
 import { ensureAuthenticated } from '../middlewares/auth.middleware';
