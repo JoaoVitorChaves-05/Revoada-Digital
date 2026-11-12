@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { API_BASE_URL } from '../../utils/apiBase';
 import './AprovacaoUsuarios.css';
 
 type ProfileType = 'STUDENT' | 'TEACHER' | 'ADMIN';
@@ -21,8 +22,11 @@ interface SolicitacaoAprovacao {
   user: UsuarioPendente;
 }
 
+interface AprovacaoUsuariosProps {
+  onBack?: () => void;
+}
+
 const ADMIN_ID_PADRAO = '550e8400-e29b-41d4-a716-446655440000';
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 const mockSolicitacoesPendentes: SolicitacaoAprovacao[] = [
   {
@@ -66,7 +70,7 @@ const mockSolicitacoesPendentes: SolicitacaoAprovacao[] = [
   },
 ];
 
-export function AprovacaoUsuarios() {
+export function AprovacaoUsuarios({ onBack }: AprovacaoUsuariosProps) {
   const [solicitacoes, setSolicitacoes] = useState<SolicitacaoAprovacao[]>([]);
   const [carregando, setCarregando] = useState<boolean>(true);
   const [busca, setBusca] = useState<string>('');
@@ -92,7 +96,7 @@ export function AprovacaoUsuarios() {
   };
 
   useEffect(() => {
-    const usuarioSalvo = localStorage.getItem('user');
+    const usuarioSalvo = localStorage.getItem('usuarioLogado') || localStorage.getItem('user');
     if (usuarioSalvo) {
       try {
         const parsed = JSON.parse(usuarioSalvo);
@@ -175,7 +179,7 @@ export function AprovacaoUsuarios() {
         throw new Error(erroApi?.error || 'Erro na comunicação com o servidor');
       }
     } catch {
-      // Atualiza localmente caso o backend não esteja rodando no momento do teste visual
+      // Fallback local para visualização caso o backend não esteja rodando
     } finally {
       setSolicitacoes((listaAtual) =>
         listaAtual.filter((item) => item.id !== solicitacao.id)
@@ -232,7 +236,7 @@ export function AprovacaoUsuarios() {
         throw new Error(erroApi?.error || 'Erro ao rejeitar solicitação');
       }
     } catch {
-      // Atualiza localmente caso o backend não esteja rodando no momento do teste visual
+      // Fallback local para visualização caso o backend não esteja rodando
     } finally {
       const nomeUsuario = solicitacaoEmRejeicao.user.full_name;
       setSolicitacoes((listaAtual) =>
@@ -269,6 +273,25 @@ export function AprovacaoUsuarios() {
     <div className="aprovacao-container">
       <header className="aprovacao-topbar">
         <div className="logo-wrapper">
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                color: '#FFFFFF',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                borderRadius: '6px',
+                padding: '0.3rem 0.75rem',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                marginRight: '0.75rem',
+              }}
+            >
+              ← Voltar
+            </button>
+          )}
           <span className="logo-revoada">Revoada</span>
           <span className="logo-digital">Digital</span>
         </div>
