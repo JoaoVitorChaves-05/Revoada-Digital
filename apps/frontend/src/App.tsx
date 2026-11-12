@@ -20,10 +20,11 @@ import { AprovacaoUsuarios } from './pages/Admin/AprovacaoUsuarios'
 
 // Identidade de teste do chat (6=a): usuários fixos para simular as duas pontas
 // na demo. Substituir pelo usuário autenticado (JWT) no Bloco B (6=b).
-// IMPORTANTE: trocar pelos UUIDs reais de usuários existentes no banco local.
+// IDs reais de estudantes de teste existentes no banco (seed-chat-students).
+// Provisório para testar a conversa; substituir pelo usuário autenticado.
 const CHAT_TEST_USERS = [
-  { id: '00000000-0000-0000-0000-000000000001', label: 'Usuário de teste 1' },
-  { id: '00000000-0000-0000-0000-000000000002', label: 'Usuário de teste 2' },
+  { id: 'a6e67b2b-788f-4674-908f-a96f5b0338ab', label: 'Aluno Teste Um' },
+  { id: '56c04b54-4763-4147-bbbf-7335784f7ec7', label: 'Aluno Teste Dois' },
 ]
 
 type Screen =
@@ -76,8 +77,22 @@ function App() {
   const menuProps = {
     onPerfil: () => setScreen('perfil'),
     onConfiguracoes: () => setScreen('configuracoes'),
+    onMeusResgates: () => setScreen('meus-resgates'),
     onLogout: logout,
   }
+
+  function navegarMenu(destino: string) {
+  const rotas: Record<string, Screen> = {
+    inicio: 'dashboard',
+    disciplinas: 'disciplinas',
+    simulados: 'gerar-simulado',
+    comunidade: 'comunidade',
+    chat: 'chat',
+    recompensas: 'recompensas',
+  }
+  const proxima = rotas[destino]
+  if (proxima) setScreen(proxima)
+}
 
   if (screen === 'verificar-email') {
     return (
@@ -176,7 +191,12 @@ function App() {
         userId={usuario?.id}
         onBack={() => setScreen('comunidade')}
         onInicio={() => setScreen('dashboard')}
+        onDisciplinas={() => setScreen('disciplinas')}
+        onSimulados={() => setScreen('gerar-simulado')}
+        onComunidade={() => setScreen('comunidade')}
         onChat={() => setScreen('chat')}
+        onRecompensas={() => setScreen('recompensas')}
+        onMeusResgates={() => setScreen('meus-resgates')}
         onPerfil={menuProps.onPerfil}
         onConfiguracoes={menuProps.onConfiguracoes}
         onLogout={menuProps.onLogout}
@@ -186,6 +206,58 @@ function App() {
 
   if (screen === 'desempenho') {
     return <PainelDesempenhoPage onBack={() => setScreen('dashboard')} />
+  }
+  
+if (screen === 'disciplinas') {
+  if (!usuario) { setScreen('login'); return null }
+  return (
+    <DisciplinasScreen
+      userName={usuario.full_name}
+      onNavigate={navegarMenu}
+      onMeusResgates={() => setScreen('meus-resgates')}
+      onEstudar={(disciplinaId) => console.log('estudar', disciplinaId)} // ligar à tela de questões depois
+      onPraticarRedacao={() => console.log('redação')}                   // idem
+      onPerfil={menuProps.onPerfil}
+      onConfiguracoes={menuProps.onConfiguracoes}
+      onLogout={menuProps.onLogout}
+    />
+  )
+}
+
+  if (screen === 'recompensas') {
+    if (!usuario) { setScreen('login'); return null }
+    return (
+      <LojaRecompensas
+        userName={usuario.full_name}
+        onMeusResgates={() => setScreen('meus-resgates')}
+        onInicio={() => setScreen('dashboard')}
+        onDisciplinas={() => setScreen('disciplinas')}
+        onSimulados={() => setScreen('gerar-simulado')}
+        onComunidade={() => setScreen('comunidade')}
+        onChat={() => setScreen('chat')}
+        onPerfil={menuProps.onPerfil}
+        onConfiguracoes={menuProps.onConfiguracoes}
+        onLogout={menuProps.onLogout}
+      />
+    )
+  }
+
+  if (screen === 'meus-resgates') {
+    if (!usuario) { setScreen('login'); return null }
+    return (
+      <MeusResgates
+        userName={usuario.full_name}
+        onVoltar={() => setScreen('recompensas')}
+        onInicio={() => setScreen('dashboard')}
+        onDisciplinas={() => setScreen('disciplinas')}
+        onSimulados={() => setScreen('gerar-simulado')}
+        onComunidade={() => setScreen('comunidade')}
+        onChat={() => setScreen('chat')}
+        onPerfil={menuProps.onPerfil}
+        onConfiguracoes={menuProps.onConfiguracoes}
+        onLogout={menuProps.onLogout}
+      />
+    )
   }
 
   if (screen === 'dashboard') {

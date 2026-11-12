@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "postinstall": "npx prisma generate --config prisma.config.ts",
     "pretest": "npm run prisma:generate",
     "test": "vitest run --passWithNoTests=false",
     "prisma:generate": "prisma generate --config prisma.config.ts",
@@ -17,6 +19,7 @@
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "7.10.0",
     "@supabase/supabase-js": "^2.117.3",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
@@ -28,6 +31,7 @@
     "zod": "^4.5.4"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",

@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import iconContainer from './icons/icon-container.png';
 import {
   ArrowLeft,
   ArrowRight,
@@ -15,7 +14,7 @@ import {
 } from 'lucide-react'
 import { useForumPosts } from '../hooks/useForum';
 import { SUBJECT_LABELS } from '../types/forum.types';
-import { UserMenu } from '../components/UserMenu';
+import { HeaderApp } from '../components/HeaderApp';
 import { CreatePostModal } from './CreatePostModal';
 
 const RELATED = [
@@ -24,13 +23,15 @@ const RELATED = [
   { category: 'Matemática', title: 'Fatorial e permutação: por onde começar?', replies: 5 },
 ]
 
-const NAV = ['Início', 'Disciplinas', 'Simulados', 'Comunidade', 'Chat', 'FAQ']
 
 interface Props {
   onBack?: () => void
   isLoggedIn?: boolean
   onChat?: () => void
   onInicio?: () => void
+  onDisciplinas?: () => void
+  onRecompensas?: () => void
+  onMeusResgates?: () => void
   onViewPost?: (postId: string) => void
   userName?: string
   onSimulados?: () => void
@@ -40,7 +41,7 @@ interface Props {
   userId?: string
 }
 
-export default function ComunidadePostScreen({ onBack, isLoggedIn = false, onChat, onInicio, onViewPost, userName, onSimulados, onPerfil, onConfiguracoes, onLogout, userId }: Props) {
+export default function ComunidadePostScreen({ onBack, isLoggedIn = false, onChat, onInicio, onDisciplinas, onRecompensas, onMeusResgates, onViewPost, userName, onSimulados, onPerfil, onConfiguracoes, onLogout, userId }: Props) {
   // BUSCAR POSTS DO BACKEND
   const { posts, loading, error, refetch } = useForumPosts();
   const [modalAberto, setModalAberto] = useState(false);
@@ -69,26 +70,20 @@ export default function ComunidadePostScreen({ onBack, isLoggedIn = false, onCha
   return (
     <>
     <div className="min-h-screen bg-[#f7f9fc] text-slate-700">
-      <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4 shadow-sm sm:px-10 lg:px-[8%]">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-900 text-sm"><img src={iconContainer} alt="Revoada Digital" /></div>
-          <span className="font-[Sora] text-base font-extrabold"><span className="text-orange-500">Revoada</span><span className="text-indigo-900">Digital</span></span>
-        </div>
-        <nav className="hidden items-stretch gap-7 text-xs font-semibold text-indigo-900 md:flex">
-          {NAV.map((item) => item === 'Chat' && !isLoggedIn ? null : item === 'Início' ? (
-            <button key={item} type="button" onClick={onInicio} className="flex items-center border-b-2 border-transparent transition hover:text-orange-500">Início</button>
-          ) : item === 'Simulados' ? (
-            <button key={item} type="button" onClick={onSimulados} className="flex items-center border-b-2 border-transparent transition hover:text-orange-500">Simulados</button>
-          ) : item === 'Chat' ? (
-            <button key={item} type="button" onClick={onChat} className="flex items-center border-b-2 border-transparent transition hover:text-orange-500">Chat</button>
-          ) : (
-            <a key={item} href="#" className={`flex items-center border-b-2 transition hover:text-orange-500 ${item === 'Comunidade' ? 'border-orange-500 font-extrabold' : 'border-transparent'}`}>
-              {item}
-            </a>
-          ))}
-        </nav>
-        <UserMenu userName={userName} onPerfil={onPerfil} onConfiguracoes={onConfiguracoes} onLogout={onLogout} />
-      </header>
+      <HeaderApp
+        ativo="Comunidade"
+        isLoggedIn={isLoggedIn}
+        userName={userName}
+        onInicio={onInicio}
+        onDisciplinas={onDisciplinas}
+        onSimulados={onSimulados}
+        onChat={onChat}
+        onRecompensas={onRecompensas}
+        onMeusResgates={onMeusResgates}
+        onPerfil={onPerfil}
+        onConfiguracoes={onConfiguracoes}
+        onLogout={onLogout}
+      />
 
       <main className="mx-auto max-w-[1280px] px-4 py-5 sm:px-10 lg:px-[8%]">
         <section className="flex flex-col justify-between gap-3 border-b border-slate-200 pb-5 sm:flex-row sm:items-center">

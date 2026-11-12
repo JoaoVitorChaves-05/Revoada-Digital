@@ -16,8 +16,166 @@ export class SchoolNotFoundError extends Error {
   }
 }
 
+export class StudentNotFoundError extends Error {
+  constructor() {
+    super('Perfil de aluno não encontrado');
+    this.name = 'StudentNotFoundError';
+  }
+}
+
 const BRASILIA_OFFSET_MS = 3 * 60 * 60 * 1000;
 const DAY_MS = 24 * 60 * 60 * 1000;
+
+// Áreas do ENEM na ordem em que devem ser retornadas. O backend é a fonte
+// única do mapa matéria -> área; o frontend apenas consome o resultado.
+export const AREAS_ENEM = [
+  'Linguagens',
+  'Ciências Humanas',
+  'Ciências da Natureza',
+  'Matemática',
+] as const;
+
+export type AreaEnem = (typeof AREAS_ENEM)[number];
+
+// Mapa matéria -> área do ENEM. Uma questão interdisciplinar (subject com
+// mais de um item) contribui para cada área correspondente.
+const SUBJECT_TO_AREA: Record<string, AreaEnem> = {
+  'Língua Portuguesa': 'Linguagens',
+  Literatura: 'Linguagens',
+  Inglês: 'Linguagens',
+  Espanhol: 'Linguagens',
+  Artes: 'Linguagens',
+  'Educação Física': 'Linguagens',
+  História: 'Ciências Humanas',
+  Geografia: 'Ciências Humanas',
+  Filosofia: 'Ciências Humanas',
+  Sociologia: 'Ciências Humanas',
+  Biologia: 'Ciências da Natureza',
+  Química: 'Ciências da Natureza',
+  Física: 'Ciências da Natureza',
+  Matemática: 'Matemática',
+};
+
+// Faixas de dificuldade exibidas, na ordem fixa de apresentação.
+export const FAIXAS_DIFICULDADE = ['Fáceis', 'Médias', 'Difíceis'] as const;
+
+export type FaixaDificuldade = (typeof FAIXAS_DIFICULDADE)[number];
+
+// Mapa difficulty (0..3 no banco) -> faixa exibida.
+// 0 e 1 = Fáceis, 2 = Médias, 3 = Difíceis.
+function faixaDaDificuldade(difficulty: number): FaixaDificuldade | null {
+  if (difficulty === 0 || difficulty === 1) {
+    return 'Fáceis';
+  }
+  if (difficulty === 2) {
+    return 'Médias';
+  }
+  if (difficulty === 3) {
+    return 'Difíceis';
+  }
+  return null;
+}
+
+export type DesempenhoPorDificuldade = {
+  nivel: FaixaDificuldade;
+  taxaAcerto: number;
+};
+
+export type DesempenhoArea = {
+  area: AreaEnem;
+  questoesResolvidas: number;
+  taxaAcerto: number;
+  porDificuldade: DesempenhoPorDificuldade[];
+};
+
+// Resposta do aluno enriquecida com os dados da questão, como vem do
+// repository. isCorrect pode ser null (questão não respondida/sem gabarito);
+// null conta como não-acerto.
+export type AnswerComQuestao = {
+  isCorrect: boolean | null;
+  question: {
+    subject: string[];
+    difficulty: number;
+  };
+};
+
+type Contagem = { total: number; acertos: number };
+
+function novaContagem(): Contagem {
+  return { total: 0, acertos: 0 };
+}
+
+function taxa(contagem: Contagem): number {
+  if (contagem.total === 0) {
+    return 0;
+  }
+  return Math.round((contagem.acertos / contagem.total) * 100);
+}
+
+// Função pura: agrega as respostas do aluno por área do ENEM.
+// Sempre retorna as 4 áreas, na ordem de AREAS_ENEM; uma área sem respostas
+// vem zerada. Cada área traz as 3 faixas de dificuldade, também zeradas quando
+// não houver respostas naquela faixa.
+export function agregarPorArea(
+  answers: AnswerComQuestao[],
+): DesempenhoArea[] {
+  const porArea = new Map<
+    AreaEnem,
+    { geral: Contagem; porFaixa: Map<FaixaDificuldade, Contagem> }
+  >();
+
+  for (const area of AREAS_ENEM) {
+    porArea.set(area, {
+      geral: novaContagem(),
+      porFaixa: new Map(
+        FAIXAS_DIFICULDADE.map((faixa) => [faixa, novaContagem()]),
+      ),
+    });
+  }
+
+  for (const answer of answers) {
+    const acertou = answer.isCorrect === true;
+    const faixa = faixaDaDificuldade(answer.question.difficulty);
+
+    // Uma questão interdisciplinar conta para cada área à qual pertence.
+    const areasDaQuestao = new Set<AreaEnem>();
+    for (const subject of answer.question.subject) {
+      const area = SUBJECT_TO_AREA[subject];
+      if (area) {
+        areasDaQuestao.add(area);
+      }
+    }
+
+    for (const area of areasDaQuestao) {
+      const registro = porArea.get(area)!;
+      registro.geral.total += 1;
+      if (acertou) {
+        registro.geral.acertos += 1;
+      }
+
+      if (faixa) {
+        const contagemFaixa = registro.porFaixa.get(faixa)!;
+        contagemFaixa.total += 1;
+        if (acertou) {
+          contagemFaixa.acertos += 1;
+        }
+      }
+    }
+  }
+
+  return AREAS_ENEM.map((area) => {
+    const registro = porArea.get(area)!;
+    return {
+      area,
+      questoesResolvidas: registro.geral.total,
+      taxaAcerto: taxa(registro.geral),
+      porDificuldade: FAIXAS_DIFICULDADE.map((nivel) => ({
+        nivel,
+        taxaAcerto: taxa(registro.porFaixa.get(nivel)!),
+      })),
+    };
+  });
+}
 
 export class DashboardService {
   constructor(
@@ -82,6 +240,37 @@ export class DashboardService {
       .sort((a, b) =>
         a.subject.localeCompare(b.subject, 'pt-BR'),
       );
+  }
+
+  // Saldo de coins (Learn-to-Earn) do aluno. Resolve pelo userId e retorna o
+  // StudentProfile.points. Fonte unica do saldo exibido no header/home e na loja.
+  async getCoins(userId: string): Promise<{ coins: number }> {
+    const student =
+      await this.dashboardRepository.findStudentByUserId(userId);
+
+    if (!student) {
+      throw new StudentNotFoundError();
+    }
+
+    return { coins: student.points };
+  }
+
+  async getDesempenhoAreas(
+    userId: string,
+  ): Promise<DesempenhoArea[]> {
+    const student =
+      await this.dashboardRepository.findStudentByUserId(userId);
+
+    if (!student) {
+      throw new StudentNotFoundError();
+    }
+
+    const answers =
+      await this.dashboardRepository.findAnswersComQuestaoByStudent(
+        student.id,
+      );
+
+    return agregarPorArea(answers);
   }
 
   async getMyDashboard(userId: string) {

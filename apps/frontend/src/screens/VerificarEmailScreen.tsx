@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
+import { API_BASE_URL } from '../utils/apiBase';
 
 type VerificarEmailScreenProps = {
   token: string | null;
   onIrParaLogin: () => void;
 };
 
-const API_BASE = 'http://localhost:3000';
+const API_BASE = API_BASE_URL;
 
 type Status = 'verificando' | 'sucesso' | 'erro';
 

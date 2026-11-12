@@ -1,10 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
 import express from 'express';
 import dashboardRouter from './dashboard.routes';
 import { dashboardService, SchoolNotFoundError } from '../services/dashboard.service';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../lib/prisma';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // 1. Mockamos o service, o prisma e o jwt para isolar o teste da rota
 vi.mock('../services/dashboard.service', () => ({
@@ -31,8 +31,12 @@ app.use('/dashboard', dashboardRouter);
 
 describe('GET /dashboard/director Route Integration', () => {
     beforeEach(() => {
-        vi.clearAllMocks();
-        process.env.JWT_SECRET = 'fake-secret';
+        vi.resetAllMocks();
+        vi.stubEnv('JWT_SECRET', 'chave-jwt-apenas-para-testes');
+    });
+
+    afterEach(() => {
+        vi.unstubAllEnvs();
     });
 
     it('deve retornar 401 se o token de autenticação não for enviado', async () => {
@@ -44,7 +48,10 @@ describe('GET /dashboard/director Route Integration', () => {
 
     it('deve retornar 403 se o usuário autenticado não for ADMIN', async () => {
         // Simula token válido
-        vi.mocked(jwt.verify).mockReturnValueOnce({ sub: 'user-student' } as any);
+        vi.mocked(jwt.verify).mockReturnValueOnce({
+            sub: 'user-student',
+            exp: Math.floor(Date.now() / 1000) + 3600,
+        } as any);
         // Simula usuário STUDENT no banco
         vi.mocked(prisma.user.findUnique).mockResolvedValueOnce({ profileType: 'STUDENT' } as any);
 
@@ -58,7 +65,10 @@ describe('GET /dashboard/director Route Integration', () => {
 
     it('deve retornar 400 se o school_id não for fornecido na query', async () => {
         // Simula token válido
-        vi.mocked(jwt.verify).mockReturnValueOnce({ sub: 'user-admin' } as any);
+        vi.mocked(jwt.verify).mockReturnValueOnce({
+            sub: 'user-admin',
+            exp: Math.floor(Date.now() / 1000) + 3600,
+        } as any);
         // Simula usuário ADMIN no banco
         vi.mocked(prisma.user.findUnique).mockResolvedValueOnce({ profileType: 'ADMIN' } as any);
 
@@ -72,7 +82,10 @@ describe('GET /dashboard/director Route Integration', () => {
 
     it('deve retornar 200 e os dados de performance se o admin for autorizado', async () => {
         // Simula token válido
-        vi.mocked(jwt.verify).mockReturnValueOnce({ sub: 'user-admin' } as any);
+        vi.mocked(jwt.verify).mockReturnValueOnce({
+            sub: 'user-admin',
+            exp: Math.floor(Date.now() / 1000) + 3600,
+        } as any);
         // Simula usuário ADMIN no banco
         vi.mocked(prisma.user.findUnique).mockResolvedValueOnce({ profileType: 'ADMIN' } as any);
         // Simula sucesso no service (ja testado antes)

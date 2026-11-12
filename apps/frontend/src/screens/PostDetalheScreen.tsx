@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import iconContainer from './icons/icon-container.png';
 import {
   ArrowLeft,
   Bookmark,
@@ -18,9 +17,8 @@ import {
 import { useForumPost, useCreateReply } from '../hooks/useForum';
 import { SUBJECT_LABELS, PROFILE_LABELS } from '../types/forum.types';
 import type { ForumReply } from '../types/forum.types';
-import { UserMenu } from '../components/UserMenu';
+import { HeaderApp } from '../components/HeaderApp';
 
-const NAV = ['Início', 'Disciplinas', 'Simulados', 'Comunidade', 'Chat', 'FAQ'];
 
 interface Props {
   postId: string;
@@ -28,6 +26,11 @@ interface Props {
   isLoggedIn?: boolean;
   onChat?: () => void;
   onInicio?: () => void;
+  onDisciplinas?: () => void;
+  onSimulados?: () => void;
+  onComunidade?: () => void;
+  onRecompensas?: () => void;
+  onMeusResgates?: () => void;
   onPerfil?: () => void;
   onConfiguracoes?: () => void;
   onLogout?: () => void;
@@ -35,7 +38,7 @@ interface Props {
   userName?: string;
 }
 
-export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, onChat, onInicio, userName, onPerfil, onConfiguracoes, onLogout, userId }: Props) {
+export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, onChat, onInicio, onDisciplinas, onSimulados, onComunidade, onRecompensas, onMeusResgates, userName, onPerfil, onConfiguracoes, onLogout, userId }: Props) {
   // Estados do backend
   const { post, loading, error, refetch } = useForumPost(postId);
   const { createReply, loading: creatingReply } = useCreateReply(postId);
@@ -156,53 +159,21 @@ export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, 
   return (
     <div className="min-h-screen bg-[#f7f9fc] text-slate-700">
       {/* HEADER */}
-      <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4 shadow-sm sm:px-10 lg:px-[8%]">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-900 text-sm">
-            <img src={iconContainer} alt="Revoada Digital" />
-          </div>
-          <span className="font-[Sora] text-base font-extrabold">
-            <span className="text-orange-500">Revoada</span>
-            <span className="text-indigo-900">Digital</span>
-          </span>
-        </div>
-        <nav className="hidden items-stretch gap-7 text-xs font-semibold text-indigo-900 md:flex">
-          {NAV.map((item) =>
-            item === 'Chat' && !isLoggedIn ? null : item === 'Início' ? (
-              <button
-                key={item}
-                type="button"
-                onClick={onInicio}
-                className="flex items-center border-b-2 border-transparent transition hover:text-orange-500"
-              >
-                Início
-              </button>
-            ) : item === 'Chat' ? (
-              <button
-                key={item}
-                type="button"
-                onClick={onChat}
-                className="flex items-center border-b-2 border-transparent transition hover:text-orange-500"
-              >
-                Chat
-              </button>
-            ) : (
-              <a
-                key={item}
-                href="#"
-                className={`flex items-center border-b-2 transition hover:text-orange-500 ${
-                  item === 'Comunidade'
-                    ? 'border-orange-500 font-extrabold'
-                    : 'border-transparent'
-                }`}
-              >
-                {item}
-              </a>
-            )
-          )}
-        </nav>
-        <UserMenu userName={userName} onPerfil={onPerfil} onConfiguracoes={onConfiguracoes} onLogout={onLogout} />
-      </header>
+      <HeaderApp
+        ativo="Comunidade"
+        isLoggedIn={isLoggedIn}
+        userName={userName}
+        onInicio={onInicio}
+        onDisciplinas={onDisciplinas}
+        onSimulados={onSimulados}
+        onComunidade={onComunidade}
+        onChat={onChat}
+        onRecompensas={onRecompensas}
+        onMeusResgates={onMeusResgates}
+        onPerfil={onPerfil}
+        onConfiguracoes={onConfiguracoes}
+        onLogout={onLogout}
+      />
 
       <main className="mx-auto max-w-[1280px] px-4 py-5 sm:px-10 lg:px-[8%]">
         <section className="flex flex-col justify-between gap-3 border-b border-slate-200 pb-5 sm:flex-row sm:items-center">
