@@ -51,13 +51,9 @@ export function useChat(currentUserId: string): UseChatResult {
   const [messagesError, setMessagesError] = useState<string | null>(null);
   const [sendError, setSendError] = useState<string | null>(null);
 
-  // Refs para acessar valores atuais dentro dos listeners do socket sem
-  // recriar o handler (evita closures velhos e listener registrado por engano
-  // com um currentUserId anterior).
+  // Mantém o destinatário atual acessível dentro dos listeners do socket.
   const selectedUserIdRef = useRef<string | null>(null);
   selectedUserIdRef.current = selectedUserId;
-
-  const loadConversationsRef = useRef<() => void>(() => {});
 
   const loadConversations = useCallback(async () => {
     setConversationsStatus('loading');
@@ -116,33 +112,23 @@ export function useChat(currentUserId: string): UseChatResult {
     [currentUserId],
   );
 
-  // Mantém a ref de loadConversations sempre apontando para a versão atual,
-  // para que o listener (registrado uma única vez) use a função mais recente.
-  loadConversationsRef.current = loadConversations;
-
-  // Carga inicial e recarga das conversas quando o usuário atual muda.
+  // Carga inicial das conversas.
   useEffect(() => {
     loadConversations();
   }, [loadConversations]);
 
-  // Conexão do socket + listeners. Registrado UMA vez por usuário (deps só
-  // currentUserId). O handler lê valores mutáveis via refs, então não precisa
-  // ser recriado a cada mudança de conversa/loadConversations — eliminando a
-  // corrida que deixava um listener antigo com currentUserId desatualizado.
+  // Conexão do socket + listeners (um por sessão/usuário).
   useEffect(() => {
     const socket = connectChatSocket(currentUserId);
 
     const handleNewMsg = (message: ChatMessage) => {
-      // A mensagem pertence à conversa aberta se qualquer uma das pontas
-      // (remetente ou destinatário) for o contato selecionado. Não depende
-      // de "quem sou eu", evitando erro por currentUserId capturado.
-      const selecionado = selectedUserIdRef.current;
-      const pertenceAConversaAberta =
-        !!selecionado &&
-        (message.sender.id === selecionado ||
-          message.receiverId === selecionado);
+      const otherId =
+        message.sender.id === currentUserId
+          ? message.receiverId
+          : message.sender.id;
 
-      if (pertenceAConversaAberta) {
+      // Se a mensagem pertence à conversa aberta, reflete na lista.
+      if (otherId && otherId === selectedUserIdRef.current) {
         setMessages((prev) => {
           // Evita duplicar: o eco do próprio envio pode já ter sido otimista.
           if (prev.some((m) => m.id === message.id)) return prev;
@@ -160,20 +146,17 @@ export function useChat(currentUserId: string): UseChatResult {
       }
 
       // Atualiza o preview/unread da lista de conversas de forma leve.
-      loadConversationsRef.current();
+      loadConversations();
     };
 
-    const handleSendMsgError = (error: { message: string }) =>
-      setSendError(error.message);
-
     socket.on('newMsg', handleNewMsg);
-    socket.on('sendMsgError', handleSendMsgError);
+    socket.on('sendMsgError', (error) => setSendError(error.message));
 
     return () => {
       socket.off('newMsg', handleNewMsg);
-      socket.off('sendMsgError', handleSendMsgError);
+      socket.off('sendMsgError');
     };
-  }, [currentUserId]);
+  }, [currentUserId, loadConversations]);
 
   // Desconecta ao desmontar o componente que usa o hook.
   useEffect(() => {
