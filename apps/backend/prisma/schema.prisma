@@ -237,6 +237,7 @@ model Attempt {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  coinsCredited Boolean @default(false)
 
   @@index([mockExamId])
   @@map("attempts")

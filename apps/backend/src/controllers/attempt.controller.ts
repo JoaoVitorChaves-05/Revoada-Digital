@@ -41,7 +41,9 @@ export async function submitAttempt(req: Request, res: Response) {
 
   try {
     const result = await attemptService.submitAttempt(id, req.body);
-    return res.status(200).json(result);
+    // Coins creditados pelo creditarCoinsMiddleware (undefined quando não creditou)
+    const totalCoinsGanho = req.body.totalCoinsGanho;
+    return res.status(200).json({ ...result, totalCoinsGanho });
   } catch (error: any) {
     return res.status(400).json({ error: 'Erro ao entregar avaliação', details: error.message });
   }
