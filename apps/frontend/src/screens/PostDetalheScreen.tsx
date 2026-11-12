@@ -36,8 +36,8 @@ interface Props {
   userName?: string;
   userProfileType?: string;
 }
-
 export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, onChat, onInicio, userName, onPerfil, onConfiguracoes, onLogout, userId, userProfileType }: Props) {
+
   // Estados do backend
   const { post, loading, error, refetch } = useForumPost(postId);
   const { createReply, loading: creatingReply } = useCreateReply(postId);
