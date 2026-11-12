@@ -95,7 +95,9 @@ model StudentProfile {
   schoolId  String
   school    School     @relation(fields: [schoolId], references: [id], onDelete: Restrict)
   mockExams MockExam[]
+
   redemptions Redemption[]
+  pointBalance PointBalance?
 
   @@map("student_profiles")
 }
@@ -367,3 +369,27 @@ model MessageRead {
   @@index([userId])
   @@map("chat_message_reads")
 }
+
+model PointBalance {
+  studentId String @id
+  balance   Int    @default(0)
+
+  student      StudentProfile     @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  transactions PointTransaction[]
+
+  @@map("point_balances")
+}
+
+model PointTransaction {
+  id        String   @id @default(uuid())
+  studentId String
+  amount    Int
+  reason    String
+  createdAt DateTime @default(now())
+
+  pointBalance PointBalance @relation(fields: [studentId], references: [studentId], onDelete: Restrict)
+
+  @@index([studentId, createdAt])
+  @@map("transactions")
+}
+
