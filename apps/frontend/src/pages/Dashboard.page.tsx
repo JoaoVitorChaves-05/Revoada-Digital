@@ -112,7 +112,7 @@ export function DashboardPage({
   // estados da pagina (carregando/erro/vazio/sucesso) para manter a mesma cara.
   function Layout({ children }: { children: ReactNode }) {
     return (
-      <div className="min-h-screen bg-[#f7f9fc] text-slate-700">
+      <div className="min-h-screen bg-[#FF2400] text-slate-700">
         <HeaderApp
           ativo="Início"
           userName={userName}

@@ -107,7 +107,7 @@ export function BlocoDisciplinas({ onEstudar, onVerDisciplinas }: BlocoDisciplin
   return (
     <section className="bloco-disciplinas" aria-label="O que vamos estudar hoje?" style={secaoStyle}>
       <div style={cabecalhoStyle}>
-        <h2 style={tituloStyle}>O que vamos estudar hoje?</h2>
+        <h2 style={tituloStyle}>INTER MELHOR TIME VLW!!</h2>
         <button
           type="button"
           className="bloco-disciplinas__ver"
