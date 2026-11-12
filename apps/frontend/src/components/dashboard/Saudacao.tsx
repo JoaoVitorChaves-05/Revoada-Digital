@@ -51,12 +51,12 @@ export function Saudacao({ nome, agora }: SaudacaoProps) {
       <h1 className="saudacao__titulo" style={tituloStyle}>
         {nome === null ? (
           <>
-            <span>Bom te ver por aqui,</span>
+            <span>oi, profff !!,</span>
             <Placeholder descricaoAcessivel="Seu nome estará disponível em breve" />
             <span>!</span>
           </>
         ) : (
-          `Bom te ver por aqui, ${nome}!`
+          `oi, profff !!, ${nome}!`
         )}
       </h1>
       <p className="saudacao__data" style={dataStyle}>
