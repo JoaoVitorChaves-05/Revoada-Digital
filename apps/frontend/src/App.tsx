@@ -16,6 +16,7 @@ import { GerarSimulado } from './pages/Simulado/GerarSimulado'
 import { FazerSimulado } from './pages/Simulado/FazerSimulado'
 import { PerfilScreen } from './screens/PerfilScreen'
 import { ConfiguracoesScreen } from './screens/ConfiguracoesScreen'
+import { AprovacaoUsuarios } from './pages/Admin/AprovacaoUsuarios'
 
 // Identidade de teste do chat (6=a): usuários fixos para simular as duas pontas
 // na demo. Substituir pelo usuário autenticado (JWT) no Bloco B (6=b).
@@ -42,6 +43,7 @@ type Screen =
   | 'historico'
   | 'perfil'
   | 'configuracoes'
+  | 'aprovacao'
 
 function telaInicial(): Screen {
   if (typeof window !== 'undefined' && window.location.pathname === '/verificar-email') {
@@ -99,29 +101,58 @@ function App() {
         onForgot={() => setScreen('redefinir')}
         onLoginSuccess={(user) => {
           setUsuario(user)
-          setScreen('dashboard')
+          const perfil = (user as { profileType?: string }).profileType
+          setScreen(perfil === 'ADMIN' ? 'aprovacao' : 'dashboard')
         }}
       />
     )
   }
   if (screen === 'redefinir') return <RedefinirScreen onBack={() => setScreen('login')} />
 
+  if (screen === 'aprovacao') {
+    return (
+      <AprovacaoUsuarios
+        onBack={() => setScreen(estaLogado ? 'dashboard' : 'home')}
+      />
+    )
+  }
+
   // --- Area logada: Comunidade / Chat / Detalhe do post ---
   if (screen === 'comunidade') {
     return (
-      <ComunidadePostScreen
-        isLoggedIn={estaLogado}
-        userName={usuario?.full_name}
-        userId={usuario?.id}
-        onBack={() => setScreen('home')}
-        onInicio={() => setScreen('dashboard')}
-        onChat={() => setScreen('chat')}
-        onSimulados={() => setScreen('gerar-simulado')}
-        onViewPost={(postId: string) => { setPostSelecionado(postId); setScreen('post-detalhe') }}
-        onPerfil={menuProps.onPerfil}
-        onConfiguracoes={menuProps.onConfiguracoes}
-        onLogout={menuProps.onLogout}
-      />
+      <div>
+        <div style={{ backgroundColor: '#1E3A8A', padding: '0.5rem 1.5rem', display: 'flex', justifyContent: 'flex-end' }}>
+          <button
+            type="button"
+            onClick={() => setScreen('aprovacao')}
+            style={{
+              backgroundColor: '#F97316',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '6px',
+              padding: '0.35rem 0.85rem',
+              fontSize: '0.85rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+            }}
+          >
+            Área Admin: Aprovação de Usuários
+          </button>
+        </div>
+        <ComunidadePostScreen
+          isLoggedIn={estaLogado}
+          userName={usuario?.full_name}
+          userId={usuario?.id}
+          onBack={() => setScreen('home')}
+          onInicio={() => setScreen('dashboard')}
+          onChat={() => setScreen('chat')}
+          onSimulados={() => setScreen('gerar-simulado')}
+          onViewPost={(postId: string) => { setPostSelecionado(postId); setScreen('post-detalhe') }}
+          onPerfil={menuProps.onPerfil}
+          onConfiguracoes={menuProps.onConfiguracoes}
+          onLogout={menuProps.onLogout}
+        />
+      </div>
     )
   }
 
@@ -159,10 +190,30 @@ function App() {
 
   if (screen === 'dashboard') {
     return (
-      <DashboardPage
-        onBack={() => setScreen('comunidade')}
-        onVerEstatisticas={() => setScreen('desempenho')}
-      />
+      <div>
+        <div style={{ backgroundColor: '#1E3A8A', padding: '0.5rem 1.5rem', display: 'flex', justifyContent: 'flex-end' }}>
+          <button
+            type="button"
+            onClick={() => setScreen('aprovacao')}
+            style={{
+              backgroundColor: '#F97316',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '6px',
+              padding: '0.35rem 0.85rem',
+              fontSize: '0.85rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+            }}
+          >
+            Área Admin: Aprovação de Usuários
+          </button>
+        </div>
+        <DashboardPage
+          onBack={() => setScreen('comunidade')}
+          onVerEstatisticas={() => setScreen('desempenho')}
+        />
+      </div>
     )
   }
 
@@ -189,8 +240,6 @@ function App() {
 
   if (screen === 'historico') {
     if (!usuario) { setScreen('login'); return null }
-    // Usa a tela de historico da feature Dashboard (HistoryPage), que resolve o
-    // aluno via Servico_Sessao (agora conectado ao usuario logado).
     return <HistoryPage onBack={() => setScreen('dashboard')} />
   }
 
