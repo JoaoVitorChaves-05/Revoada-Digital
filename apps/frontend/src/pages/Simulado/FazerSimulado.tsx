@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import './FazerSimulado.css';
 import { simuladoService, type AttemptApi } from '../../services/simulado.service';
+import { TextoComImagem } from '../../components/TextoComImagem';
 
 type FazerSimuladoProps = {
   attemptId: string;
@@ -101,7 +102,7 @@ export function FazerSimulado({ attemptId, onFinalizar }: FazerSimuladoProps) {
 
         <div className="questao-card">
           <h2 className="questao-header">Questão {indiceQuestaoAtual + 1}</h2>
-          <p className="questao-enunciado">{atual.text}</p>
+          <TextoComImagem conteudo={atual.text} className="questao-enunciado" />
 
           <div className="alternativas-container">
             {atual.alternatives.map((alt, i) => {
@@ -116,7 +117,7 @@ export function FazerSimulado({ attemptId, onFinalizar }: FazerSimuladoProps) {
                     onChange={() => selecionar(alt.id)}
                   />
                   <span className="alternativa-letra">{letra})</span>
-                  <span className="alternativa-texto">{alt.text}</span>
+                  <TextoComImagem conteudo={alt.text} className="alternativa-texto" />
                 </label>
               );
             })}
