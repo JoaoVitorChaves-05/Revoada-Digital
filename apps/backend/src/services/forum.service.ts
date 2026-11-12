@@ -38,9 +38,17 @@ export class ForumService {
 		return this.forumRepository.updatePost(id, data);
 	}
 
-	async deletePost(id: string) {
-		await this.getPost(id);
-		return this.forumRepository.deletePost(id);
+	async deletePost(id: string, userId: string, userProfileType: string) {
+    const post = await this.getPost(id);
+
+    const isAuthor = post.authorId === userId; 
+    const isTeacher = userProfileType === 'TEACHER';
+
+		if (!isAuthor && !isTeacher) {
+		throw new Error('Acesso negado: Sem permissão para excluir este post.');
+		}
+
+    return this.forumRepository.deletePost(id);
 	}
 
 	async listReplies(postId: string) {

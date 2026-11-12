@@ -29,8 +29,13 @@ class ForumService {
     return response.data;
   }
 
-  async deletePost(id: string): Promise<void> {
-    await api.delete(`/forum/posts/${id}`);
+  async deletePost(id: string, userId: string, userProfileType: string): Promise<void> {
+    await api.delete(`/forum/posts/${id}`, {
+      headers: {
+        'user-id': userId,
+        'user-profile-type': userProfileType
+      }
+    });
   }
 
   async listReplies(postId: string): Promise<ForumReply[]> {

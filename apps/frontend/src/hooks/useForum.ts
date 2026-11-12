@@ -109,11 +109,11 @@ export function useDeletePost() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const deletePost = async (postId: string): Promise<boolean> => {
+  const deletePost = async (postId: string, userId: string, userProfileType: string): Promise<boolean> => {
     try {
       setLoading(true);
       setError(null);
-      await forumService.deletePost(postId);
+      await forumService.deletePost(postId, userId, userProfileType);
       return true;
     } catch (err: any) {
       setError(err.response?.data?.error || 'Erro ao deletar post');

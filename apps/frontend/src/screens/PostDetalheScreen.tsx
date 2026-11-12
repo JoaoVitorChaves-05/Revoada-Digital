@@ -282,7 +282,7 @@ export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, 
                     disabled={isDeleting}
                     onClick={async () => {
                       if(window.confirm('Tem certeza que deseja excluir este post?')) {
-                        const success = await deletePost(post.id);
+                        const success = await deletePost(post.id, userId as string, userProfileType as string);
                         if (success) {
                           onBack(); // Sai da tela se a exclusão der certo
                         } else {

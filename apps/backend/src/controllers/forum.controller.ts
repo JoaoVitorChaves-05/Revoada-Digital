@@ -66,14 +66,29 @@ export async function updatePost(req: Request, res: Response) {
 }
 
 export async function deletePost(req: Request, res: Response) {
-	try {
-		await forumService.deletePost(getParam(req, 'id'));
-		return res.status(204).send();
-	} catch (error) {
-		return isNotFoundError(error)
-			? res.status(404).json({ error: 'Postagem não encontrada' })
-			: res.status(500).json({ error: 'Erro ao remover postagem' });
-	}
+    try {
+        const postId = getParam(req, 'id');
+        const userId = req.headers['user-id'] as string;
+        const userProfileType = req.headers['user-profile-type'] as string;
+
+        if (!userId) {
+            return res.status(401).json({ error: 'Usuário não autenticado.' });
+        }
+
+        await forumService.deletePost(postId, userId, userProfileType);
+        
+        return res.status(204).send();
+    } catch (error: any) {
+        // Intercepta o erro de segurança que criamos no service
+        if (error.message === 'Acesso negado: Sem permissão para excluir este post.') {
+            return res.status(403).json({ error: error.message });
+        }
+
+        // Mantém o tratamento de erros original do seu projeto
+        return isNotFoundError(error)
+            ? res.status(404).json({ error: 'Postagem não encontrada' })
+            : res.status(500).json({ error: 'Erro ao remover postagem' });
+    }
 }
 
 export async function listReplies(req: Request, res: Response) {
