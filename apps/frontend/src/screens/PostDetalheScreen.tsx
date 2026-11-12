@@ -49,6 +49,7 @@ export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, 
   const [liked, setLiked] = useState<Set<string>>(new Set());
   const [draft, setDraft] = useState('');
   const [localReplies, setLocalReplies] = useState<ForumReply[]>([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Atualizar respostas locais quando o post carregar
   useEffect(() => {
@@ -280,16 +281,7 @@ export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, 
                     className={`${iconButton} h-5 w-5 hover:bg-red-50 hover:text-red-600 disabled:opacity-50`} 
                     aria-label="Excluir post"
                     disabled={isDeleting}
-                    onClick={async () => {
-                      if(window.confirm('Tem certeza que deseja excluir este post?')) {
-                        const success = await deletePost(post.id, userId as string, userProfileType as string);
-                        if (success) {
-                          onBack(); // Sai da tela se a exclusão der certo
-                        } else {
-                          alert('Ocorreu um erro ao tentar excluir o post.');
-                        }
-                      }
-                    }}
+                    onClick={() => setShowDeleteModal(true)}
                   >
                     <Trash2 size={11} />
                   </button>
@@ -459,6 +451,44 @@ export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, 
         <span>© 2026 RevoadaDigital. Aprender é melhor em comunidade.</span>
         <span>Central de ajuda　·　Termos de uso　·　Privacidade</span>
       </footer>
+
+      {/* MODAL DE CONFIRMAÇÃO DE EXCLUSÃO */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl">
+            <h3 className="mb-2 text-lg font-extrabold text-indigo-950">Excluir post</h3>
+            <p className="mb-6 text-sm text-slate-600">
+              Tem certeza que deseja excluir este post? Esta ação não pode ser desfeita.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                className="rounded-lg px-4 py-2 text-sm font-bold text-slate-600 transition hover:bg-slate-100"
+                onClick={() => setShowDeleteModal(false)}
+                disabled={isDeleting}
+              >
+                Cancelar
+              </button>
+              <button
+                className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-red-700 disabled:opacity-50"
+                disabled={isDeleting}
+                onClick={async () => {
+                  const success = await deletePost(post.id, userId as string, userProfileType as string);
+                  if (success) {
+                    setShowDeleteModal(false);
+                    onBack();
+                  } else {
+                    alert('Ocorreu um erro ao tentar excluir o post.');
+                    setShowDeleteModal(false);
+                  }
+                }}
+              >
+                {isDeleting ? 'Excluindo...' : 'Sim, excluir'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
