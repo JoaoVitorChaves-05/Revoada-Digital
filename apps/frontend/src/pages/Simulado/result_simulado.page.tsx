@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { AttemptResult } from '../../types/resultado_simulado.types';
 import { ResultQuestionCard } from '../../components/ResultQuestionCard';
+import { PontosGanhosToast } from '../../components/PontosGanhosToast';
 import { API_BASE_URL } from '../../utils/apiBase';
 
 interface ResultPageProps {
@@ -46,6 +47,7 @@ export function ResultPage({ attemptId }: ResultPageProps) {
 
   return (
     <div style={{ padding: '32px', fontFamily: 'sans-serif', maxWidth: '672px', margin: '0 auto' }}>
+      <PontosGanhosToast pontos={result.earnedPoints ?? 0} />
       <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '24px', color: '#1e3a8a' }}>Desempenho no Simulado</h1>
       
       <div style={{ backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '24px', borderRadius: '8px', marginBottom: '32px', display: 'flex', flexDirection: 'column', gap: '8px' }}>

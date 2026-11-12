@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import {
+  getCoins,
   getDashboard,
   getDesempenhoAreas,
   getMyDashboard,
@@ -11,7 +12,8 @@ const dashboardRouter = Router();
 
 dashboardRouter.get('/director', ensureAuthenticated, ensureAdmin, getDashboard);
 dashboardRouter.get('/me', ensureAuthenticated, getMyDashboard);
-// Resolve o aluno por ?userId= (sem JWT nesta fase), como GET /attempts.
+// Saldo de coins resolvido por ?userId= (sem JWT nesta fase), como GET /attempts.
+dashboardRouter.get('/me/coins', getCoins);
 dashboardRouter.get('/me/desempenho-areas', getDesempenhoAreas);
 
 export default dashboardRouter;

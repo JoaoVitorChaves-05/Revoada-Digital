@@ -242,13 +242,24 @@ export class DashboardService {
       );
   }
 
-  // Desempenho do aluno agregado por área do ENEM. Alimenta a aba Disciplinas
-  // e o bloco "Desempenho por área" do Dashboard.
+  // Saldo de coins (Learn-to-Earn) do aluno. Resolve pelo userId e retorna o
+  // StudentProfile.points. Fonte unica do saldo exibido no header/home e na loja.
+  async getCoins(userId: string): Promise<{ coins: number }> {
+    const student =
+      await this.dashboardRepository.findStudentByUserId(userId);
+
+    if (!student) {
+      throw new StudentNotFoundError();
+    }
+
+    return { coins: student.points };
+  }
+
   async getDesempenhoAreas(
-    studentId: string,
+    userId: string,
   ): Promise<DesempenhoArea[]> {
     const student =
-      await this.dashboardRepository.findStudentByUserId(studentId);
+      await this.dashboardRepository.findStudentByUserId(userId);
 
     if (!student) {
       throw new StudentNotFoundError();
