@@ -95,6 +95,8 @@ model StudentProfile {
   schoolId  String
   school    School     @relation(fields: [schoolId], references: [id], onDelete: Restrict)
   mockExams MockExam[]
+
+  redemptions Redemption[]
   pointBalance PointBalance?
 
   @@map("student_profiles")
