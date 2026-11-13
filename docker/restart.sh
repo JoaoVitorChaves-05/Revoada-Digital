@@ -20,7 +20,7 @@ if [ "$#" -eq 1 ]; then
 else
   read -r -p "Restart all services? (y/n): " answer
   case "$answer" in
-    y|Y|yes||Yes|YES)
+    y|Y|yes|Yes|YES)
       docker compose down
       ;;
     n|N|no|No|NO)
