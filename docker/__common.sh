@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-BUILDABLE_SERVICES=("backend")
+BUILDABLE_SERVICES=("backend", "frontend")
 show_services() {
     echo "Available services:"
     docker compose config --services
