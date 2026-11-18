@@ -5,7 +5,7 @@ export type RewardErrorCode =
   | 'OUT_OF_STOCK'
   | 'INSUFFICIENT_POINTS'
   | 'REWARD_CHANGED'
-  | 'REWARD_NAME_TAKEN';
+  | 'REWARD_NAME_TAKEN'; //configurar o schema + banco desse dps
 
 export class RewardError extends Error {
   constructor(
