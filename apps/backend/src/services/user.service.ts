@@ -2,8 +2,24 @@ import { CreateUserInput, UpdateUserInput } from '../schemas/user.schema';
 import { UserRepository } from '../repositories/user.repository';
 import { hash } from 'bcrypt';
 
+export class StudentProfileNotFoundError extends Error {
+	constructor() {
+		super('Perfil de aluno não encontrado');
+		this.name = 'StudentProfileNotFoundError';
+	}
+}
+
 export class UserService {
 	constructor(private readonly userRepository = new UserRepository()) {}
+
+	async getPoints(userId: string): Promise<{ points: number }> {
+		const student = await this.userRepository.findStudentPointsByUserId(userId);
+		if (!student) {
+			throw new StudentProfileNotFoundError();
+		}
+
+		return { points: student.points };
+	}
 
 	async createUser(data: CreateUserInput) {
 		const [emailUser, rgUser] = await Promise.all([
