@@ -40,6 +40,58 @@ export class RewardRepository {
     });
   }
 
+  create(data: {
+    name: string;
+    description: string;
+    cost: number;
+    isAvailable?: boolean;
+    stock?: number | null;
+  }) {
+    return this.client.reward.create({
+      data: {
+        name: data.name,
+        description: data.description,
+        cost: data.cost,
+        ...(data.isAvailable !== undefined
+          ? { isAvailable: data.isAvailable }
+          : {}),
+        ...(data.stock !== undefined ? { stock: data.stock } : {}),
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        cost: true,
+        isAvailable: true,
+        stock: true,
+      },
+    });
+  }
+
+  update(
+    id: string,
+    data: {
+      name?: string;
+      description?: string;
+      cost?: number;
+      isAvailable?: boolean;
+      stock?: number | null;
+    },
+  ) {
+    return this.client.reward.update({
+      where: { id },
+      data,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        cost: true,
+        isAvailable: true,
+        stock: true,
+      },
+    });
+  }
+
   redeemTransaction(data: {
     studentId: string;
     rewardId: string;
