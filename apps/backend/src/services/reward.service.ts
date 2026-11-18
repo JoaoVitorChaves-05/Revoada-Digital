@@ -1,5 +1,9 @@
 import { RewardRepository } from '../repositories/reward.repository';
-import type { RedeemRewardInput } from '../schemas/reward.schema';
+import type {
+  RedeemRewardInput,
+  CreateRewardInput,
+  UpdateRewardInput,
+} from '../schemas/reward.schema';
 import { RewardError } from '../errors/reward.error';
 
 export class RewardService {
@@ -52,6 +56,19 @@ export class RewardService {
       rewardId: reward.id,
       cost: reward.cost,
     });
+  }
+
+  async create(input: CreateRewardInput) {
+    return this.rewardRepository.create(input);
+  }
+
+  async update(id: string, input: UpdateRewardInput) {
+    const reward = await this.rewardRepository.findById(id);
+    if (!reward) {
+      throw new RewardError('REWARD_NOT_FOUND', 'Recompensa não encontrada');
+    }
+
+    return this.rewardRepository.update(id, input);
   }
 }
 
