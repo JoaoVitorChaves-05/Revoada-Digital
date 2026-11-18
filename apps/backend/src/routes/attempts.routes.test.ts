@@ -94,14 +94,13 @@ describe('POST /attempts/:id/submit (rota + middleware de coins + controller)', 
       id: ATTEMPT_ID,
       coinsCredited: false,
       mockExam: { studentId: 'student-1' },
-      answers: [
-        { isCorrect: true, question: { difficulty: 1 } },
-        { isCorrect: true, question: { difficulty: 3 } },
-        { isCorrect: false, question: { difficulty: 2 } },
-      ],
+      answers: [],
     });
-    prismaMock.$transaction.mockResolvedValue([]);
-    submitAttemptMock.mockResolvedValue({ score: 50 });
+    submitAttemptMock.mockResolvedValue({
+      score: 50,
+      earnedPoints: 4,
+      coinsCredited: true,
+    });
 
     const res = await request(app)
       .post(`/attempts/${ATTEMPT_ID}/submit`)
@@ -112,7 +111,9 @@ describe('POST /attempts/:id/submit (rota + middleware de coins + controller)', 
     // 1 (fácil) + 3 (difícil) = 4
     expect(res.body.totalCoinsGanho).toBe(4);
     expect(res.body.score).toBe(50);
-    expect(prismaMock.$transaction).toHaveBeenCalledOnce();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(prismaMock.studentProfile.update).not.toHaveBeenCalled();
+    expect(prismaMock.attempt.update).not.toHaveBeenCalled();
     expect(submitAttemptMock).toHaveBeenCalledOnce();
     expect(submitAttemptMock).toHaveBeenCalledWith(
       ATTEMPT_ID,
@@ -143,7 +144,21 @@ describe('POST /attempts/:id/submit (rota + middleware de coins + controller)', 
   });
 
   it('quando creditarCoins=false pula o crédito mas ainda chama o service', async () => {
-    submitAttemptMock.mockResolvedValue({ score: 70 });
+    prismaMock.studentProfile.findUnique.mockResolvedValue({
+      id: 'student-1',
+      userId: 'user-1',
+    });
+    prismaMock.attempt.findUnique.mockResolvedValue({
+      id: ATTEMPT_ID,
+      coinsCredited: false,
+      mockExam: { studentId: 'student-1' },
+      answers: [],
+    });
+    submitAttemptMock.mockResolvedValue({
+      score: 70,
+      earnedPoints: 0,
+      coinsCredited: false,
+    });
 
     const res = await request(app)
       .post(`/attempts/${ATTEMPT_ID}/submit`)
@@ -152,9 +167,12 @@ describe('POST /attempts/:id/submit (rota + middleware de coins + controller)', 
 
     expect(res.status).toBe(200);
     expect(res.body.totalCoinsGanho).toBeUndefined();
-    expect(prismaMock.studentProfile.findUnique).not.toHaveBeenCalled();
-    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(prismaMock.attempt.count).not.toHaveBeenCalled();
     expect(submitAttemptMock).toHaveBeenCalledOnce();
+    expect(submitAttemptMock).toHaveBeenCalledWith(
+      ATTEMPT_ID,
+      expect.objectContaining({ creditarCoins: false }),
+    );
   });
 
   it('bloqueia com 400 quando já pontuou 2 vezes em 24h', async () => {
@@ -163,6 +181,12 @@ describe('POST /attempts/:id/submit (rota + middleware de coins + controller)', 
       userId: 'user-1',
     });
     prismaMock.attempt.count.mockResolvedValue(2);
+    prismaMock.attempt.findUnique.mockResolvedValue({
+      id: ATTEMPT_ID,
+      coinsCredited: false,
+      mockExam: { studentId: 'student-1' },
+      answers: [],
+    });
 
     const res = await request(app)
       .post(`/attempts/${ATTEMPT_ID}/submit`)
@@ -172,6 +196,8 @@ describe('POST /attempts/:id/submit (rota + middleware de coins + controller)', 
     expect(res.status).toBe(400);
     expect(res.body.error).toBe('Limite diário atingido');
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(prismaMock.studentProfile.update).not.toHaveBeenCalled();
+    expect(prismaMock.attempt.update).not.toHaveBeenCalled();
     expect(submitAttemptMock).not.toHaveBeenCalled();
   });
 

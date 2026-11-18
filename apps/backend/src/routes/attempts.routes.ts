@@ -13,7 +13,7 @@ import { createAttemptSchema, submitAttemptSchema } from '../schemas/attempt.sch
 
 const attemptsRouter = Router();
 
-// O creditarCoinsMiddleware lê o attemptId do corpo; copia o :id da URL para lá
+// O middleware lê o attemptId do corpo; copia o :id da URL para lá
 function injetarAttemptId(req: Request, _res: Response, next: NextFunction) {
   const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   if (req.body.attemptId === undefined) {
