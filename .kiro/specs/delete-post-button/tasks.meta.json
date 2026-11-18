@@ -1,0 +1,43 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Create `canDeletePost` pure helper": [
+      {
+        "executionId": "878f372c-0c10-4ef5-9ee6-69cf284c97e7",
+        "chatSessionId": "sess_4d2083ac-5079-4fe6-913f-0e8acb2a1a94",
+        "timestamp": 1795041411911
+      },
+      {
+        "executionId": "878f372c-0c10-4ef5-9ee6-69cf284c97e7",
+        "chatSessionId": "sess_4d2083ac-5079-4fe6-913f-0e8acb2a1a94",
+        "timestamp": 1795042275765
+      }
+    ],
+    "1. Implement the permission helper": [
+      {
+        "executionId": "878f372c-0c10-4ef5-9ee6-69cf284c97e7",
+        "chatSessionId": "sess_4d2083ac-5079-4fe6-913f-0e8acb2a1a94",
+        "timestamp": 1795042275953
+      }
+    ],
+    "2.1 Create `ConfirmDialog` reusable modal": [
+      {
+        "executionId": "5cba6ea3-d425-4d83-adc1-c44ed405902e",
+        "chatSessionId": "sess_4d2083ac-5079-4fe6-913f-0e8acb2a1a94",
+        "timestamp": 1795042517211
+      },
+      {
+        "executionId": "5cba6ea3-d425-4d83-adc1-c44ed405902e",
+        "chatSessionId": "sess_4d2083ac-5079-4fe6-913f-0e8acb2a1a94",
+        "timestamp": 1795042590756
+      }
+    ],
+    "2. Implement the ConfirmDialog component": [
+      {
+        "executionId": "5cba6ea3-d425-4d83-adc1-c44ed405902e",
+        "chatSessionId": "sess_4d2083ac-5079-4fe6-913f-0e8acb2a1a94",
+        "timestamp": 1795042590874
+      }
+    ]
+  }
+}
