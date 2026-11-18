@@ -16,8 +16,9 @@ import {
 } from 'lucide-react';
 import { useForumPost, useCreateReply } from '../hooks/useForum';
 import { SUBJECT_LABELS, PROFILE_LABELS } from '../types/forum.types';
-import type { ForumReply } from '../types/forum.types';
+import type { ForumReply, ProfileType } from '../types/forum.types';
 import { HeaderApp } from '../components/HeaderApp';
+import { DeletePostButton } from '../components/DeletePostButton';
 
 
 interface Props {
@@ -36,9 +37,10 @@ interface Props {
   onLogout?: () => void;
   userId?: string;
   userName?: string;
+  userProfileType?: ProfileType;
 }
 
-export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, onChat, onInicio, onDisciplinas, onSimulados, onComunidade, onRecompensas, onMeusResgates, userName, onPerfil, onConfiguracoes, onLogout, userId }: Props) {
+export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, onChat, onInicio, onDisciplinas, onSimulados, onComunidade, onRecompensas, onMeusResgates, userName, onPerfil, onConfiguracoes, onLogout, userId, userProfileType }: Props) {
   // Estados do backend
   const { post, loading, error, refetch } = useForumPost(postId);
   const { createReply, loading: creatingReply } = useCreateReply(postId);
@@ -236,6 +238,14 @@ export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, 
                     {formatDate(post.createdAt)} · {PROFILE_LABELS[post.author.profileType]}
                   </small>
                 </div>
+                <DeletePostButton
+                  post={post}
+                  userId={userId}
+                  userProfileType={userProfileType}
+                  onDeleted={onBack}
+                  variant="icon"
+                  className={`${iconButton} h-5 w-5 text-red-500 hover:bg-red-50 hover:text-red-600`}
+                />
                 <button className={`${iconButton} h-5 w-5`} aria-label="Mais opções">
                   <Ellipsis size={11} />
                 </button>

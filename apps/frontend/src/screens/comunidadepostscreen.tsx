@@ -14,7 +14,9 @@ import {
 } from 'lucide-react'
 import { useForumPosts } from '../hooks/useForum';
 import { SUBJECT_LABELS } from '../types/forum.types';
+import type { ProfileType } from '../types/forum.types';
 import { HeaderApp } from '../components/HeaderApp';
+import { DeletePostButton } from '../components/DeletePostButton';
 import { CreatePostModal } from './CreatePostModal';
 
 const RELATED = [
@@ -39,9 +41,10 @@ interface Props {
   onConfiguracoes?: () => void
   onLogout?: () => void
   userId?: string
+  userProfileType?: ProfileType
 }
 
-export default function ComunidadePostScreen({ onBack, isLoggedIn = false, onChat, onInicio, onDisciplinas, onRecompensas, onMeusResgates, onViewPost, userName, onSimulados, onPerfil, onConfiguracoes, onLogout, userId }: Props) {
+export default function ComunidadePostScreen({ onBack, isLoggedIn = false, onChat, onInicio, onDisciplinas, onRecompensas, onMeusResgates, onViewPost, userName, onSimulados, onPerfil, onConfiguracoes, onLogout, userId, userProfileType }: Props) {
   // BUSCAR POSTS DO BACKEND
   const { posts, loading, error, refetch } = useForumPosts();
   const [modalAberto, setModalAberto] = useState(false);
@@ -194,6 +197,15 @@ export default function ComunidadePostScreen({ onBack, isLoggedIn = false, onCha
                         >
                           <Share2 size={10} />
                         </button>
+                        <DeletePostButton
+                          post={post}
+                          userId={userId}
+                          userProfileType={userProfileType}
+                          stopPropagation
+                          variant="icon"
+                          className={`${iconButton} h-5 w-5 hover:text-red-600`}
+                          onDeleted={() => refetch()}
+                        />
                       </div>
                     </div>
                   </article>
