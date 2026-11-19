@@ -10,8 +10,8 @@ A lógica pura (reducer, validação/normalização de telefone, montagem do req
 
 ## Tasks
 
-- [ ] 1. Definir os tipos de domínio da recarga
-  - [ ] 1.1 Criar `recarga.types.ts`
+- [x] 1. Definir os tipos de domínio da recarga
+  - [x] 1.1 Criar `recarga.types.ts`
     - Criar `apps/frontend/src/types/recarga.types.ts`
     - Exportar `CatalogItem` (`id: string`, `name: string`, `amountBRL: number`, `coinsCost: number`) no formato real do `GET /payments/catalog`
     - Exportar `RechargeRequest` estrito (`catalogItemId: string`, `phoneNumber: string`)

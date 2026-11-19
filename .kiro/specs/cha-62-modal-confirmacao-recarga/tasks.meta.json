@@ -1,0 +1,24 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Criar `recarga.types.ts`": [
+      {
+        "executionId": "b3b1929b-7285-4c2c-8769-ca0e8ee29490",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795071020438
+      },
+      {
+        "executionId": "b3b1929b-7285-4c2c-8769-ca0e8ee29490",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795071073321
+      }
+    ],
+    "1. Definir os tipos de domínio da recarga": [
+      {
+        "executionId": "b3b1929b-7285-4c2c-8769-ca0e8ee29490",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795071073603
+      }
+    ]
+  }
+}
