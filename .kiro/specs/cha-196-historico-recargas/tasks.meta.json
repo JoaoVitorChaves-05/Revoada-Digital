@@ -1,5 +1,10 @@
 {
-  "pbtResults": {},
+  "pbtResults": {
+    "3.2 Escrever property test para acumulação de páginas": {
+      "status": "passed",
+      "lastRunTimestamp": 1795067003612
+    }
+  },
   "executionHistory": {
     "1. Definir os tipos de domínio e contrato da API": [
       {
@@ -33,6 +38,16 @@
         "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
         "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
         "timestamp": 1795063822295
+      },
+      {
+        "executionId": "5b0e2226-b983-469f-8bb1-0b2d42ff2fb1",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795067618346
+      },
+      {
+        "executionId": "5b0e2226-b983-469f-8bb1-0b2d42ff2fb1",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795067776160
       }
     ],
     "3.1 Criar helper puro de redução de páginas": [
@@ -257,6 +272,102 @@
         "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
         "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
         "timestamp": 1795064305564
+      }
+    ],
+    "2.2 Escrever property test para rótulo de status": [
+      {
+        "executionId": "5b0e2226-b983-469f-8bb1-0b2d42ff2fb1",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795066815408
+      },
+      {
+        "executionId": "5b0e2226-b983-469f-8bb1-0b2d42ff2fb1",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795067777075
+      }
+    ],
+    "2.3 Escrever property test para data/hora pt-BR": [
+      {
+        "executionId": "5b0e2226-b983-469f-8bb1-0b2d42ff2fb1",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795066816746
+      },
+      {
+        "executionId": "5b0e2226-b983-469f-8bb1-0b2d42ff2fb1",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795067778531
+      }
+    ],
+    "2.4 Escrever property test para moeda BRL": [
+      {
+        "executionId": "5b0e2226-b983-469f-8bb1-0b2d42ff2fb1",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795066817661
+      },
+      {
+        "executionId": "5b0e2226-b983-469f-8bb1-0b2d42ff2fb1",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795067779965
+      }
+    ],
+    "2.5 Escrever property test para telefone pt-BR": [
+      {
+        "executionId": "5b0e2226-b983-469f-8bb1-0b2d42ff2fb1",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795066819044
+      },
+      {
+        "executionId": "5b0e2226-b983-469f-8bb1-0b2d42ff2fb1",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795067780894
+      }
+    ],
+    "3.2 Escrever property test para acumulação de páginas": [
+      {
+        "executionId": "5b0e2226-b983-469f-8bb1-0b2d42ff2fb1",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795066820437
+      },
+      {
+        "executionId": "5b0e2226-b983-469f-8bb1-0b2d42ff2fb1",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795067782292
+      }
+    ],
+    "5.2 Escrever property test para visibilidade de \"carregar mais\"": [
+      {
+        "executionId": "5b0e2226-b983-469f-8bb1-0b2d42ff2fb1",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795066821435
+      },
+      {
+        "executionId": "5b0e2226-b983-469f-8bb1-0b2d42ff2fb1",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795067783763
+      }
+    ],
+    "5.3 Escrever property test para exclusividade dos estados de UI": [
+      {
+        "executionId": "5b0e2226-b983-469f-8bb1-0b2d42ff2fb1",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795066822870
+      },
+      {
+        "executionId": "5b0e2226-b983-469f-8bb1-0b2d42ff2fb1",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795067784706
+      }
+    ],
+    "5.4 Escrever property test para erro ao carregar mais": [
+      {
+        "executionId": "5b0e2226-b983-469f-8bb1-0b2d42ff2fb1",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795066823816
+      },
+      {
+        "executionId": "5b0e2226-b983-469f-8bb1-0b2d42ff2fb1",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795067785873
       }
     ]
   }

@@ -23,22 +23,22 @@ Nenhuma tarefa de backend está incluída. A **API_Historico_Recargas** (`GET /p
     - Exportar a constante `DADO_INDISPONIVEL = 'Indisponível'`.
     - _Requirements: 2.1, 2.2, 2.4, 2.5, 2.6, 2.7_
 
-  - [ ]* 2.2 Escrever property test para rótulo de status
+  - [x]* 2.2 Escrever property test para rótulo de status
     - **Property 5: Totalidade do rótulo de status**
     - **Validates: Requirements 2.4, 2.7**
     - Tag: `// Feature: cha-196-historico-recargas, Property 5: ...`; `fast-check` com `{ numRuns: 100 }` (ou superior); alvo `rotuloStatus`.
 
-  - [ ]* 2.3 Escrever property test para data/hora pt-BR
+  - [x]* 2.3 Escrever property test para data/hora pt-BR
     - **Property 6: Formatação de data e hora pt-BR**
     - **Validates: Requirements 2.1**
     - Gerador de datas ISO 8601 válidas; verifica o padrão `DD/MM/AAAA HH:MM` (24h); `{ numRuns: 100 }`.
 
-  - [ ]* 2.4 Escrever property test para moeda BRL
+  - [x]* 2.4 Escrever property test para moeda BRL
     - **Property 7: Formatação de valor em BRL**
     - **Validates: Requirements 2.2**
     - Gerador de decimais em `0,01..999999999,99`; verifica prefixo `R$`, duas casas decimais, vírgula decimal e ponto de milhar; `{ numRuns: 100 }`.
 
-  - [ ]* 2.5 Escrever property test para telefone pt-BR
+  - [x]* 2.5 Escrever property test para telefone pt-BR
     - **Property 8: Formatação de telefone pt-BR**
     - **Validates: Requirements 2.5**
     - Gerador de sequências de 11 dígitos; verifica o padrão `(DD) NNNNN-NNNN`; `{ numRuns: 100 }`.
@@ -48,7 +48,7 @@ Nenhuma tarefa de backend está incluída. A **API_Historico_Recargas** (`GET /p
     - Função pura (em `formatoRecarga.ts` ou helper vizinho em `src/utils`) que concatena a próxima `Pagina_Recargas` após os itens já acumulados, removendo `id` já presentes e preservando a ordem de recebimento (ordem decrescente por `createdAt`).
     - _Requirements: 1.3, 6.3_
 
-  - [ ]* 3.2 Escrever property test para acumulação de páginas
+  - [x]* 3.2 Escrever property test para acumulação de páginas
     - **Property 1: Acumulação de páginas preserva ordem e não duplica**
     - **Validates: Requirements 1.3, 6.3**
     - `fast-check` com sequências arbitrárias de páginas (incluindo `id` repetidos); `{ numRuns: 100 }`.
@@ -75,17 +75,17 @@ Nenhuma tarefa de backend está incluída. A **API_Historico_Recargas** (`GET /p
     - Não trata `401` (delegado ao interceptor global); usa flag `ativo` para evitar atualização pós-desmontagem (padrão de `useSaldoCoins.ts`).
     - _Requirements: 1.1, 1.3, 1.4, 1.5, 3.1, 3.2, 3.3, 4.1, 5.1, 5.3, 5.4, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 7.3, 7.7_
 
-  - [ ]* 5.2 Escrever property test para visibilidade de "carregar mais"
+  - [x]* 5.2 Escrever property test para visibilidade de "carregar mais"
     - **Property 2: Visibilidade do controle "carregar mais"**
     - **Validates: Requirements 4.2, 6.1, 6.5**
     - Alvo: derivação `temMais` a partir de `hasMore`/estado; `{ numRuns: 100 }`.
 
-  - [ ]* 5.3 Escrever property test para exclusividade dos estados de UI
+  - [x]* 5.3 Escrever property test para exclusividade dos estados de UI
     - **Property 3: Exclusividade dos estados de UI**
     - **Validates: Requirements 4.3, 4.4, 5.1**
     - Alvo: reducer de estado do hook (no máximo um entre `vazio`/`erro-inicial`/`lista`; `vazio`/`erro-inicial` ⇒ lista vazia); `{ numRuns: 100 }`.
 
-  - [ ]* 5.4 Escrever property test para erro ao carregar mais
+  - [x]* 5.4 Escrever property test para erro ao carregar mais
     - **Property 4: Erro ao carregar mais preserva os itens exibidos**
     - **Validates: Requirements 6.6**
     - Alvo: reducer de estado do hook (lista idêntica antes/depois da falha); `{ numRuns: 100 }`.
