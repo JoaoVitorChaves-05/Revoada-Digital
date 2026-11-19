@@ -1,4 +1,4 @@
-interface ConfirmDialogProps {
+﻿interface ConfirmDialogProps {
   isOpen: boolean;
   title: string;
   message: string;
@@ -43,7 +43,9 @@ export function ConfirmDialog({
   }
 
   return (
-    <div style={{
+    <div
+      onClick={(e) => e.stopPropagation()}
+      style={{
       position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
       backgroundColor: 'rgba(128, 128, 128, 0.8)',
       display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000,

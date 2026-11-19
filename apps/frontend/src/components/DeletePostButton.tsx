@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import type { ForumPost, ProfileType } from '../types/forum.types';
 import { canDeletePost } from '../utils/forumPermissions';
@@ -15,6 +15,8 @@ interface DeletePostButtonProps {
   stopPropagation?: boolean;
   className?: string;
   variant?: 'icon' | 'menu-item';
+  /** tamanho (px) do ícone lucide na variante "icon", para casar com os ícones vizinhos */
+  iconSize?: number;
 }
 
 /**
@@ -37,6 +39,7 @@ export function DeletePostButton({
   stopPropagation,
   className,
   variant = 'icon',
+  iconSize = 10,
 }: DeletePostButtonProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleted, setDeleted] = useState(false);
@@ -76,7 +79,7 @@ export function DeletePostButton({
         onClick={handleClick}
         className={className}
       >
-        <Trash2 className={variant === 'icon' ? 'h-full w-full' : undefined} />
+        <Trash2 size={variant === 'icon' ? iconSize : undefined} />
         {variant === 'menu-item' && <span>Excluir</span>}
       </button>
 

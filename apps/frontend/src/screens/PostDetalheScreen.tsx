@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import {
   ArrowLeft,
   Bookmark,
@@ -244,6 +244,7 @@ export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, 
                   userProfileType={userProfileType}
                   onDeleted={onBack}
                   variant="icon"
+                  iconSize={11}
                   className={`${iconButton} h-5 w-5 text-red-500 hover:bg-red-50 hover:text-red-600`}
                 />
                 <button className={`${iconButton} h-5 w-5`} aria-label="Mais opções">

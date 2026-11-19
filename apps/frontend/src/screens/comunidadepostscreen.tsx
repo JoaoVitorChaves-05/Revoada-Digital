@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import {
   ArrowLeft,
   ArrowRight,
@@ -203,6 +203,7 @@ export default function ComunidadePostScreen({ onBack, isLoggedIn = false, onCha
                           userProfileType={userProfileType}
                           stopPropagation
                           variant="icon"
+                          iconSize={10}
                           className={`${iconButton} h-5 w-5 hover:text-red-600`}
                           onDeleted={() => refetch()}
                         />

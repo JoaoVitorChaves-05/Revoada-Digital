@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
+﻿import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fc from 'fast-check';
 import ComunidadePostScreen from './comunidadepostscreen';
@@ -180,6 +180,30 @@ describe('ComunidadePostScreen — exclusão na lista', () => {
 
     // Abriu o dialog de confirmação, mas não navegou.
     expect(confirmButton()).toBeInTheDocument();
+    expect(onViewPost).not.toHaveBeenCalled();
+  });
+
+  // Requirements: 7.2 — clicar nos botões do dialog de confirmação não navega pelo card.
+  it('clicar em "Excluir" dentro do dialog não dispara a navegação do card', async () => {
+    deletePostMock.mockResolvedValue(true);
+    currentPosts = [makePost({ id: 'post-dialog', authorId: 'author-1' })];
+    const onViewPost = vi.fn();
+
+    render(
+      <ComunidadePostScreen
+        userId="author-1"
+        userProfileType="STUDENT"
+        onViewPost={onViewPost}
+      />,
+    );
+
+    const card = cardForTitle('Título post-dialog');
+    fireEvent.click(within(card).getByRole('button', { name: 'Excluir post' }));
+    // Clique no botão de confirmação, que vive dentro do overlay do dialog.
+    fireEvent.click(confirmButton());
+
+    await waitFor(() => expect(deletePostMock).toHaveBeenCalledWith('post-dialog'));
+    // O clique no dialog não deve escapar para o onClick do card.
     expect(onViewPost).not.toHaveBeenCalled();
   });
 
