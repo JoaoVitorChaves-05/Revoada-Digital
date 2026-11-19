@@ -90,7 +90,7 @@ A lógica pura (reducer, validação/normalização de telefone, montagem do req
     - Verificar `api.post('/payments/recharge', body)` (R8.1); que não lê `token`/`accessToken` nem monta headers (R8.2); mapeamento específico de `INSUFFICIENT_POINTS` (R7.4) e `PROVIDER_FAILURE` (R7.5)
     - _Requirements: 7.4, 7.5, 8.1, 8.2_
 
-- [ ] 5. Checkpoint - Garantir que a lógica pura e o serviço passam
+- [x] 5. Checkpoint - Garantir que a lógica pura e o serviço passam
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 6. Implementar o componente `RecargaConfirmModal`
@@ -116,8 +116,8 @@ A lógica pura (reducer, validação/normalização de telefone, montagem do req
     - `role="dialog"` com nome acessível (R9.1); focus trap com Tab/Shift+Tab (R9.2); foco inicial interno (R9.3); Esc fecha fora de `submitting` e não fecha durante `submitting` (R9.4); label associado e botões operáveis por teclado (R9.5)
     - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
 
-- [ ] 7. Checkpoint final - Validação do workspace frontend (opcional)
-  - [ ]* 7.1 Rodar build e testes do frontend
+- [x] 7. Checkpoint final - Validação do workspace frontend (opcional)
+  - [x]* 7.1 Rodar build e testes do frontend
     - `npm run build --workspace apps/frontend` e `npm run test --workspace apps/frontend` (vitest `--run`)
     - Garantir que a build e todos os testes passam; perguntar à usuária se surgirem dúvidas
     - Observação: `npm run lint --workspace apps/frontend` é **opcional** e pode falhar por **incompatibilidade de toolchain pré-existente** no ambiente (não relacionada a esta feature); não bloquear a conclusão por causa do lint

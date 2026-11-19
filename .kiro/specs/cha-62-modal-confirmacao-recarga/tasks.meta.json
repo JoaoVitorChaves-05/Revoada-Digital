@@ -164,6 +164,37 @@
         "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
         "timestamp": 1795072688227
       }
+    ],
+    "5. Checkpoint - Garantir que a lógica pura e o serviço passam": [
+      {
+        "executionId": "2f540401-9d3a-42eb-b69e-73ad19cdf60e",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795072733454
+      },
+      {
+        "executionId": "2f540401-9d3a-42eb-b69e-73ad19cdf60e",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795072797185
+      }
+    ],
+    "7.1 Rodar build e testes do frontend": [
+      {
+        "executionId": "2f540401-9d3a-42eb-b69e-73ad19cdf60e",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795072801788
+      },
+      {
+        "executionId": "2f540401-9d3a-42eb-b69e-73ad19cdf60e",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795072949883
+      }
+    ],
+    "7. Checkpoint final - Validação do workspace frontend (opcional)": [
+      {
+        "executionId": "2f540401-9d3a-42eb-b69e-73ad19cdf60e",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795072950088
+      }
     ]
   }
 }

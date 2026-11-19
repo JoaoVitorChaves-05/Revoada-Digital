@@ -10,7 +10,6 @@ import type { RechargeRequest, RecargaErroCodigo } from '../types/recarga.types'
 
 // Codigos de erro de dominio do backend (corpo `{ code, error }`).
 const CODIGO_INSUFFICIENT_POINTS = 'INSUFFICIENT_POINTS';
-const CODIGO_PROVIDER_FAILURE = 'PROVIDER_FAILURE';
 
 /**
  * Erro de recarga com o codigo de dominio derivado da resposta do backend.
@@ -18,11 +17,11 @@ const CODIGO_PROVIDER_FAILURE = 'PROVIDER_FAILURE';
  * `mapearErroRecarga(codigo)`.
  */
 export class RecargaError extends Error {
-  constructor(
-    public codigo: RecargaErroCodigo,
-    message: string,
-  ) {
+  public codigo: RecargaErroCodigo;
+
+  constructor(codigo: RecargaErroCodigo, message: string) {
     super(message);
+    this.codigo = codigo;
     this.name = 'RecargaError';
   }
 }
