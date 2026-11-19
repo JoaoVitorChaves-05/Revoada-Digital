@@ -76,6 +76,25 @@
         "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
         "timestamp": 1795071438730
       }
+    ],
+    "6.1 Criar `RecargaConfirmModal.tsx`": [
+      {
+        "executionId": "2f540401-9d3a-42eb-b69e-73ad19cdf60e",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795072064524
+      },
+      {
+        "executionId": "2f540401-9d3a-42eb-b69e-73ad19cdf60e",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795072191708
+      }
+    ],
+    "6. Implementar o componente `RecargaConfirmModal`": [
+      {
+        "executionId": "2f540401-9d3a-42eb-b69e-73ad19cdf60e",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795072191871
+      }
     ]
   }
 }

@@ -93,8 +93,8 @@ A lógica pura (reducer, validação/normalização de telefone, montagem do req
 - [ ] 5. Checkpoint - Garantir que a lógica pura e o serviço passam
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 6. Implementar o componente `RecargaConfirmModal`
-  - [ ] 6.1 Criar `RecargaConfirmModal.tsx`
+- [x] 6. Implementar o componente `RecargaConfirmModal`
+  - [x] 6.1 Criar `RecargaConfirmModal.tsx`
     - Criar `apps/frontend/src/components/RecargaConfirmModal.tsx`
     - Props: `isOpen: boolean`, `item: CatalogItem | null`, `onClose: () => void`, `onSuccess?: (item: CatalogItem) => void`
     - Renderizar `null` quando `!isOpen || !item` (R1.2)
