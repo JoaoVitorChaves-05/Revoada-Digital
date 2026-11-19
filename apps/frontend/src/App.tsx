@@ -19,6 +19,7 @@ import { ConfiguracoesScreen } from './screens/ConfiguracoesScreen'
 import { DisciplinasScreen } from './screens/DisciplinasScreen'
 import { LojaRecompensas } from './pages/Recompensas/LojaRecompensas'
 import { MeusResgates } from './pages/Recompensas/MeusResgates'
+import { HistoricoRecargas } from './pages/Recompensas/HistoricoRecargas'
 
 
 // Identidade de teste do chat (6=a): usuários fixos para simular as duas pontas
@@ -50,6 +51,7 @@ type Screen =
   | 'disciplinas'
   | 'recompensas'
   | 'meus-resgates'
+  | 'historico-recargas'
 
 function telaInicial(): Screen {
   if (typeof window !== 'undefined' && window.location.pathname === '/verificar-email') {
@@ -211,6 +213,7 @@ if (screen === 'disciplinas') {
       <LojaRecompensas
         userName={usuario.full_name}
         onMeusResgates={() => setScreen('meus-resgates')}
+        onHistoricoRecargas={() => setScreen('historico-recargas')}
         onInicio={() => setScreen('dashboard')}
         onDisciplinas={() => setScreen('disciplinas')}
         onSimulados={() => setScreen('gerar-simulado')}
@@ -227,6 +230,24 @@ if (screen === 'disciplinas') {
     if (!usuario) { setScreen('login'); return null }
     return (
       <MeusResgates
+        userName={usuario.full_name}
+        onVoltar={() => setScreen('recompensas')}
+        onInicio={() => setScreen('dashboard')}
+        onDisciplinas={() => setScreen('disciplinas')}
+        onSimulados={() => setScreen('gerar-simulado')}
+        onComunidade={() => setScreen('comunidade')}
+        onChat={() => setScreen('chat')}
+        onPerfil={menuProps.onPerfil}
+        onConfiguracoes={menuProps.onConfiguracoes}
+        onLogout={menuProps.onLogout}
+      />
+    )
+  }
+
+  if (screen === 'historico-recargas') {
+    if (!usuario) { setScreen('login'); return null }
+    return (
+      <HistoricoRecargas
         userName={usuario.full_name}
         onVoltar={() => setScreen('recompensas')}
         onInicio={() => setScreen('dashboard')}
