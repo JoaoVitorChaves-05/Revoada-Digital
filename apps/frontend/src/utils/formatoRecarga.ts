@@ -15,12 +15,18 @@ export const DADO_INDISPONIVEL = 'Indisponível';
 /** Rótulo pt-BR para um Status_Recarga não mapeado (R2.7). */
 const STATUS_DESCONHECIDO = 'Status desconhecido';
 
-/** Mapa de rótulos pt-BR de Status_Recarga (R2.4). */
-const ROTULOS_STATUS: Record<string, string> = {
+/**
+ * Mapa de rótulos pt-BR de Status_Recarga (R2.4). Construído sem protótipo
+ * (`Object.create(null)`) para que a busca por chaves herdadas de
+ * `Object.prototype` (ex.: `"toString"`, `"valueOf"`, `"constructor"`) devolva
+ * `undefined` — e não a função herdada —, garantindo que o fallback `??` para
+ * `STATUS_DESCONHECIDO` funcione para qualquer status fora do mapa (R2.7).
+ */
+const ROTULOS_STATUS: Record<string, string> = Object.assign(Object.create(null), {
   PENDING: 'Pendente',
   COMPLETED: 'Concluída',
   REFUNDED: 'Estornada',
-};
+});
 
 /**
  * Formata uma data/hora ISO 8601 no padrão `DD/MM/AAAA HH:MM` (24h, pt-BR) (R2.1).
