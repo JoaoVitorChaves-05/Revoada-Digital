@@ -97,6 +97,7 @@ model StudentProfile {
   mockExams MockExam[]
 
   redemptions Redemption[]
+  payments Payment[]
   pointBalance PointBalance?
 
   @@map("student_profiles")
@@ -171,6 +172,46 @@ model Redemption {
 
   @@index([studentId, createdAt])
   @@map("redemptions")
+}
+
+model RechargeCatalogItem {
+  id          String   @id @default(uuid())
+  name        String
+  amountBRL   Decimal  @db.Decimal(10, 2) @map("amount_brl")
+  coinsCost   Int      @map("coins_cost")
+  isAvailable Boolean  @default(true) @map("is_available")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  payments Payment[]
+
+  @@map("recharge_catalog_items")
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  REFUNDED
+}
+
+model Payment {
+  id            String        @id @default(uuid())
+  studentId     String        @map("student_id")
+  catalogItemId String        @map("catalog_item_id")
+  phoneNumber   String        @map("phone_number")
+  amountBRL     Decimal       @db.Decimal(10, 2) @map("amount_brl")
+  coinsSpent    Int           @map("coins_spent")
+  status        PaymentStatus @default(PENDING)
+  externalId    String?       @unique @map("external_id")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+
+  student     StudentProfile     @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  catalogItem RechargeCatalogItem @relation(fields: [catalogItemId], references: [id], onDelete: Restrict)
+
+  @@index([studentId, createdAt])
+  @@index([status, createdAt])
+  @@map("payments")
 }
 
 model MockExam {
