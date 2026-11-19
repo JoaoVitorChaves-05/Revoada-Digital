@@ -1,7 +1,11 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PaymentRepository } from '../repositories/payment.repository';
 import type { CreatePaymentInput } from '../schemas/payment.schema';
-import { PaymentService, type RechargeProvider } from './payment.service';
+import {
+  PaymentService,
+  RechargeProviderError,
+  type RechargeProvider,
+} from './payment.service';
 
 function createRepositoryMock() {
   return {
@@ -57,6 +61,10 @@ describe('PaymentService', () => {
     });
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('reserva coins, solicita a recarga e conclui o pagamento', async () => {
     vi.mocked(provider.createRecharge).mockResolvedValue({
       externalId: 'provider-1',
@@ -86,10 +94,15 @@ describe('PaymentService', () => {
     expect(repository.refund).not.toHaveBeenCalled();
   });
 
-  it('estorna a reserva e retorna erro de provedor quando a recarga falha', async () => {
-    vi.mocked(provider.createRecharge).mockRejectedValue(
-      new Error('provider unavailable'),
+  it('estorna quando o provedor declara uma falha definitiva', async () => {
+    const providerError = new RechargeProviderError(
+      'DEFINITIVE',
+      'Recarga rejeitada',
     );
+    vi.mocked(provider.createRecharge).mockRejectedValue(
+      providerError,
+    );
+    const logError = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     await expect(
       service.createRecharge('user-1', input),
@@ -99,6 +112,81 @@ describe('PaymentService', () => {
 
     expect(repository.refund).toHaveBeenCalledWith('payment-1');
     expect(repository.markCompleted).not.toHaveBeenCalled();
+    expect(logError).toHaveBeenCalledWith(
+      '[payments] recharge provider failed',
+      expect.objectContaining({
+        paymentId: 'payment-1',
+        certainty: 'DEFINITIVE',
+        error: 'RechargeProviderError: Recarga rejeitada',
+      }),
+    );
+  });
+
+  it('mantém a reserva pendente quando a falha do provedor é incerta', async () => {
+    vi.mocked(provider.createRecharge).mockRejectedValue(
+      new RechargeProviderError('UNCERTAIN', 'Timeout'),
+    );
+    const logError = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    await expect(
+      service.createRecharge('user-1', input),
+    ).rejects.toMatchObject({
+      code: 'PROVIDER_FAILURE',
+    });
+
+    expect(repository.refund).not.toHaveBeenCalled();
+    expect(repository.markCompleted).not.toHaveBeenCalled();
+    expect(logError).toHaveBeenCalledWith(
+      '[payments] recharge provider failed',
+      expect.objectContaining({
+        paymentId: 'payment-1',
+        certainty: 'UNCERTAIN',
+      }),
+    );
+  });
+
+  it('trata erros não tipados do provedor como incertos', async () => {
+    vi.mocked(provider.createRecharge).mockRejectedValue(
+      new Error('network timeout'),
+    );
+    const logError = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    await expect(
+      service.createRecharge('user-1', input),
+    ).rejects.toMatchObject({
+      code: 'PROVIDER_FAILURE',
+    });
+
+    expect(repository.refund).not.toHaveBeenCalled();
+    expect(logError).toHaveBeenCalledWith(
+      '[payments] recharge provider failed',
+      expect.objectContaining({
+        paymentId: 'payment-1',
+        certainty: 'UNCERTAIN',
+      }),
+    );
+  });
+
+  it('registra falha ao persistir a aceitação do provedor', async () => {
+    vi.mocked(provider.createRecharge).mockResolvedValue({
+      externalId: 'provider-1',
+    });
+    const persistenceError = new Error('database unavailable');
+    repository.markCompleted.mockRejectedValue(persistenceError);
+    const logError = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    await expect(
+      service.createRecharge('user-1', input),
+    ).rejects.toBe(persistenceError);
+
+    expect(logError).toHaveBeenCalledWith(
+      '[payments] failed to persist provider acceptance',
+      expect.objectContaining({
+        paymentId: 'payment-1',
+        externalId: 'provider-1',
+        error: 'Error: database unavailable',
+      }),
+    );
   });
 
   it('não reserva coins quando o saldo é insuficiente', async () => {
@@ -119,9 +207,10 @@ describe('PaymentService', () => {
 
   it('informa falha explícita se não conseguir estornar os pontos', async () => {
     vi.mocked(provider.createRecharge).mockRejectedValue(
-      new Error('provider unavailable'),
+      new RechargeProviderError('DEFINITIVE', 'Recarga rejeitada'),
     );
     repository.refund.mockRejectedValue(new Error('database unavailable'));
+    const logError = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     await expect(
       service.createRecharge('user-1', input),
@@ -131,5 +220,9 @@ describe('PaymentService', () => {
 
     expect(repository.refund).toHaveBeenCalledWith('payment-1');
     expect(repository.markCompleted).not.toHaveBeenCalled();
+    expect(logError).toHaveBeenCalledWith(
+      '[payments] point refund failed',
+      expect.objectContaining({ paymentId: 'payment-1' }),
+    );
   });
 });
