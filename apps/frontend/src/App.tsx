@@ -135,6 +135,7 @@ function App() {
         isLoggedIn={estaLogado}
         userName={usuario?.full_name}
         userId={usuario?.id}
+        userProfileType={usuario?.profileType}
         onBack={() => setScreen('home')}
         onInicio={() => setScreen('dashboard')}
         onDisciplinas={() => setScreen('disciplinas')}
@@ -168,6 +169,7 @@ function App() {
         isLoggedIn={estaLogado}
         userName={usuario?.full_name}
         userId={usuario?.id}
+        userProfileType={usuario?.profileType}
         onBack={() => setScreen('comunidade')}
         onInicio={() => setScreen('dashboard')}
         onDisciplinas={() => setScreen('disciplinas')}
