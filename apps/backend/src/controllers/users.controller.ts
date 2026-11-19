@@ -1,6 +1,24 @@
 import { Request, Response } from 'express';
-import { userService } from '../services/user.service';
+import { StudentProfileNotFoundError, userService } from '../services/user.service';
 import { emailVerificationService } from '../services/emailVerification.service';
+
+export async function getMyPoints(req: Request, res: Response) {
+	const userId = req.user?.id;
+	if (!userId) {
+		return res.status(401).json({ error: 'Usuário não autenticado' });
+	}
+
+	try {
+		const points = await userService.getPoints(userId);
+		return res.status(200).json(points);
+	} catch (error) {
+		if (error instanceof StudentProfileNotFoundError) {
+			return res.status(404).json({ error: error.message });
+		}
+
+		return res.status(500).json({ error: 'Erro ao consultar saldo de pontos' });
+	}
+}
 
 export async function createUser(req: Request, res: Response) {
 	try {

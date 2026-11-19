@@ -27,6 +27,29 @@ export class DashboardRepository {
     });
   }
 
+  // Retorna as respostas submetidas de um aluno específico, com o assunto
+  // (subject) e a dificuldade (difficulty) de cada questão. Usado para agregar
+  // o desempenho por área do ENEM.
+  async findAnswersComQuestaoByStudent(studentId: string) {
+    return prisma.attemptAnswer.findMany({
+      where: {
+        attempt: {
+          status: AttemptStatus.SUBMITTED,
+          mockExam: { studentId },
+        },
+      },
+      select: {
+        isCorrect: true,
+        question: {
+          select: {
+            subject: true,
+            difficulty: true,
+          },
+        },
+      },
+    });
+  }
+
   // Retorna o perfil do aluno pelo ID do usuário
   async findStudentByUserId(userId: string) {
     return prisma.studentProfile.findUnique({

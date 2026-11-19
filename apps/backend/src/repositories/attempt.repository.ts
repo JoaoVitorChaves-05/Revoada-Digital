@@ -65,7 +65,7 @@ export class AttemptRepository {
    * Executa a entrega da avaliação dentro de uma transação:
    * 1. Registra as respostas individuais em AttemptAnswer.
    * 2. Atualiza o status do Attempt para SUBMITTED com nota e estatísticas.
-   * 3. Atualiza os pontos (Learn-to-Earn) do StudentProfile.
+   * 3. Atualiza o saldo de pontos do StudentProfile quando houver crédito.
    */
   async submitAttemptTransaction(data: {
     attemptId: string;
@@ -74,6 +74,7 @@ export class AttemptRepository {
     correctAnswers: number;
     totalQuestions: number;
     earnedPoints: number;
+    coinsCredited: boolean;
     answers: {
       questionId: string;
       selectedAlternativeId?: string | null;
@@ -102,10 +103,11 @@ export class AttemptRepository {
           correctAnswers: data.correctAnswers,
           totalQuestions: data.totalQuestions,
           earnedPoints: data.earnedPoints,
+          coinsCredited: data.coinsCredited,
         },
       });
 
-      // 3. Incrementar pontos do Learn-to-Earn do aluno
+      // 3. Creditar pontos na mesma transação que entrega a tentativa
       if (data.earnedPoints > 0) {
         await tx.studentProfile.update({
           where: { id: data.studentId },

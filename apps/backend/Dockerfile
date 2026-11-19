@@ -5,7 +5,7 @@ WORKDIR /RevDig
 COPY package.json package-lock.json node_modules/ tsconfig.base.json ./
 COPY apps/backend/package.json ./apps/backend/package.json
 
-RUN npm ci 
+RUN npm ci --ignore-scripts
 
 COPY apps/backend ./apps/backend
 

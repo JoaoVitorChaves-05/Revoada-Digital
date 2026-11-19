@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { UserRepository } from '../repositories/user.repository';
-import { UserService } from './user.service';
+import { StudentProfileNotFoundError, UserService } from './user.service';
 import { compare } from 'bcrypt';
 
 vi.mock('../repositories/user.repository', () => ({
@@ -22,6 +22,7 @@ function createRepositoryMock() {
 		findByEmail: vi.fn(),
 		findByRg: vi.fn(),
 		findById: vi.fn(),
+		findStudentPointsByUserId: vi.fn(),
 		createWithProfileAndApproval: vi.fn(),
 		update: vi.fn(),
 		delete: vi.fn(),
@@ -35,6 +36,28 @@ describe('UserService', () => {
 	beforeEach(() => {
 		repository = createRepositoryMock();
 		service = new UserService(repository as unknown as UserRepository);
+	});
+
+	it.each([120, 0])('retorna saldo de %i pontos do aluno', async (points) => {
+		repository.findStudentPointsByUserId.mockResolvedValue({ points });
+
+		await expect(service.getPoints('user-1')).resolves.toEqual({ points });
+		expect(repository.findStudentPointsByUserId).toHaveBeenCalledWith('user-1');
+	});
+
+	it('rejeita consulta de saldo quando o perfil de aluno não existe', async () => {
+		repository.findStudentPointsByUserId.mockResolvedValue(null);
+
+		await expect(service.getPoints('user-1')).rejects.toBeInstanceOf(
+			StudentProfileNotFoundError,
+		);
+	});
+
+	it('propaga falha inesperada na consulta de saldo', async () => {
+		const error = new Error('Falha na consulta');
+		repository.findStudentPointsByUserId.mockRejectedValue(error);
+
+		await expect(service.getPoints('user-1')).rejects.toBe(error);
 	});
 
 	it('cria usuário com hash e não devolve a senha', async () => {

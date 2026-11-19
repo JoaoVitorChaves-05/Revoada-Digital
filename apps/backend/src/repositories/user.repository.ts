@@ -122,4 +122,11 @@ export class UserRepository {
 	async delete(id: string) {
 		return prisma.user.delete({ where: { id } });
 	}
+
+	async findStudentPointsByUserId(userId: string) {
+		return prisma.studentProfile.findUnique({
+			where: { userId },
+			select: { points: true },
+		});
+	}
 }

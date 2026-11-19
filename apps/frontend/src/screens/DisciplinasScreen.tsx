@@ -1,5 +1,9 @@
-import iconContainer from './icons/icon-container.png'
+import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
+import { HeaderApp } from '../components/HeaderApp'
+import type { DesempenhoArea } from '../types/desempenhoAreas.types'
+import { buscarDesempenhoAreas } from '../utils/desempenhoAreasClient'
+import { sessao } from '../utils/sessao'
 
 const css = `
 /* Tela Disciplinas — ajuste as variáveis para os tokens reais do seu Figma / CSS global */
@@ -393,6 +397,7 @@ type DisciplinasScreenProps = {
   onNavigate?: (destino: string) => void
   onEstudar?: (disciplinaId: string) => void
   onPraticarRedacao?: () => void
+  onMeusResgates?: () => void
   onPerfil?: () => void
   onConfiguracoes?: () => void
   onLogout?: () => void
@@ -440,80 +445,67 @@ const IconLapis = (
     <path d="M4 20l1-4L16.5 4.5a2 2 0 0 1 3 3L8 19l-4 1Z" />
   </svg>
 )
-const IconSino = (
-  <svg {...stroke}>
-    <path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7Z" />
-    <path d="M10 20a2 2 0 0 0 4 0" />
-  </svg>
-)
 const IconSeta = (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M5 12h14M13 6l6 6-6 6" />
   </svg>
 )
 
-const disciplinas: Disciplina[] = [
-  {
-    id: 'matematica',
-    nome: 'Matemática',
-    descricao: 'Matemática e suas Tecnologias',
-    resolvidas: 340,
-    acerto: 74,
-    icone: IconCalculadora,
-    niveis: [
-      { label: 'Fáceis', valor: 92 },
-      { label: 'Médias', valor: 78 },
-      { label: 'Difíceis', valor: 64 },
-    ],
-  },
-  {
-    id: 'natureza',
-    nome: 'Ciências da Natureza',
-    descricao: 'Biologia, Química e Física',
-    resolvidas: 290,
-    acerto: 70,
-    icone: IconAtomo,
-    niveis: [
-      { label: 'Fáceis', valor: 84 },
-      { label: 'Médias', valor: 68 },
-      { label: 'Difíceis', valor: 56 },
-    ],
-  },
-  {
-    id: 'humanas',
-    nome: 'Ciências Humanas',
-    descricao: 'História, Geografia, Filosofia e Sociologia',
-    resolvidas: 302,
-    acerto: 82,
-    icone: IconGlobo,
-    niveis: [
-      { label: 'Fáceis', valor: 90 },
-      { label: 'Médias', valor: 72 },
-      { label: 'Difíceis', valor: 60 },
-    ],
-  },
-  {
+// Metadados por area (chave = nome da area como retornado pelo backend).
+const META_AREAS: Record<string, { id: string; descricao: string; icone: ReactNode }> = {
+  Linguagens: {
     id: 'linguagens',
-    nome: 'Linguagens',
     descricao: 'Português, Literatura e línguas estrangeiras',
-    resolvidas: 316,
-    acerto: 86,
     icone: IconLivro,
-    niveis: [
-      { label: 'Fáceis', valor: 94 },
-      { label: 'Médias', valor: 82 },
-      { label: 'Difíceis', valor: 66 },
-    ],
   },
-]
+  'Ciências Humanas': {
+    id: 'humanas',
+    descricao: 'História, Geografia, Filosofia e Sociologia',
+    icone: IconGlobo,
+  },
+  'Ciências da Natureza': {
+    id: 'natureza',
+    descricao: 'Biologia, Química e Física',
+    icone: IconAtomo,
+  },
+  Matemática: {
+    id: 'matematica',
+    descricao: 'Matemática e suas Tecnologias',
+    icone: IconCalculadora,
+  },
+}
 
-const links = [
-  { id: 'inicio', label: 'Início' },
-  { id: 'disciplinas', label: 'Disciplinas' },
-  { id: 'simulados', label: 'Simulados' },
-  { id: 'comunidade', label: 'Comunidade' },
-  { id: 'faq', label: 'FAQ' },
-]
+const ORDEM_AREAS = [
+  'Linguagens',
+  'Ciências Humanas',
+  'Ciências da Natureza',
+  'Matemática',
+] as const
+
+function montarDisciplinas(areas: DesempenhoArea[]): Disciplina[] {
+  const porNome = new Map(areas.map((area) => [area.area, area]))
+
+  return ORDEM_AREAS.flatMap((nome) => {
+    const meta = META_AREAS[nome]
+    const dados = porNome.get(nome)
+    if (!meta || !dados) {
+      return []
+    }
+
+    return [{
+      id: meta.id,
+      nome,
+      descricao: meta.descricao,
+      resolvidas: dados.questoesResolvidas,
+      acerto: dados.taxaAcerto,
+      icone: meta.icone,
+      niveis: dados.porDificuldade.map((faixa) => ({
+        label: faixa.nivel,
+        valor: faixa.taxaAcerto,
+      })),
+    }]
+  })
+}
 
 function DonutChart({ valor, label }: Nivel) {
   const raio = 20
@@ -541,50 +533,55 @@ function DonutChart({ valor, label }: Nivel) {
   )
 }
 
-export function DisciplinasScreen({ onNavigate, onEstudar, onPraticarRedacao }: DisciplinasScreenProps) {
+export function DisciplinasScreen({ userName, onNavigate, onEstudar, onPraticarRedacao, onMeusResgates, onPerfil, onConfiguracoes, onLogout }: DisciplinasScreenProps) {
+  const [disciplinas, setDisciplinas] = useState<Disciplina[]>([])
+  const [carregando, setCarregando] = useState(true)
+  const [erro, setErro] = useState<string | null>(null)
+
+  async function carregar() {
+    setCarregando(true)
+    setErro(null)
+
+    try {
+      const areas = await buscarDesempenhoAreas(
+        sessao.getUserId(),
+        sessao.getAuthToken(),
+      )
+      setDisciplinas(montarDisciplinas(areas))
+    } catch (error: unknown) {
+      setErro(error instanceof Error ? error.message : 'Erro inesperado.')
+    } finally {
+      setCarregando(false)
+    }
+  }
+
+  useEffect(() => {
+    void carregar()
+  }, [])
+
+  const semDados =
+    !carregando &&
+    !erro &&
+    disciplinas.length > 0 &&
+    disciplinas.every((disciplina) => disciplina.resolvidas === 0)
+
   return (
     <div className="site-shell disciplinas-page">
       <style>{css}</style>
-      <header className="topbar topbar-logged">
-        <div className="logo-wrap" aria-label="Revoada Digital">
-          <div className="logo-mark"><img src={iconContainer} alt="Revoada Digital" /></div>
-          <div className="logo-text">
-            <span className="text-orange">Revoada</span>
-            <span className="text-blue">Digital</span>
-          </div>
-        </div>
-
-        <nav className="main-nav">
-          {links.map((link) => (
-            <a
-              key={link.id}
-              href={`#${link.id}`}
-              className={link.id === 'disciplinas' ? 'active' : undefined}
-              aria-current={link.id === 'disciplinas' ? 'page' : undefined}
-              onClick={(e) => {
-                if (onNavigate) {
-                  e.preventDefault()
-                  onNavigate(link.id)
-                }
-              }}
-            >
-              {link.label}
-            </a>
-          ))}
-        </nav>
-
-        <div className="header-actions">
-          <button type="button" className="icon-btn" aria-label="Notificações">{IconSino}</button>
-          <span className="divider-v" />
-          <button type="button" className="user-menu">
-            <span className="avatar">JL</span>
-            <span className="user-name">Júlia</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </button>
-        </div>
-      </header>
+      <HeaderApp
+        ativo="Disciplinas"
+        userName={userName}
+        onInicio={() => onNavigate?.('inicio')}
+        onDisciplinas={() => onNavigate?.('disciplinas')}
+        onSimulados={() => onNavigate?.('simulados')}
+        onComunidade={() => onNavigate?.('comunidade')}
+        onChat={() => onNavigate?.('chat')}
+        onRecompensas={() => onNavigate?.('recompensas')}
+        onMeusResgates={onMeusResgates}
+        onPerfil={onPerfil}
+        onConfiguracoes={onConfiguracoes}
+        onLogout={onLogout}
+      />
 
       <main className="disciplinas-main">
         <h1>Disciplinas</h1>
@@ -592,7 +589,30 @@ export function DisciplinasScreen({ onNavigate, onEstudar, onPraticarRedacao }: 
           Acompanhe seu desempenho por área e veja onde você já está forte e onde ainda pode avançar.
         </p>
 
-        <div className="disciplinas-grid">
+        {carregando ? (
+          <p className="disciplinas-sub" role="status" aria-live="polite">
+            Carregando seu desempenho...
+          </p>
+        ) : erro ? (
+          <div role="alert">
+            <p className="disciplinas-sub" style={{ color: '#b91c1c', fontWeight: 600 }}>
+              {erro}
+            </p>
+            <button type="button" className="link-action" onClick={carregar}>
+              Tentar novamente {IconSeta}
+            </button>
+          </div>
+        ) : (
+          <>
+            {semDados ? (
+              <p className="disciplinas-sub">
+                Você ainda não respondeu questões. Faça um simulado para começar a
+                acompanhar seu desempenho por área. Enquanto isso, os números aparecem
+                zerados.
+              </p>
+            ) : null}
+
+            <div className="disciplinas-grid">
           {disciplinas.map((d) => (
             <section key={d.id} className="disc-card" aria-labelledby={`disc-${d.id}`}>
               <div className="disc-head">
@@ -601,7 +621,6 @@ export function DisciplinasScreen({ onNavigate, onEstudar, onPraticarRedacao }: 
                   <h2 id={`disc-${d.id}`}>{d.nome}</h2>
                   <p>{d.descricao}</p>
                 </div>
-                <span className="badge">Exemplo</span>
               </div>
 
               <div className="disc-meta">
@@ -618,7 +637,9 @@ export function DisciplinasScreen({ onNavigate, onEstudar, onPraticarRedacao }: 
               </div>
             </section>
           ))}
-        </div>
+            </div>
+          </>
+        )}
 
         <section className="redacao-card" aria-labelledby="redacao-titulo">
           <div className="redacao-info">

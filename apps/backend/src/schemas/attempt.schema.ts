@@ -15,6 +15,10 @@ export const submitAttemptSchema = z.object({
       })
     )
     .min(1, 'A avaliação deve conter ao menos uma resposta enviada.'),
+  // Flag opcional: o aluno pode escolher não creditar coins deste simulado.
+  // Precisa constar no schema, senão o validateSchema a remove do corpo
+  // antes de chegar ao creditarCoinsMiddleware.
+  creditarCoins: z.boolean().optional(),
 });
 
 export type CreateAttemptInput = z.infer<typeof createAttemptSchema>;
