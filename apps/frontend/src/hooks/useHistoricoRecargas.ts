@@ -1,24 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { buscarHistoricoRecargas } from '../utils/recargasClient';
-import { acumularRecargas } from '../utils/formatoRecarga';
+import {
+  type EstadoUIHistorico,
+  reduzirCargaInicialErro,
+  reduzirCargaInicialSucesso,
+  reduzirCarregarMaisSucesso,
+} from './historicoRecargasEstado';
 import {
   PAGINA_INICIAL,
   TAMANHO_PAGINA_PADRAO,
   type Recarga,
 } from '../types/recargas.types';
 
-/**
- * Estados da maquina de UI da Tela_Historico (CHA-196). No maximo um estado
- * vale por vez; `vazio` e `erro-inicial` implicam lista vazia (sem dados
- * parciais).
- */
-export type EstadoUIHistorico =
-  | 'carregando-inicial' // R1.2, R3.1
-  | 'lista' // R1.3
-  | 'vazio' // R1.4, R4
-  | 'erro-inicial' // R1.5, R5
-  | 'carregando-mais' // R6.4
-  | 'erro-carregar-mais'; // R6.6
+export type { EstadoUIHistorico } from './historicoRecargasEstado';
 
 export interface RetornoHistoricoRecargas {
   estado: EstadoUIHistorico;
@@ -69,24 +63,19 @@ export function useHistoricoRecargas(): RetornoHistoricoRecargas {
     })
       .then((resposta) => {
         if (!ativoRef.current) return;
-        const itens = resposta.items ?? [];
-        if (itens.length === 0) {
-          setRecargas([]);
-          setTemMais(false);
-          setEstado('vazio');
-          return;
-        }
-        setRecargas(acumularRecargas([], itens));
-        setTemMais(resposta.hasMore);
-        setEstado('lista');
+        const proximo = reduzirCargaInicialSucesso(resposta);
+        setRecargas(proximo.recargas);
+        setTemMais(proximo.temMais);
+        setEstado(proximo.estado);
       })
       .catch(() => {
         // 401 nao chega aqui com efeito: o interceptor global redireciona ao
         // login. Qualquer outro erro/timeout cai em erro-inicial (R5.1).
         if (!ativoRef.current) return;
-        setRecargas([]);
-        setTemMais(false);
-        setEstado('erro-inicial');
+        const proximo = reduzirCargaInicialErro();
+        setRecargas(proximo.recargas);
+        setTemMais(proximo.temMais);
+        setEstado(proximo.estado);
       });
   }, []);
 
@@ -103,11 +92,14 @@ export function useHistoricoRecargas(): RetornoHistoricoRecargas {
       buscarHistoricoRecargas({ page: pagina, pageSize: TAMANHO_PAGINA_PADRAO })
         .then((resposta) => {
           if (!ativoRef.current) return;
+          setRecargas(
+            (anteriores) =>
+              reduzirCarregarMaisSucesso(anteriores, resposta).recargas,
+          );
+          // `temMais` depende apenas da resposta (pagina vazia oculta; caso
+          // contrario segue `hasMore`), entao pode ser derivado fora do
+          // updater de `recargas` (R6.5, R6.7).
           const itens = resposta.items ?? [];
-          if (itens.length > 0) {
-            setRecargas((anteriores) => acumularRecargas(anteriores, itens));
-          }
-          // Proxima pagina vazia mantem os itens e oculta o controle (R6.7).
           setTemMais(itens.length === 0 ? false : resposta.hasMore);
           proximaPaginaRef.current = pagina + 1;
           setEstado('lista');
