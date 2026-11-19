@@ -69,8 +69,8 @@ A lógica pura (reducer, validação/normalização de telefone, montagem do req
     - **Property 3: Montagem do Recharge_Request é estrita e usa o telefone normalizado**
     - **Validates: Requirements 1.3, 3.5, 4.2, 4.5**
 
-- [ ] 4. Implementar o Recharge_Service sobre o cliente compartilhado
-  - [ ] 4.1 Criar `recargaClient.ts`
+- [x] 4. Implementar o Recharge_Service sobre o cliente compartilhado
+  - [x] 4.1 Criar `recargaClient.ts`
     - Criar `apps/frontend/src/utils/recargaClient.ts`
     - Classe `RecargaError extends Error` com `codigo: RecargaErroCodigo`
     - `criarRecarga(request: RechargeRequest): Promise<void>` usando `api.post('/payments/recharge', request)` do `../services/api` — sem montar headers, sem ler `token`/`accessToken`; o interceptor injeta `authToken` e trata 401 globalmente
