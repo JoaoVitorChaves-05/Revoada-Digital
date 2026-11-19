@@ -152,6 +152,18 @@
         "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
         "timestamp": 1795072537741
       }
+    ],
+    "4.2 Property test da mensagem de erro não vazia": [
+      {
+        "executionId": "2f540401-9d3a-42eb-b69e-73ad19cdf60e",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795072552907
+      },
+      {
+        "executionId": "2f540401-9d3a-42eb-b69e-73ad19cdf60e",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795072688227
+      }
     ]
   }
 }

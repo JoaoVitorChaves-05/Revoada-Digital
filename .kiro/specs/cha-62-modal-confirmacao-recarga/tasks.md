@@ -78,7 +78,7 @@ A lógica pura (reducer, validação/normalização de telefone, montagem do req
     - `mapearErroRecarga(codigo)`: mensagem específica para `INSUFFICIENT_POINTS` (saldo insuficiente) e `PROVIDER_FAILURE` (falha genérica do provedor, com retry), e genérica para os demais; nunca vazia; nunca afirma sucesso nem menciona UNCERTAIN
     - _Requirements: 7.3, 7.4, 7.5, 7.7, 8.1, 8.2_
 
-  - [ ]* 4.2 Property test da mensagem de erro não vazia
+  - [x]* 4.2 Property test da mensagem de erro não vazia
     - Adicionar `apps/frontend/src/utils/recargaClient.test.ts` com `fast-check` (mín. 100 iterações) cobrindo todos os `RecargaErroCodigo`
     - Verificar que `mapearErroRecarga(c)` é não vazio após `trim` e não afirma sucesso
     - `// Feature: cha-62-modal-confirmacao-recarga, Property 5: Mensagem de erro nunca é vazia`
