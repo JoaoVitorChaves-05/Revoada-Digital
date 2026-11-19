@@ -46,8 +46,8 @@ A lógica pura (reducer, validação/normalização de telefone, montagem do req
     - `formatarBRL`: casos 0, inteiros e centavos; `normalizarTelefone`: entradas com máscara/espaços
     - _Requirements: 2.2, 3.4_
 
-- [ ] 3. Implementar o reducer puro de Submit_State e a montagem do request
-  - [ ] 3.1 Criar `submitRecarga.ts`
+- [x] 3. Implementar o reducer puro de Submit_State e a montagem do request
+  - [x] 3.1 Criar `submitRecarga.ts`
     - Criar `apps/frontend/src/utils/submitRecarga.ts`
     - Exportar `estadoInicial: SubmitState` (`{ status: 'idle' }`)
     - `submitReducer(state, action)`: reducer **total** e **determinístico** seguindo a tabela de transições do design — `submitting` ignora `SUBMIT` (guarda contra duplo envio); `success` ignora `SUBMIT`/`SUCCESS`/`ERROR`; `error` + `SUBMIT` vai a `submitting` limpando a mensagem; `RESET` volta a `idle`
