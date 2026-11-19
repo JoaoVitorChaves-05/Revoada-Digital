@@ -1,0 +1,263 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1. Definir os tipos de domínio e contrato da API": [
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063706610
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063715833
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063759770
+      }
+    ],
+    "2.1 Criar `apps/frontend/src/utils/formatoRecarga.ts` com funções puras": [
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063706843
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063763247
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063822295
+      }
+    ],
+    "3.1 Criar helper puro de redução de páginas": [
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063706997
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063829662
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063877719
+      }
+    ],
+    "4.1 Criar `apps/frontend/src/utils/recargasClient.ts`": [
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063707148
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063881795
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063928420
+      }
+    ],
+    "4.2 Criar o mock temporário de desenvolvimento": [
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063707372
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063933313
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795064016063
+      }
+    ],
+    "5.1 Criar `apps/frontend/src/hooks/useHistoricoRecargas.ts` com a máquina de estados": [
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063707523
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063936589
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795064019703
+      }
+    ],
+    "6. Checkpoint — garantir que lógica pura e hook passam nos testes": [
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063707646
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795064312535
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795064483687
+      }
+    ],
+    "7.1 Criar o componente `RecargaItem` (em `pages/Recompensas/`)": [
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063707924
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795064032914
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795064092370
+      }
+    ],
+    "8.1 Criar `apps/frontend/src/pages/Recompensas/HistoricoRecargas.tsx`": [
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063708141
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795064100166
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795064184186
+      }
+    ],
+    "9.1 Integrar `HistoricoRecargas` em `apps/frontend/src/App.tsx`": [
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063708306
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795064188160
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795064240812
+      }
+    ],
+    "9.2 Fiar o ponto de entrada na área de recompensas": [
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063708471
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795064244425
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795064305093
+      }
+    ],
+    "10. Checkpoint final — validação lint/build/test": [
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063708663
+      },
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795064486838
+      },
+      {
+        "executionId": "f351a057-5d9b-46f4-beaa-b4f61487acc3",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795065014865
+      },
+      {
+        "executionId": "f351a057-5d9b-46f4-beaa-b4f61487acc3",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795065232955
+      }
+    ],
+    "2. Implementar formatadores pt-BR puros": [
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063822584
+      }
+    ],
+    "3. Implementar o reducer puro de paginação (merge + dedupe)": [
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795063877865
+      }
+    ],
+    "4. Implementar o cliente HTTP e o mock de desenvolvimento": [
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795064016311
+      }
+    ],
+    "5. Implementar o hook de dados `useHistoricoRecargas`": [
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795064019865
+      }
+    ],
+    "7. Implementar o componente de item `RecargaItem`": [
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795064092564
+      }
+    ],
+    "8. Implementar a página `HistoricoRecargas`": [
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795064184639
+      }
+    ],
+    "9. Integrar a tela ao App e fiar o ponto de entrada": [
+      {
+        "executionId": "2b1fb88b-b3c3-4f72-80ef-f8feab2d2a41",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795064305564
+      }
+    ]
+  }
+}
