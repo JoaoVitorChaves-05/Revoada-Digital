@@ -225,7 +225,7 @@ export default function ComunidadePostScreen({ onBack, isLoggedIn = false, onCha
                 </p>
                 <div className="grid grid-cols-2 gap-2 border-y border-slate-100 py-2">
                   <div>
-                    <strong className="block text-base text-indigo-950">{posts.length}</strong>
+                    <strong className="block text-base text-indigo-950">{posts.length + 1}</strong>
                     <span className="text-[8px] text-slate-500">posts criados</span>
                   </div>
                 </div>
