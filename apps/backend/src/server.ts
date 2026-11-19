@@ -13,6 +13,7 @@ import forumRouter from './routes/forum.routes';
 import { chatRoutes } from './routes/chat.list.routes';
 import dashboardRouter from './routes/dashboard.routes';
 import rewardsRouter from './routes/rewards.routes';
+import paymentsRouter from './routes/payments.routes';
 
 export const app = express();
 
@@ -61,3 +62,4 @@ app.use('/forum', forumRouter);
 app.use('/chat', chatRoutes);
 app.use('/dashboard', dashboardRouter);
 app.use('/rewards', rewardsRouter);
+app.use('/payments', paymentsRouter);
