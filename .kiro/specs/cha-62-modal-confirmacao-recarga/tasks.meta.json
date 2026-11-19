@@ -95,6 +95,30 @@
         "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
         "timestamp": 1795072191871
       }
+    ],
+    "2.2 Property test da validação de telefone": [
+      {
+        "executionId": "2f540401-9d3a-42eb-b69e-73ad19cdf60e",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795072287135
+      },
+      {
+        "executionId": "2f540401-9d3a-42eb-b69e-73ad19cdf60e",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795072406761
+      }
+    ],
+    "2.3 Property test da formatação BRL": [
+      {
+        "executionId": "2f540401-9d3a-42eb-b69e-73ad19cdf60e",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795072288200
+      },
+      {
+        "executionId": "2f540401-9d3a-42eb-b69e-73ad19cdf60e",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795072407800
+      }
     ]
   }
 }

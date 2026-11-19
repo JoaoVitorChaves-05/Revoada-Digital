@@ -27,14 +27,14 @@ A lógica pura (reducer, validação/normalização de telefone, montagem do req
     - `telefoneValido(phoneValue: string): boolean` como `/^\d{2}9\d{8}$/.test(normalizarTelefone(phoneValue))`
     - _Requirements: 2.2, 3.3, 3.4, 3.5_
 
-  - [ ]* 2.2 Property test da validação de telefone
+  - [x]* 2.2 Property test da validação de telefone
     - Adicionar `apps/frontend/src/utils/formatoMoedaTelefone.property.test.ts` com `fast-check` (mín. 100 iterações)
     - Gerador inclui strings arbitrárias, apenas-dígitos, whitespace e vazias (edge cases de R3.4)
     - `// Feature: cha-62-modal-confirmacao-recarga, Property 2: Validação de telefone casa exatamente a Phone_Rule`
     - **Property 2: Validação de telefone casa exatamente a Phone_Rule**
     - **Validates: Requirements 3.3, 3.4, 3.5**
 
-  - [ ]* 2.3 Property test da formatação BRL
+  - [x]* 2.3 Property test da formatação BRL
     - Adicionar ao `apps/frontend/src/utils/formatoMoedaTelefone.property.test.ts` com `fast-check` (mín. 100 iterações)
     - Gerar números finitos não negativos; comparar `formatarBRL(v)` com `Intl.NumberFormat('pt-BR', ...)` (model-based): símbolo `R$`, vírgula decimal, duas casas
     - `// Feature: cha-62-modal-confirmacao-recarga, Property 4: Formatação BRL em pt-BR`
