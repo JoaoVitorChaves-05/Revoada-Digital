@@ -1,5 +1,14 @@
 {
-  "pbtResults": {},
+  "pbtResults": {
+    "3.2 Property test do reducer (totalidade/idempotência)": {
+      "status": "passed",
+      "lastRunTimestamp": 1795072519248
+    },
+    "3.3 Property test da montagem do Recharge_Request": {
+      "status": "passed",
+      "lastRunTimestamp": 1795072520328
+    }
+  },
   "executionHistory": {
     "1.1 Criar `recarga.types.ts`": [
       {
@@ -118,6 +127,30 @@
         "executionId": "2f540401-9d3a-42eb-b69e-73ad19cdf60e",
         "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
         "timestamp": 1795072407800
+      }
+    ],
+    "3.2 Property test do reducer (totalidade/idempotência)": [
+      {
+        "executionId": "2f540401-9d3a-42eb-b69e-73ad19cdf60e",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795072422882
+      },
+      {
+        "executionId": "2f540401-9d3a-42eb-b69e-73ad19cdf60e",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795072536947
+      }
+    ],
+    "3.3 Property test da montagem do Recharge_Request": [
+      {
+        "executionId": "2f540401-9d3a-42eb-b69e-73ad19cdf60e",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795072423755
+      },
+      {
+        "executionId": "2f540401-9d3a-42eb-b69e-73ad19cdf60e",
+        "chatSessionId": "sess_c24c4adb-974b-4a68-bde8-05d2a4eec8e7",
+        "timestamp": 1795072537741
       }
     ]
   }

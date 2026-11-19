@@ -55,14 +55,14 @@ A lógica pura (reducer, validação/normalização de telefone, montagem do req
     - Importar `normalizarTelefone` de `./formatoMoedaTelefone` e os tipos de `../types/recarga.types`
     - _Requirements: 1.3, 3.5, 4.2, 4.5, 5.1, 5.4, 6.1, 6.3, 7.1, 7.6_
 
-  - [ ]* 3.2 Property test do reducer (totalidade/idempotência)
+  - [x]* 3.2 Property test do reducer (totalidade/idempotência)
     - Adicionar `apps/frontend/src/utils/submitRecarga.property.test.ts` com `fast-check` (mín. 100 iterações)
     - Gerar sequências de `SubmitAction` a partir de `estadoInicial`; verificar totalidade, determinismo, guarda de `submitting`, idempotência de `success` e limpeza de erro ao reenviar
     - `// Feature: cha-62-modal-confirmacao-recarga, Property 1: Reducer de Submit_State é total, determinístico e idempotente onde exigido`
     - **Property 1: Reducer de Submit_State é total, determinístico e idempotente onde exigido**
     - **Validates: Requirements 5.1, 5.4, 6.1, 6.3, 7.1, 7.6**
 
-  - [ ]* 3.3 Property test da montagem do Recharge_Request
+  - [x]* 3.3 Property test da montagem do Recharge_Request
     - Adicionar ao `apps/frontend/src/utils/submitRecarga.property.test.ts` com `fast-check` (mín. 100 iterações)
     - Gerar `CatalogItem` e telefones válidos; verificar chaves exatas, `catalogItemId === item.id`, `phoneNumber === normalizarTelefone(p)` e ausência de campos legados
     - `// Feature: cha-62-modal-confirmacao-recarga, Property 3: Montagem do Recharge_Request é estrita e usa o telefone normalizado`
