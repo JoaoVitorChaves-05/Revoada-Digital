@@ -1,3 +1,6 @@
+import { DisciplinasScreen } from './screens/DisciplinasScreen'
+import { LojaRecompensas } from './pages/Recompensas/LojaRecompensas'
+import { MeusResgates } from './pages/Recompensas/MeusResgates'
 import { useState } from 'react'
 import './App.css'
 import { HomeScreen } from './screens/HomeScreen'
@@ -45,6 +48,9 @@ type Screen =
   | 'perfil'
   | 'configuracoes'
   | 'aprovacao'
+  | 'disciplinas'
+  | 'recompensas'
+  | 'meus-resgates'
 
 function telaInicial(): Screen {
   if (typeof window !== 'undefined' && window.location.pathname === '/verificar-email') {
