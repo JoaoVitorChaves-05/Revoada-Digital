@@ -19,8 +19,8 @@ A lógica pura (reducer, validação/normalização de telefone, montagem do req
     - Exportar `SubmitState` (união discriminada: `idle` | `submitting` | `success` | `error` com `codigo` e `mensagem`) e `SubmitAction` (`SUBMIT` | `SUCCESS` | `ERROR` com `codigo`/`mensagem` | `RESET`)
     - _Requirements: 2.4, 4.5, 5.1_
 
-- [ ] 2. Implementar a formatação de moeda e telefone (funções puras)
-  - [ ] 2.1 Criar `formatoMoedaTelefone.ts`
+- [x] 2. Implementar a formatação de moeda e telefone (funções puras)
+  - [x] 2.1 Criar `formatoMoedaTelefone.ts`
     - Criar `apps/frontend/src/utils/formatoMoedaTelefone.ts`
     - `formatarBRL(amountBRL: number): string` usando `Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })` (função pura)
     - `normalizarTelefone(phoneValue: string): string` como `phoneValue.replace(/\D/g, '')`
