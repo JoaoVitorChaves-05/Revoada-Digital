@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { Bell, ChevronDown, User, Settings, LogOut } from 'lucide-react';
+import { Bell, ChevronDown, User, Gift, Settings, LogOut } from 'lucide-react';
 
 type UserMenuProps = {
   userName?: string;
   onPerfil?: () => void;
+  onMeusResgates?: () => void;
   onConfiguracoes?: () => void;
   onLogout?: () => void;
 };
@@ -14,7 +15,7 @@ function getInitials(name: string) {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-export function UserMenu({ userName, onPerfil, onConfiguracoes, onLogout }: UserMenuProps) {
+export function UserMenu({ userName, onPerfil, onMeusResgates, onConfiguracoes, onLogout }: UserMenuProps) {
   const [aberto, setAberto] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -58,6 +59,13 @@ export function UserMenu({ userName, onPerfil, onConfiguracoes, onLogout }: User
             className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
           >
             <User size={16} /> Perfil
+          </button>
+          <button
+            role="menuitem"
+            onClick={() => { setAberto(false); onMeusResgates?.(); }}
+            className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          >
+            <Gift size={16} /> Meus resgates
           </button>
           <button
             role="menuitem"

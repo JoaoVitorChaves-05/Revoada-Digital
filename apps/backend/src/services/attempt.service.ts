@@ -3,7 +3,7 @@ import { CreateAttemptInput, SubmitAttemptInput } from '../schemas/attempt.schem
 import { AttemptStatus } from '@prisma/client';
 
 export class AttemptService {
-  constructor(private readonly attemptRepository = new AttemptRepository()) {}
+  constructor(private readonly attemptRepository = new AttemptRepository()) { }
 
   async createAttempt(data: CreateAttemptInput) {
     return this.attemptRepository.create(data.mockExamId);
@@ -37,6 +37,8 @@ export class AttemptService {
 
     let correctAnswersCount = 0;
     let totalEarnedPoints = 0;
+    const shouldCreditCoins = data.creditarCoins !== false;
+    // Se não for explicitamente definido como false, consideramos que deve creditar moedas
 
     // Processamento e validação de cada resposta recebida
     const processedAnswers = data.answers.map((answerInput) => {
@@ -55,8 +57,17 @@ export class AttemptService {
 
       if (isCorrect) {
         correctAnswersCount++;
-        // Exemplo de cálculo de pontos baseado no nível de dificuldade da questão (ex: dificuldade * 10)
-        totalEarnedPoints += (questionData.difficulty || 1) * 10;
+        // Atribuição de pontos com base na dificuldade da questão
+        if (shouldCreditCoins) {
+          const difficulty = questionData.difficulty;
+          if (difficulty >= 3) {
+            totalEarnedPoints += 3;
+          } else if (difficulty === 2) {
+            totalEarnedPoints += 2;
+          } else {
+            totalEarnedPoints += 1;
+          }
+        }
       }
 
       return {
@@ -77,6 +88,7 @@ export class AttemptService {
       correctAnswers: correctAnswersCount,
       totalQuestions,
       earnedPoints: totalEarnedPoints,
+      coinsCredited: shouldCreditCoins,
       answers: processedAnswers,
     });
   }
