@@ -1,14 +1,15 @@
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fc from 'fast-check';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import PostDetalheScreen from './PostDetalheScreen';
-import { renderComProviders, seedUsuario } from '../test/router';
+import { AuthProvider } from '../auth/AuthContext';
 import type { ForumPost, ProfileType } from '../types/forum.types';
+import type { UsuarioLogado } from '../auth/authStore';
 
-// Mocka os hooks de fórum usados pela tela de detalhe e pelo DeletePostButton
-// (que é renderizado dentro da tela). Isola a tela da camada de serviço/rede.
+// Mocka os hooks de forum usados pela tela de detalhe e pelo DeletePostButton.
 //  - useForumPost: fornece o post exibido.
-//  - useCreateReply: usado pelo formulário de resposta (não exercitado aqui).
+//  - useCreateReply: usado pelo formulario de resposta (nao exercitado aqui).
 //  - useDeletePost: usado pelo DeletePostButton; deletePost(id): Promise<boolean>.
 const deletePostMock = vi.fn<(id: string) => Promise<boolean>>();
 const refetchMock = vi.fn();
@@ -35,13 +36,23 @@ vi.mock('../hooks/useForum', () => ({
   }),
 }));
 
-// Fixture mínima válida de ForumPost.
+const STORAGE_KEY = 'usuarioLogado';
+
+function seedSessao(user: Partial<UsuarioLogado> & Pick<UsuarioLogado, 'id' | 'profileType'>) {
+  const completo: UsuarioLogado = {
+    email: 'teste@exemplo.com',
+    full_name: 'Usuario Teste',
+    ...user,
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(completo));
+}
+
 function makePost(overrides: Partial<ForumPost> = {}): ForumPost {
   return {
     id: 'post-1',
     authorId: 'author-1',
-    title: 'Título de teste',
-    content: 'Conteúdo de teste',
+    title: 'Titulo de teste',
+    content: 'Conteudo de teste',
     subject: 'MATH',
     createdAt: '2024-01-01T00:00:00.000Z',
     updatedAt: '2024-01-01T00:00:00.000Z',
@@ -55,18 +66,35 @@ function makePost(overrides: Partial<ForumPost> = {}): ForumPost {
   };
 }
 
+/**
+ * Renderiza a tela de detalhe em /comunidade/:postId dentro de um roteador real.
+ * A rota /comunidade mostra um sentinela para verificar a navegacao de "voltar"
+ * (onDeleted/onBack agora usam useNavigate, nao mais props).
+ */
+function renderDetalhe(postId = 'post-1') {
+  return render(
+    <AuthProvider>
+      <MemoryRouter initialEntries={[`/comunidade/${postId}`]}>
+        <Routes>
+          <Route path="/comunidade" element={<div>LISTA DA COMUNIDADE</div>} />
+          <Route path="/comunidade/:postId" element={<PostDetalheScreen />} />
+        </Routes>
+      </MemoryRouter>
+    </AuthProvider>,
+  );
+}
+
 const deleteControl = () => screen.queryByRole('button', { name: 'Excluir post' });
 const confirmButton = () => screen.getByRole('button', { name: 'Excluir' });
 
-describe('PostDetalheScreen - exclusão de post', () => {
+describe('PostDetalheScreen - exclusao de post', () => {
   beforeEach(() => {
     deletePostMock.mockReset();
     refetchMock.mockReset();
     createReplyMock.mockReset();
     deleteState = { loading: false, error: null };
     postState = makePost();
-    // HeaderApp usa useAuth/useNavigate; semeia sessão e render com providers.
-    seedUsuario();
+    localStorage.clear();
   });
 
   afterEach(() => {
@@ -74,130 +102,94 @@ describe('PostDetalheScreen - exclusão de post', () => {
     localStorage.clear();
   });
 
-  // Requirements: 2.4 — o botão de exclusão aparece quando o usuário é o autor.
-  it('exibe o botão de exclusão quando o usuário logado é o autor', () => {
+  // Requirements: 2.4 - o botao de exclusao aparece quando o usuario e o autor.
+  it('exibe o botao de exclusao quando o usuario logado e o autor', () => {
     postState = makePost({ authorId: 'author-1' });
-    renderComProviders(
-      <PostDetalheScreen
-        postId="post-1"
-        onBack={vi.fn()}
-        userId="author-1"
-        userProfileType="STUDENT"
-      />,
-    );
+    seedSessao({ id: 'author-1', profileType: 'STUDENT' });
+    renderDetalhe();
     expect(deleteControl()).toBeInTheDocument();
   });
 
-  // Requirements: 2.4 — professor vê o botão mesmo não sendo o autor.
-  it('exibe o botão de exclusão para TEACHER que não é autor', () => {
+  // Requirements: 2.4 - professor ve o botao mesmo nao sendo o autor.
+  it('exibe o botao de exclusao para TEACHER que nao e autor', () => {
     postState = makePost({ authorId: 'author-1' });
-    renderComProviders(
-      <PostDetalheScreen
-        postId="post-1"
-        onBack={vi.fn()}
-        userId="prof-1"
-        userProfileType="TEACHER"
-      />,
-    );
+    seedSessao({ id: 'prof-1', profileType: 'TEACHER' });
+    renderDetalhe();
     expect(deleteControl()).toBeInTheDocument();
   });
 
-  // Requirements: 2.4 — admin vê o botão mesmo não sendo o autor.
-  it('exibe o botão de exclusão para ADMIN que não é autor', () => {
+  // Requirements: 2.4 - admin ve o botao mesmo nao sendo o autor.
+  it('exibe o botao de exclusao para ADMIN que nao e autor', () => {
     postState = makePost({ authorId: 'author-1' });
-    renderComProviders(
-      <PostDetalheScreen
-        postId="post-1"
-        onBack={vi.fn()}
-        userId="admin-1"
-        userProfileType="ADMIN"
-      />,
-    );
+    seedSessao({ id: 'admin-1', profileType: 'ADMIN' });
+    renderDetalhe();
     expect(deleteControl()).toBeInTheDocument();
   });
 
-  // Requirements: 2.4 — STUDENT que não é autor não vê o botão.
-  it('não exibe o botão para STUDENT que não é o autor', () => {
+  // Requirements: 2.4 - STUDENT que nao e autor nao ve o botao.
+  it('nao exibe o botao para STUDENT que nao e o autor', () => {
     postState = makePost({ authorId: 'author-1' });
-    renderComProviders(
-      <PostDetalheScreen
-        postId="post-1"
-        onBack={vi.fn()}
-        userId="outro-usuario"
-        userProfileType="STUDENT"
-      />,
-    );
+    seedSessao({ id: 'outro-usuario', profileType: 'STUDENT' });
+    renderDetalhe();
     expect(deleteControl()).toBeNull();
   });
 
-  // Requirements: 2.4 — sem usuário logado (userId indefinido) o botão não aparece.
-  it('não exibe o botão quando não há usuário logado', () => {
+  // Requirements: 2.4 - sem usuario logado o botao nao aparece.
+  it('nao exibe o botao quando nao ha usuario logado', () => {
     postState = makePost({ authorId: 'author-1' });
-    renderComProviders(<PostDetalheScreen postId="post-1" onBack={vi.fn()} />);
+    renderDetalhe();
     expect(deleteControl()).toBeNull();
   });
 
-  // Requirements: 6.5 — confirmar a exclusão com sucesso chama onBack exatamente uma vez.
-  it('confirma a exclusão e chama onBack exatamente uma vez', async () => {
+  // Requirements: 6.5 - confirmar a exclusao com sucesso volta para a lista.
+  it('confirma a exclusao e navega de volta para a comunidade', async () => {
     deletePostMock.mockResolvedValue(true);
-    const onBack = vi.fn();
     postState = makePost({ id: 'post-42', authorId: 'author-1' });
-    renderComProviders(
-      <PostDetalheScreen
-        postId="post-42"
-        onBack={onBack}
-        userId="author-1"
-      />,
-    );
+    seedSessao({ id: 'author-1', profileType: 'STUDENT' });
+    renderDetalhe('post-42');
 
     fireEvent.click(deleteControl()!);
     expect(deletePostMock).not.toHaveBeenCalled();
 
     fireEvent.click(confirmButton());
 
-    await waitFor(() => expect(onBack).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(screen.getByText('LISTA DA COMUNIDADE')).toBeInTheDocument());
     expect(deletePostMock).toHaveBeenCalledTimes(1);
     expect(deletePostMock).toHaveBeenCalledWith('post-42');
   });
 
-  // Property 8: Pós-sucesso correto (detalhe)
-  // Em qualquer exclusão bem-sucedida feita por um usuário permitido, o callback
-  // de pós-sucesso da tela de detalhe (onBack) dispara exatamente uma vez.
+  // Property 8: Pos-sucesso correto (detalhe)
+  // Em qualquer exclusao bem-sucedida feita por um usuario permitido, a tela
+  // navega de volta para a lista da comunidade.
   // **Validates: Requirements 6.5**
-  it('Property 8 (Pós-sucesso correto, detalhe): onBack dispara exatamente uma vez em sucesso', async () => {
+  it('Property 8 (Pos-sucesso correto, detalhe): volta para a comunidade em sucesso', async () => {
     const permittedUser = fc.oneof(
       fc.record({
-        userId: fc.constant('author-1'),
-        userProfileType: fc.constantFrom<ProfileType>('STUDENT', 'TEACHER', 'ADMIN'),
+        id: fc.constant('author-1'),
+        profileType: fc.constantFrom<ProfileType>('STUDENT', 'TEACHER', 'ADMIN'),
       }),
       fc.record({
-        userId: fc.constantFrom('author-1', 'prof-1'),
-        userProfileType: fc.constantFrom<ProfileType>('TEACHER', 'ADMIN'),
+        id: fc.constantFrom('author-1', 'prof-1'),
+        profileType: fc.constantFrom<ProfileType>('TEACHER', 'ADMIN'),
       }),
     );
 
     await fc.assert(
-      fc.asyncProperty(permittedUser, async ({ userId, userProfileType }) => {
+      fc.asyncProperty(permittedUser, async ({ id, profileType }) => {
         deletePostMock.mockReset();
         deletePostMock.mockResolvedValue(true);
         refetchMock.mockReset();
         deleteState = { loading: false, error: null };
         postState = makePost({ authorId: 'author-1' });
+        localStorage.clear();
+        seedSessao({ id, profileType });
 
-        const onBack = vi.fn();
-        const { unmount, getByRole } = renderComProviders(
-          <PostDetalheScreen
-            postId="post-1"
-            onBack={onBack}
-            userId={userId}
-            userProfileType={userProfileType}
-          />,
-        );
+        const { unmount, getByRole, findByText } = renderDetalhe();
 
         fireEvent.click(getByRole('button', { name: 'Excluir post' }));
         fireEvent.click(getByRole('button', { name: 'Excluir' }));
 
-        await waitFor(() => expect(onBack).toHaveBeenCalledTimes(1));
+        await findByText('LISTA DA COMUNIDADE');
         unmount();
       }),
       { numRuns: 25 },

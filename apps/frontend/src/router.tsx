@@ -8,6 +8,8 @@ import { DashboardRoute } from './routes/DashboardRoute';
 import { PainelDesempenhoRoute } from './routes/PainelDesempenhoRoute';
 import { DisciplinasRoute } from './routes/DisciplinasRoute';
 import { ConfiguracoesRoute } from './routes/ConfiguracoesRoute';
+import { ComunidadeRoute } from './routes/ComunidadeRoute';
+import { PostDetalheRoute } from './routes/PostDetalheRoute';
 import { RotaProtegida } from './auth/RotaProtegida';
 
 /**
@@ -33,6 +35,8 @@ export const router = createBrowserRouter([
       { path: '/desempenho', element: <PainelDesempenhoRoute /> },
       { path: '/disciplinas', element: <DisciplinasRoute /> },
       { path: '/configuracoes', element: <ConfiguracoesRoute /> },
+      { path: '/comunidade', element: <ComunidadeRoute /> },
+      { path: '/comunidade/:postId', element: <PostDetalheRoute /> },
     ],
   },
 

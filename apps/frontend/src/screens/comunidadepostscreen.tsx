@@ -1,4 +1,5 @@
 ﻿import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   ArrowLeft,
   ArrowRight,
@@ -14,10 +15,10 @@ import {
 } from 'lucide-react'
 import { useForumPosts } from '../hooks/useForum';
 import { SUBJECT_LABELS } from '../types/forum.types';
-import type { ProfileType } from '../types/forum.types';
 import { HeaderApp } from '../components/HeaderApp';
 import { DeletePostButton } from '../components/DeletePostButton';
 import { CreatePostModal } from './CreatePostModal';
+import { useAuth } from '../auth/useAuth';
 
 const RELATED = [
   { category: 'Matemática', title: 'Probabilidade: quando somar e quando multiplicar?', replies: 8 },
@@ -25,15 +26,11 @@ const RELATED = [
   { category: 'Matemática', title: 'Fatorial e permutação: por onde começar?', replies: 5 },
 ]
 
-
-interface Props {
-  onBack?: () => void
-  onViewPost?: (postId: string) => void
-  userId?: string
-  userProfileType?: ProfileType
-}
-
-export default function ComunidadePostScreen({ onBack, onViewPost, userId, userProfileType }: Props) {
+export default function ComunidadePostScreen() {
+  const navigate = useNavigate();
+  const { usuario } = useAuth();
+  const userId = usuario?.id;
+  const userProfileType = usuario?.profileType;
   // BUSCAR POSTS DO BACKEND
   const { posts, loading, error, refetch } = useForumPosts();
   const [modalAberto, setModalAberto] = useState(false);
@@ -74,7 +71,7 @@ export default function ComunidadePostScreen({ onBack, onViewPost, userId, userP
         </section>
 
         <div className="flex items-center gap-2 py-4 text-[10px] font-semibold text-slate-500">
-          <button className="inline-flex items-center gap-1 font-bold text-indigo-700 hover:text-orange-500" onClick={onBack}><ArrowLeft size={12} /> Voltar ao início</button>
+          <button className="inline-flex items-center gap-1 font-bold text-indigo-700 hover:text-orange-500" onClick={() => navigate('/dashboard')}><ArrowLeft size={12} /> Voltar ao início</button>
         </div>
 
         {/* ✨ ESTADOS DE LOADING E ERRO */}
@@ -113,7 +110,7 @@ export default function ComunidadePostScreen({ onBack, onViewPost, userId, userP
                   <article 
                     key={post.id} 
                     className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5 cursor-pointer hover:shadow-lg hover:border-indigo-200 transition-all"
-                    onClick={() => onViewPost?.(post.id)}
+                    onClick={() => navigate(`/comunidade/${post.id}`)}
                   >
                     <div className="flex flex-wrap gap-1 text-[10px] font-bold">
                       <span className="rounded bg-indigo-50 px-2 py-1 text-indigo-700">
