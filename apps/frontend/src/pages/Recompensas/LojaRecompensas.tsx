@@ -16,18 +16,9 @@ import type { CategoriaRecompensa, Recompensa } from './recompensa.types';
 import { useSaldoCoins } from '../../hooks/useSaldoCoins';
 
 type Props = {
-  userName?: string;
   saldoPontos?: number;
   pontosNaSemana?: number;
   onMeusResgates?: () => void;
-  onInicio?: () => void;
-  onDisciplinas?: () => void;
-  onSimulados?: () => void;
-  onComunidade?: () => void;
-  onChat?: () => void;
-  onPerfil?: () => void;
-  onConfiguracoes?: () => void;
-  onLogout?: () => void;
 };
 
 const CATEGORIAS: Array<'Todas' | CategoriaRecompensa> = [
@@ -59,18 +50,9 @@ function textoDisponibilidade(r: Recompensa): string {
 }
 
 export function LojaRecompensas({
-  userName,
   saldoPontos: saldoPontosProp,
   pontosNaSemana = 250,
   onMeusResgates,
-  onInicio,
-  onDisciplinas,
-  onSimulados,
-  onComunidade,
-  onChat,
-  onPerfil,
-  onConfiguracoes,
-  onLogout,
 }: Props) {
   const [busca, setBusca] = useState('');
   const [categoria, setCategoria] = useState<'Todas' | CategoriaRecompensa>('Todas');
@@ -103,18 +85,7 @@ export function LojaRecompensas({
 
   return (
     <div className="min-h-screen bg-[#f7f9fc] text-slate-700">
-      <HeaderApp
-        ativo="Recompensas"
-        userName={userName}
-        onInicio={onInicio}
-        onDisciplinas={onDisciplinas}
-        onSimulados={onSimulados}
-        onComunidade={onComunidade}
-        onChat={onChat}
-        onPerfil={onPerfil}
-        onConfiguracoes={onConfiguracoes}
-        onLogout={onLogout}
-      />
+      <HeaderApp />
 
       <main className="mx-auto max-w-[1100px] px-4 py-8 sm:px-10 lg:px-[6%]">
         {/* Titulo + Meus resgates */}

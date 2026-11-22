@@ -393,14 +393,8 @@ type Disciplina = {
 }
 
 type DisciplinasScreenProps = {
-  userName?: string
-  onNavigate?: (destino: string) => void
   onEstudar?: (disciplinaId: string) => void
   onPraticarRedacao?: () => void
-  onMeusResgates?: () => void
-  onPerfil?: () => void
-  onConfiguracoes?: () => void
-  onLogout?: () => void
 }
 
 const stroke = {
@@ -533,7 +527,7 @@ function DonutChart({ valor, label }: Nivel) {
   )
 }
 
-export function DisciplinasScreen({ userName, onNavigate, onEstudar, onPraticarRedacao, onMeusResgates, onPerfil, onConfiguracoes, onLogout }: DisciplinasScreenProps) {
+export function DisciplinasScreen({ onEstudar, onPraticarRedacao }: DisciplinasScreenProps) {
   const [disciplinas, setDisciplinas] = useState<Disciplina[]>([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState<string | null>(null)
@@ -568,20 +562,7 @@ export function DisciplinasScreen({ userName, onNavigate, onEstudar, onPraticarR
   return (
     <div className="site-shell disciplinas-page">
       <style>{css}</style>
-      <HeaderApp
-        ativo="Disciplinas"
-        userName={userName}
-        onInicio={() => onNavigate?.('inicio')}
-        onDisciplinas={() => onNavigate?.('disciplinas')}
-        onSimulados={() => onNavigate?.('simulados')}
-        onComunidade={() => onNavigate?.('comunidade')}
-        onChat={() => onNavigate?.('chat')}
-        onRecompensas={() => onNavigate?.('recompensas')}
-        onMeusResgates={onMeusResgates}
-        onPerfil={onPerfil}
-        onConfiguracoes={onConfiguracoes}
-        onLogout={onLogout}
-      />
+      <HeaderApp />
 
       <main className="disciplinas-main">
         <h1>Disciplinas</h1>

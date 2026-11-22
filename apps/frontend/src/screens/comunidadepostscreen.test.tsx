@@ -1,23 +1,24 @@
-Ôªøimport { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
+import { screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fc from 'fast-check';
 import ComunidadePostScreen from './comunidadepostscreen';
+import { renderComProviders, seedUsuario } from '../test/router';
 import type { ForumPost, ProfileType } from '../types/forum.types';
 
-// --- Mocks dos hooks de f√≥rum ---------------------------------------------
+// --- Mocks dos hooks de fÛrum ---------------------------------------------
 // A tela usa `useForumPosts()` para obter `{ posts, loading, error, refetch }`
-// e a exclus√£o passa por `useDeletePost()` (`deletePost(id): Promise<boolean>`).
-// Mockamos ambos para isolar a tela da camada de servi√ßo/rede.
+// e a exclus„o passa por `useDeletePost()` (`deletePost(id): Promise<boolean>`).
+// Mockamos ambos para isolar a tela da camada de serviÁo/rede.
 
 // `posts` servidos pelo mock de useForumPosts. `refetch` simula o recarregamento
-// p√≥s-exclus√£o removendo da lista os posts j√° exclu√≠dos e for√ßando novo render.
+// pÛs-exclus„o removendo da lista os posts j· excluÌdos e forÁando novo render.
 let currentPosts: ForumPost[] = [];
 const refetchMock = vi.fn(() => {
   currentPosts = currentPosts.filter((p) => !deletedIds.has(p.id));
 });
 const deletedIds = new Set<string>();
 
-// Mock de useDeletePost: registra o id exclu√≠do e resolve sucesso/falha.
+// Mock de useDeletePost: registra o id excluÌdo e resolve sucesso/falha.
 const deletePostMock = vi.fn<(id: string) => Promise<boolean>>();
 let deleteHookState: { loading: boolean; error: string | null };
 
@@ -35,19 +36,19 @@ vi.mock('../hooks/useForum', () => ({
   }),
 }));
 
-// CreatePostModal √© irrelevante para estes testes; renderiza nada.
+// CreatePostModal È irrelevante para estes testes; renderiza nada.
 vi.mock('./CreatePostModal', () => ({
   CreatePostModal: () => null,
 }));
 
-// Fixture m√≠nima v√°lida de ForumPost.
+// Fixture mÌnima v·lida de ForumPost.
 function makePost(overrides: Partial<ForumPost> = {}): ForumPost {
   const id = overrides.id ?? 'post-1';
   return {
     id,
     authorId: 'author-1',
-    title: `T√≠tulo ${id}`,
-    content: `Conte√∫do ${id}`,
+    title: `TÌtulo ${id}`,
+    content: `Conte˙do ${id}`,
     subject: 'MATH',
     createdAt: '2024-01-01T00:00:00.000Z',
     updatedAt: '2024-01-01T00:00:00.000Z',
@@ -61,44 +62,47 @@ function makePost(overrides: Partial<ForumPost> = {}): ForumPost {
   };
 }
 
-// Localiza o <article> (card) que cont√©m um dado t√≠tulo.
+// Localiza o <article> (card) que contÈm um dado tÌtulo.
 function cardForTitle(title: string): HTMLElement {
   const heading = screen.getByRole('heading', { name: title });
   const card = heading.closest('article');
-  if (!card) throw new Error(`Card n√£o encontrado para o t√≠tulo: ${title}`);
+  if (!card) throw new Error(`Card n„o encontrado para o tÌtulo: ${title}`);
   return card as HTMLElement;
 }
 
 const deleteControls = () => screen.queryAllByRole('button', { name: 'Excluir post' });
 const confirmButton = () => screen.getByRole('button', { name: 'Excluir' });
 
-describe('ComunidadePostScreen ‚Äî exclus√£o na lista', () => {
+describe('ComunidadePostScreen ó exclus„o na lista', () => {
   beforeEach(() => {
     refetchMock.mockClear();
     deletePostMock.mockReset();
     deletedIds.clear();
     deleteHookState = { loading: false, error: null };
     currentPosts = [];
+    // HeaderApp usa useAuth/useNavigate; semeia sess„o e render com providers.
+    seedUsuario();
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
+    localStorage.clear();
   });
 
-  // Requirements: 2.3, 6.2 ‚Äî o bot√£o aparece s√≥ nos posts permitidos.
-  it('renderiza o bot√£o de exclus√£o apenas nos posts permitidos', () => {
+  // Requirements: 2.3, 6.2 ó o bot„o aparece sÛ nos posts permitidos.
+  it('renderiza o bot„o de exclus„o apenas nos posts permitidos', () => {
     currentPosts = [
       makePost({ id: 'meu-post', authorId: 'author-1' }),
       makePost({ id: 'post-alheio', authorId: 'outro-autor' }),
     ];
 
-    render(
+    renderComProviders(
       <ComunidadePostScreen userId="author-1" userProfileType="STUDENT" />,
     );
 
-    // STUDENT autor v√™ o bot√£o apenas no pr√≥prio post; no post alheio, nenhum.
-    const meuCard = cardForTitle('T√≠tulo meu-post');
-    const alheioCard = cardForTitle('T√≠tulo post-alheio');
+    // STUDENT autor vÍ o bot„o apenas no prÛprio post; no post alheio, nenhum.
+    const meuCard = cardForTitle('TÌtulo meu-post');
+    const alheioCard = cardForTitle('TÌtulo post-alheio');
     expect(
       within(meuCard).getByRole('button', { name: 'Excluir post' }),
     ).toBeInTheDocument();
@@ -107,47 +111,47 @@ describe('ComunidadePostScreen ‚Äî exclus√£o na lista', () => {
     ).toBeNull();
   });
 
-  // Requirements: 6.2 ‚Äî TEACHER v√™ o bot√£o em qualquer post.
-  it('professor v√™ o bot√£o de exclus√£o em todos os posts', () => {
+  // Requirements: 6.2 ó TEACHER vÍ o bot„o em qualquer post.
+  it('professor vÍ o bot„o de exclus„o em todos os posts', () => {
     currentPosts = [
       makePost({ id: 'p1', authorId: 'a1' }),
       makePost({ id: 'p2', authorId: 'a2' }),
     ];
 
-    render(
+    renderComProviders(
       <ComunidadePostScreen userId="prof-1" userProfileType="TEACHER" />,
     );
 
     expect(deleteControls()).toHaveLength(2);
   });
 
-  // Requirements: 6.2 ‚Äî sem usu√°rio logado, nenhum bot√£o aparece.
-  it('n√£o renderiza nenhum bot√£o quando n√£o h√° usu√°rio logado', () => {
+  // Requirements: 6.2 ó sem usu·rio logado, nenhum bot„o aparece.
+  it('n„o renderiza nenhum bot„o quando n„o h· usu·rio logado', () => {
     currentPosts = [makePost({ id: 'p1', authorId: 'a1' })];
 
-    render(<ComunidadePostScreen />);
+    renderComProviders(<ComunidadePostScreen />);
 
     expect(deleteControls()).toHaveLength(0);
   });
 
-  // Requirements: 6.2, 6.3 ‚Äî confirmar chama refetch uma vez e remove o post da lista.
-  it('ao confirmar a exclus√£o, chama refetch uma vez e remove o post da vis√£o', async () => {
+  // Requirements: 6.2, 6.3 ó confirmar chama refetch uma vez e remove o post da lista.
+  it('ao confirmar a exclus„o, chama refetch uma vez e remove o post da vis„o', async () => {
     deletePostMock.mockResolvedValue(true);
     currentPosts = [
       makePost({ id: 'post-apagar', authorId: 'author-1' }),
       makePost({ id: 'post-manter', authorId: 'author-1' }),
     ];
-    // refetch remove o post exclu√≠do da lista servida pelo mock.
+    // refetch remove o post excluÌdo da lista servida pelo mock.
     refetchMock.mockImplementation(() => {
       deletedIds.add('post-apagar');
       currentPosts = currentPosts.filter((p) => !deletedIds.has(p.id));
     });
 
-    const { rerender } = render(
+    const { rerender } = renderComProviders(
       <ComunidadePostScreen userId="author-1" userProfileType="STUDENT" />,
     );
 
-    const card = cardForTitle('T√≠tulo post-apagar');
+    const card = cardForTitle('TÌtulo post-apagar');
     fireEvent.click(within(card).getByRole('button', { name: 'Excluir post' }));
     fireEvent.click(confirmButton());
 
@@ -157,17 +161,17 @@ describe('ComunidadePostScreen ‚Äî exclus√£o na lista', () => {
     // Re-render para refletir a lista atualizada pelo refetch.
     rerender(<ComunidadePostScreen userId="author-1" userProfileType="STUDENT" />);
 
-    expect(screen.queryByRole('heading', { name: 'T√≠tulo post-apagar' })).toBeNull();
-    expect(screen.getByRole('heading', { name: 'T√≠tulo post-manter' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'TÌtulo post-apagar' })).toBeNull();
+    expect(screen.getByRole('heading', { name: 'TÌtulo post-manter' })).toBeInTheDocument();
   });
 
-  // Requirements: 7.2, 7.3 ‚Äî clicar no controle de exclus√£o n√£o navega pelo card.
-  it('clicar no controle de exclus√£o n√£o dispara a navega√ß√£o do card', () => {
+  // Requirements: 7.2, 7.3 ó clicar no controle de exclus„o n„o navega pelo card.
+  it('clicar no controle de exclus„o n„o dispara a navegaÁ„o do card', () => {
     deletePostMock.mockResolvedValue(true);
     currentPosts = [makePost({ id: 'post-nav', authorId: 'author-1' })];
     const onViewPost = vi.fn();
 
-    render(
+    renderComProviders(
       <ComunidadePostScreen
         userId="author-1"
         userProfileType="STUDENT"
@@ -175,21 +179,21 @@ describe('ComunidadePostScreen ‚Äî exclus√£o na lista', () => {
       />,
     );
 
-    const card = cardForTitle('T√≠tulo post-nav');
+    const card = cardForTitle('TÌtulo post-nav');
     fireEvent.click(within(card).getByRole('button', { name: 'Excluir post' }));
 
-    // Abriu o dialog de confirma√ß√£o, mas n√£o navegou.
+    // Abriu o dialog de confirmaÁ„o, mas n„o navegou.
     expect(confirmButton()).toBeInTheDocument();
     expect(onViewPost).not.toHaveBeenCalled();
   });
 
-  // Requirements: 7.2 ‚Äî clicar nos bot√µes do dialog de confirma√ß√£o n√£o navega pelo card.
-  it('clicar em "Excluir" dentro do dialog n√£o dispara a navega√ß√£o do card', async () => {
+  // Requirements: 7.2 ó clicar nos botıes do dialog de confirmaÁ„o n„o navega pelo card.
+  it('clicar em "Excluir" dentro do dialog n„o dispara a navegaÁ„o do card', async () => {
     deletePostMock.mockResolvedValue(true);
     currentPosts = [makePost({ id: 'post-dialog', authorId: 'author-1' })];
     const onViewPost = vi.fn();
 
-    render(
+    renderComProviders(
       <ComunidadePostScreen
         userId="author-1"
         userProfileType="STUDENT"
@@ -197,22 +201,22 @@ describe('ComunidadePostScreen ‚Äî exclus√£o na lista', () => {
       />,
     );
 
-    const card = cardForTitle('T√≠tulo post-dialog');
+    const card = cardForTitle('TÌtulo post-dialog');
     fireEvent.click(within(card).getByRole('button', { name: 'Excluir post' }));
-    // Clique no bot√£o de confirma√ß√£o, que vive dentro do overlay do dialog.
+    // Clique no bot„o de confirmaÁ„o, que vive dentro do overlay do dialog.
     fireEvent.click(confirmButton());
 
     await waitFor(() => expect(deletePostMock).toHaveBeenCalledWith('post-dialog'));
-    // O clique no dialog n√£o deve escapar para o onClick do card.
+    // O clique no dialog n„o deve escapar para o onClick do card.
     expect(onViewPost).not.toHaveBeenCalled();
   });
 
-  // Requirements: 7.3 ‚Äî clicar fora do controle de exclus√£o navega normalmente.
-  it('clicar na √°rea do card (fora do controle) dispara a navega√ß√£o', () => {
+  // Requirements: 7.3 ó clicar fora do controle de exclus„o navega normalmente.
+  it('clicar na ·rea do card (fora do controle) dispara a navegaÁ„o', () => {
     currentPosts = [makePost({ id: 'post-nav', authorId: 'author-1' })];
     const onViewPost = vi.fn();
 
-    render(
+    renderComProviders(
       <ComunidadePostScreen
         userId="author-1"
         userProfileType="STUDENT"
@@ -220,17 +224,17 @@ describe('ComunidadePostScreen ‚Äî exclus√£o na lista', () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole('heading', { name: 'T√≠tulo post-nav' }));
+    fireEvent.click(screen.getByRole('heading', { name: 'TÌtulo post-nav' }));
 
     expect(onViewPost).toHaveBeenCalledTimes(1);
     expect(onViewPost).toHaveBeenCalledWith('post-nav');
   });
 
   // Property 7: Clique isolado na lista
-  // Ativar o controle de exclus√£o nunca dispara a navega√ß√£o do card, para
-  // qualquer usu√°rio permitido.
+  // Ativar o controle de exclus„o nunca dispara a navegaÁ„o do card, para
+  // qualquer usu·rio permitido.
   // **Validates: Requirements 7.2, 7.3**
-  it('Property 7 (Clique isolado na lista): ativar o controle de exclus√£o nunca navega pelo card', () => {
+  it('Property 7 (Clique isolado na lista): ativar o controle de exclus„o nunca navega pelo card', () => {
     const permittedUser = fc.oneof(
       fc.record({
         userId: fc.constant('author-1'),
@@ -250,7 +254,7 @@ describe('ComunidadePostScreen ‚Äî exclus√£o na lista', () => {
         currentPosts = [makePost({ id: 'prop7', authorId: 'author-1' })];
         const onViewPost = vi.fn();
 
-        const { unmount, getByRole } = render(
+        const { unmount, getByRole } = renderComProviders(
           <ComunidadePostScreen
             userId={userId}
             userProfileType={userProfileType}
@@ -258,7 +262,7 @@ describe('ComunidadePostScreen ‚Äî exclus√£o na lista', () => {
           />,
         );
 
-        // Ativa o controle de exclus√£o; nunca deve navegar.
+        // Ativa o controle de exclus„o; nunca deve navegar.
         fireEvent.click(getByRole('button', { name: 'Excluir post' }));
         expect(onViewPost).not.toHaveBeenCalled();
 
@@ -268,10 +272,10 @@ describe('ComunidadePostScreen ‚Äî exclus√£o na lista', () => {
     );
   });
 
-  // Property 8: P√≥s-sucesso correto (lista)
-  // Numa exclus√£o bem-sucedida, refetch dispara exatamente uma vez.
+  // Property 8: PÛs-sucesso correto (lista)
+  // Numa exclus„o bem-sucedida, refetch dispara exatamente uma vez.
   // **Validates: Requirements 6.2**
-  it('Property 8 (P√≥s-sucesso correto, lista): exclus√£o bem-sucedida chama refetch exatamente uma vez', async () => {
+  it('Property 8 (PÛs-sucesso correto, lista): exclus„o bem-sucedida chama refetch exatamente uma vez', async () => {
     await fc.assert(
       fc.asyncProperty(fc.constantFrom('p-a', 'p-b', 'p-c'), async (postId) => {
         refetchMock.mockClear();
@@ -280,7 +284,7 @@ describe('ComunidadePostScreen ‚Äî exclus√£o na lista', () => {
         deleteHookState = { loading: false, error: null };
         currentPosts = [makePost({ id: postId, authorId: 'author-1' })];
 
-        const { unmount, getByRole } = render(
+        const { unmount, getByRole } = renderComProviders(
           <ComunidadePostScreen userId="author-1" userProfileType="STUDENT" />,
         );
 

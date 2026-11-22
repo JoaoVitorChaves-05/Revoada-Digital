@@ -3,50 +3,19 @@ import { HeaderApp } from '../../components/HeaderApp';
 import { RESGATES_MOCK } from './recompensasMock';
 
 type Props = {
-  userName?: string;
   onVoltar?: () => void;
-  onInicio?: () => void;
-  onDisciplinas?: () => void;
-  onSimulados?: () => void;
-  onComunidade?: () => void;
-  onChat?: () => void;
-  onPerfil?: () => void;
-  onConfiguracoes?: () => void;
-  onLogout?: () => void;
 };
 
 function formatarData(iso: string): string {
   return new Date(iso).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-export function MeusResgates({
-  userName,
-  onVoltar,
-  onInicio,
-  onDisciplinas,
-  onSimulados,
-  onComunidade,
-  onChat,
-  onPerfil,
-  onConfiguracoes,
-  onLogout,
-}: Props) {
+export function MeusResgates({ onVoltar }: Props) {
   const resgates = RESGATES_MOCK;
 
   return (
     <div className="min-h-screen bg-[#f7f9fc] text-slate-700">
-      <HeaderApp
-        ativo="Recompensas"
-        userName={userName}
-        onInicio={onInicio}
-        onDisciplinas={onDisciplinas}
-        onSimulados={onSimulados}
-        onComunidade={onComunidade}
-        onChat={onChat}
-        onPerfil={onPerfil}
-        onConfiguracoes={onConfiguracoes}
-        onLogout={onLogout}
-      />
+      <HeaderApp />
 
       <main className="mx-auto max-w-[900px] px-4 py-8 sm:px-10 lg:px-[6%]">
         <button

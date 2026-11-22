@@ -1,7 +1,8 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fc from 'fast-check';
 import PostDetalheScreen from './PostDetalheScreen';
+import { renderComProviders, seedUsuario } from '../test/router';
 import type { ForumPost, ProfileType } from '../types/forum.types';
 
 // Mocka os hooks de fórum usados pela tela de detalhe e pelo DeletePostButton
@@ -64,16 +65,19 @@ describe('PostDetalheScreen - exclusão de post', () => {
     createReplyMock.mockReset();
     deleteState = { loading: false, error: null };
     postState = makePost();
+    // HeaderApp usa useAuth/useNavigate; semeia sessão e render com providers.
+    seedUsuario();
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
+    localStorage.clear();
   });
 
   // Requirements: 2.4 — o botão de exclusão aparece quando o usuário é o autor.
   it('exibe o botão de exclusão quando o usuário logado é o autor', () => {
     postState = makePost({ authorId: 'author-1' });
-    render(
+    renderComProviders(
       <PostDetalheScreen
         postId="post-1"
         onBack={vi.fn()}
@@ -87,7 +91,7 @@ describe('PostDetalheScreen - exclusão de post', () => {
   // Requirements: 2.4 — professor vê o botão mesmo não sendo o autor.
   it('exibe o botão de exclusão para TEACHER que não é autor', () => {
     postState = makePost({ authorId: 'author-1' });
-    render(
+    renderComProviders(
       <PostDetalheScreen
         postId="post-1"
         onBack={vi.fn()}
@@ -101,7 +105,7 @@ describe('PostDetalheScreen - exclusão de post', () => {
   // Requirements: 2.4 — admin vê o botão mesmo não sendo o autor.
   it('exibe o botão de exclusão para ADMIN que não é autor', () => {
     postState = makePost({ authorId: 'author-1' });
-    render(
+    renderComProviders(
       <PostDetalheScreen
         postId="post-1"
         onBack={vi.fn()}
@@ -115,7 +119,7 @@ describe('PostDetalheScreen - exclusão de post', () => {
   // Requirements: 2.4 — STUDENT que não é autor não vê o botão.
   it('não exibe o botão para STUDENT que não é o autor', () => {
     postState = makePost({ authorId: 'author-1' });
-    render(
+    renderComProviders(
       <PostDetalheScreen
         postId="post-1"
         onBack={vi.fn()}
@@ -129,7 +133,7 @@ describe('PostDetalheScreen - exclusão de post', () => {
   // Requirements: 2.4 — sem usuário logado (userId indefinido) o botão não aparece.
   it('não exibe o botão quando não há usuário logado', () => {
     postState = makePost({ authorId: 'author-1' });
-    render(<PostDetalheScreen postId="post-1" onBack={vi.fn()} />);
+    renderComProviders(<PostDetalheScreen postId="post-1" onBack={vi.fn()} />);
     expect(deleteControl()).toBeNull();
   });
 
@@ -138,7 +142,7 @@ describe('PostDetalheScreen - exclusão de post', () => {
     deletePostMock.mockResolvedValue(true);
     const onBack = vi.fn();
     postState = makePost({ id: 'post-42', authorId: 'author-1' });
-    render(
+    renderComProviders(
       <PostDetalheScreen
         postId="post-42"
         onBack={onBack}
@@ -181,7 +185,7 @@ describe('PostDetalheScreen - exclusão de post', () => {
         postState = makePost({ authorId: 'author-1' });
 
         const onBack = vi.fn();
-        const { unmount, getByRole } = render(
+        const { unmount, getByRole } = renderComProviders(
           <PostDetalheScreen
             postId="post-1"
             onBack={onBack}

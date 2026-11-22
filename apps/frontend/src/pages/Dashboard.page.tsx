@@ -29,24 +29,10 @@ import { HeaderApp } from '../components/HeaderApp';
  */
 
 export interface DashboardPageProps {
-  /** Volta para a tela anterior (padrão de navegação por `useState` de App.tsx). */
-  onBack: () => void;
   /** Aciona a navegação para o painel de estatísticas/desempenho (R12.4). */
   onVerEstatisticas: () => void;
-  /** Nome do aluno logado (exibido no menu de usuário do cabeçalho). */
-  userName?: string;
-  /** Navegação do cabeçalho padrão (mesmo das demais telas logadas). */
-  onSimulados?: () => void;
-  onComunidade?: () => void;
-  onChat?: () => void;
-  onDisciplinas?: () => void;
-  onRecompensas?: () => void;
-  onMeusResgates?: () => void;
-  onPerfil?: () => void;
-  onConfiguracoes?: () => void;
-  onLogout?: () => void;
-  /** Navegação do bloco de disciplinas (clique no card). */
-  onNavigate?: (destino: string) => void;
+  /** Navegação do bloco de disciplinas (clique no card "ver disciplinas"). */
+  onVerDisciplinas?: () => void;
 }
 
 
@@ -95,17 +81,7 @@ const colunasStyle: CSSProperties = {
 
 export function DashboardPage({
   onVerEstatisticas,
-  userName,
-  onSimulados,
-  onComunidade,
-  onChat,
-  onDisciplinas,
-  onRecompensas,
-  onMeusResgates,
-  onPerfil,
-  onConfiguracoes,
-  onLogout,
-  onNavigate,
+  onVerDisciplinas,
 }: DashboardPageProps) {
   const [metricas, setMetricas] = useState<MetricasDashboard | null>(null);
   const [totalTentativas, setTotalTentativas] = useState<number>(0);
@@ -117,20 +93,7 @@ export function DashboardPage({
   function Layout({ children }: { children: ReactNode }) {
     return (
       <div className="min-h-screen bg-[#f7f9fc] text-slate-700">
-        <HeaderApp
-          ativo="Início"
-          userName={userName}
-          onInicio={() => { /* ja esta no inicio */ }}
-          onSimulados={onSimulados}
-          onComunidade={onComunidade}
-          onChat={onChat}
-          onDisciplinas={onDisciplinas}
-          onRecompensas={onRecompensas}
-          onMeusResgates={onMeusResgates}
-          onPerfil={onPerfil}
-          onConfiguracoes={onConfiguracoes}
-          onLogout={onLogout}
-        />
+        <HeaderApp />
         <main className="mx-auto max-w-[1100px] px-4 py-8 sm:px-10 lg:px-[6%]">
           {children}
         </main>
@@ -240,7 +203,7 @@ export function DashboardPage({
       <div className="dashboard__blocos" style={{ ...colunasStyle, marginTop: '1.5rem' }}>
         <ContinueDeOndeParou />
         <BlocoDesempenhoAreas onVerEstatisticas={onVerEstatisticas} />
-        <BlocoDisciplinas onVerDisciplinas={() => onNavigate?.('disciplinas')} />
+        <BlocoDisciplinas onVerDisciplinas={() => onVerDisciplinas?.()} />
         <BlocoRadar />
       </div>
 

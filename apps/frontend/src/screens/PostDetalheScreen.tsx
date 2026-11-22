@@ -24,23 +24,12 @@ import { DeletePostButton } from '../components/DeletePostButton';
 interface Props {
   postId: string;
   onBack: () => void;
-  isLoggedIn?: boolean;
-  onChat?: () => void;
-  onInicio?: () => void;
-  onDisciplinas?: () => void;
-  onSimulados?: () => void;
-  onComunidade?: () => void;
-  onRecompensas?: () => void;
-  onMeusResgates?: () => void;
-  onPerfil?: () => void;
-  onConfiguracoes?: () => void;
-  onLogout?: () => void;
   userId?: string;
   userName?: string;
   userProfileType?: ProfileType;
 }
 
-export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, onChat, onInicio, onDisciplinas, onSimulados, onComunidade, onRecompensas, onMeusResgates, userName, onPerfil, onConfiguracoes, onLogout, userId, userProfileType }: Props) {
+export default function PostDetalheScreen({ postId, onBack, userName, userId, userProfileType }: Props) {
   // Estados do backend
   const { post, loading, error, refetch } = useForumPost(postId);
   const { createReply, loading: creatingReply } = useCreateReply(postId);
@@ -161,21 +150,7 @@ export default function PostDetalheScreen({ postId, onBack, isLoggedIn = false, 
   return (
     <div className="min-h-screen bg-[#f7f9fc] text-slate-700">
       {/* HEADER */}
-      <HeaderApp
-        ativo="Comunidade"
-        isLoggedIn={isLoggedIn}
-        userName={userName}
-        onInicio={onInicio}
-        onDisciplinas={onDisciplinas}
-        onSimulados={onSimulados}
-        onComunidade={onComunidade}
-        onChat={onChat}
-        onRecompensas={onRecompensas}
-        onMeusResgates={onMeusResgates}
-        onPerfil={onPerfil}
-        onConfiguracoes={onConfiguracoes}
-        onLogout={onLogout}
-      />
+      <HeaderApp />
 
       <main className="mx-auto max-w-[1280px] px-4 py-5 sm:px-10 lg:px-[8%]">
         <section className="flex flex-col justify-between gap-3 border-b border-slate-200 pb-5 sm:flex-row sm:items-center">
