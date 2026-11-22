@@ -1,23 +1,11 @@
-import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
-
-/**
- * Perfil de acesso do usuário (espelha o backend).
- */
-export type ProfileType = 'STUDENT' | 'TEACHER' | 'ADMIN';
-
-/**
- * Usuário autenticado persistido no localStorage pela camada de login.
- * Esta é a fonte canônica do tipo; `LoginScreen` reexporta por compatibilidade.
- */
-export type UsuarioLogado = {
-  id: string;
-  email: string;
-  full_name: string;
-  profileType: ProfileType;
-};
-
-const STORAGE_KEY = 'usuarioLogado';
+import {
+  AuthContext,
+  STORAGE_KEY,
+  type AuthContextValue,
+  type UsuarioLogado,
+} from './authStore';
 
 /**
  * Lê o usuário logado do localStorage. Nunca lança: retorna null se ausente,
@@ -34,19 +22,6 @@ function lerUsuarioPersistido(): UsuarioLogado | null {
     return null;
   }
 }
-
-export interface AuthContextValue {
-  /** Usuário autenticado atual, ou null se deslogado. */
-  usuario: UsuarioLogado | null;
-  /** Conveniência: `usuario !== null`. */
-  estaLogado: boolean;
-  /** Registra o login: grava no localStorage e no estado. */
-  login: (usuario: UsuarioLogado) => void;
-  /** Encerra a sessão: limpa o localStorage e o estado. */
-  logout: () => void;
-}
-
-const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   // Inicializa a partir do localStorage para que a sessão sobreviva ao reload.
@@ -76,16 +51,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-/**
- * Acessa o contexto de autenticação. Lança se usado fora do AuthProvider,
- * para evitar estados de sessão silenciosamente incorretos.
- */
-export function useAuth(): AuthContextValue {
-  const ctx = useContext(AuthContext);
-  if (!ctx) {
-    throw new Error('useAuth deve ser usado dentro de um <AuthProvider>.');
-  }
-  return ctx;
 }

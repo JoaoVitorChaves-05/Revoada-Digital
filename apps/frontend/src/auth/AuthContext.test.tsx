@@ -4,7 +4,9 @@
 import { act, render, renderHook, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { ReactNode } from 'react';
-import { AuthProvider, useAuth, type UsuarioLogado } from './AuthContext';
+import { AuthProvider } from './AuthContext';
+import { useAuth } from './useAuth';
+import type { UsuarioLogado } from './authStore';
 
 const STORAGE_KEY = 'usuarioLogado';
 
