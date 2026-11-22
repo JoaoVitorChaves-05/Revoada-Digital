@@ -10,6 +10,10 @@ import { DisciplinasRoute } from './routes/DisciplinasRoute';
 import { ConfiguracoesRoute } from './routes/ConfiguracoesRoute';
 import { ComunidadeRoute } from './routes/ComunidadeRoute';
 import { PostDetalheRoute } from './routes/PostDetalheRoute';
+import { GerarSimuladoRoute } from './routes/GerarSimuladoRoute';
+import { FazerSimuladoRoute } from './routes/FazerSimuladoRoute';
+import { ResultadoSimuladoRoute } from './routes/ResultadoSimuladoRoute';
+import { HistoricoSimuladosRoute } from './routes/HistoricoSimuladosRoute';
 import { RotaProtegida } from './auth/RotaProtegida';
 
 /**
@@ -37,6 +41,10 @@ export const router = createBrowserRouter([
       { path: '/configuracoes', element: <ConfiguracoesRoute /> },
       { path: '/comunidade', element: <ComunidadeRoute /> },
       { path: '/comunidade/:postId', element: <PostDetalheRoute /> },
+      { path: '/simulado/gerar', element: <GerarSimuladoRoute /> },
+      { path: '/simulado/fazer/:attemptId', element: <FazerSimuladoRoute /> },
+      { path: '/simulado/resultado/:attemptId', element: <ResultadoSimuladoRoute /> },
+      { path: '/simulado/historico', element: <HistoricoSimuladosRoute /> },
     ],
   },
 
