@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { LoginScreen } from '../screens/LoginScreen';
+import { Login } from '../pages/auth/Login';
 import { useAuth } from '../auth/useAuth';
 
 /**
@@ -11,7 +11,7 @@ export function LoginRoute() {
   const navigate = useNavigate();
   const { login } = useAuth();
   return (
-    <LoginScreen
+    <Login
       onBack={() => navigate('/')}
       onForgot={() => navigate('/redefinir')}
       onLoginSuccess={(user) => {

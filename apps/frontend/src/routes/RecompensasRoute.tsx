@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { LojaRecompensas } from '../pages/Recompensas/LojaRecompensas';
+import { LojaRecompensas } from '../pages/recompensas/LojaRecompensas';
 
 /** Rota da loja de recompensas (/recompensas). */
 export function RecompensasRoute() {

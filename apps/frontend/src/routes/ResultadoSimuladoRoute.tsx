@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { ResultPage } from '../pages/Simulado/result_simulado.page';
+import { ResultadoSimulado } from '../pages/simulado/ResultadoSimulado';
 
 /**
  * Rota do resultado de um simulado (/simulado/resultado/:attemptId). Lê o
@@ -17,7 +17,7 @@ export function ResultadoSimuladoRoute() {
       <button onClick={() => navigate('/simulado/historico')} style={{ margin: '10px' }}>
         Ver histórico de simulados
       </button>
-      <ResultPage attemptId={attemptId} />
+      <ResultadoSimulado attemptId={attemptId} />
     </div>
   );
 }

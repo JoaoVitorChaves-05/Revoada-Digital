@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { MeusResgates } from '../pages/Recompensas/MeusResgates';
+import { MeusResgates } from '../pages/recompensas/MeusResgates';
 
 /** Rota de "meus resgates" (/recompensas/meus-resgates): "voltar" leva à loja. */
 export function MeusResgatesRoute() {

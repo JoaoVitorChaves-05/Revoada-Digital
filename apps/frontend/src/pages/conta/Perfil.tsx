@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { api } from '../services/api';
+import { api } from '../../services/api';
 
 type Props = {
   userId: string;
@@ -21,7 +21,7 @@ const PERFIL_LABEL: Record<string, string> = {
   ADMIN: 'Administrador',
 };
 
-export function PerfilScreen({ userId, onBack }: Props) {
+export function Perfil({ userId, onBack }: Props) {
   const [dados, setDados] = useState<PerfilData | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);

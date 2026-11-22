@@ -1,5 +1,5 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { VerificarEmailScreen } from '../screens/VerificarEmailScreen';
+import { VerificarEmail } from '../pages/auth/VerificarEmail';
 
 /**
  * Wrapper de rota da verificação de email. Lê o token da query (?token=) e
@@ -11,7 +11,7 @@ export function VerificarEmailRoute() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
   return (
-    <VerificarEmailScreen
+    <VerificarEmail
       token={token}
       onIrParaLogin={() => navigate('/login')}
     />

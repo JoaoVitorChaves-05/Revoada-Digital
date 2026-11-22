@@ -1,13 +1,13 @@
 import { Suspense, lazy, useEffect, useState } from 'react';
-import iconContainer from './icons/icon-container.png';
-import { Reveal } from '../components/landing/Reveal';
-import { RoletaIdealizadores } from '../components/landing/RoletaIdealizadores';
-import { useReducedMotion } from '../utils/scroll';
-import './HomeLanding.css';
+import iconContainer from '../../assets/icons/icon-container.png';
+import { Reveal } from '../../components/landing/Reveal';
+import { RoletaIdealizadores } from '../../components/landing/RoletaIdealizadores';
+import { useReducedMotion } from '../../utils/scroll';
+import './Home.css';
 
 // O livro 3D (three.js) e pesado: carrega sob demanda para nao atrasar o
 // carregamento inicial da landing.
-const Livro3D = lazy(() => import('../components/landing/Livro3D'));
+const Livro3D = lazy(() => import('../../components/landing/Livro3D'));
 
 type HomeScreenProps = {
   onCadastro: () => void;
@@ -29,7 +29,7 @@ const DIFERENCIAIS = [
   },
 ];
 
-export function HomeScreen({ onCadastro, onLogin }: HomeScreenProps) {
+export function Home({ onCadastro, onLogin }: HomeScreenProps) {
   const reducedMotion = useReducedMotion();
   const [progresso, setProgresso] = useState(0);
 

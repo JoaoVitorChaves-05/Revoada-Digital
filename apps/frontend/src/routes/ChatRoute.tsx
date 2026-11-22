@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChatPage } from '../pages/Chat/ChatPage';
+import { Chat } from '../pages/chat/Chat';
 
 // Identidade de teste do chat: usuários fixos para simular as duas pontas na
 // demo. Provisório até o chat usar o usuário autenticado (JWT). Movido do antigo
@@ -15,7 +15,7 @@ export function ChatRoute() {
   const navigate = useNavigate();
   const [chatUserId, setChatUserId] = useState<string>(CHAT_TEST_USERS[0].id);
   return (
-    <ChatPage
+    <Chat
       onBack={() => navigate('/comunidade')}
       currentUserId={chatUserId}
       testUsers={CHAT_TEST_USERS}

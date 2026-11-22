@@ -2,10 +2,10 @@ import { render, screen, fireEvent, waitFor, within } from '@testing-library/rea
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fc from 'fast-check';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import ComunidadePostScreen from './comunidadepostscreen';
-import { AuthProvider } from '../auth/AuthContext';
-import type { ForumPost, ProfileType } from '../types/forum.types';
-import type { UsuarioLogado } from '../auth/authStore';
+import { Comunidade } from './Comunidade';
+import { AuthProvider } from '../../auth/AuthContext';
+import type { ForumPost, ProfileType } from '../../types/forum.types';
+import type { UsuarioLogado } from '../../auth/authStore';
 
 // --- Mocks dos hooks de forum ---------------------------------------------
 // A tela usa `useForumPosts()` para obter `{ posts, loading, error, refetch }`
@@ -21,7 +21,7 @@ const deletedIds = new Set<string>();
 const deletePostMock = vi.fn<(id: string) => Promise<boolean>>();
 let deleteHookState: { loading: boolean; error: string | null };
 
-vi.mock('../hooks/useForum', () => ({
+vi.mock('../../hooks/useForum', () => ({
   useForumPosts: () => ({
     posts: currentPosts,
     loading: false,
@@ -62,7 +62,7 @@ function renderComunidade() {
     <AuthProvider>
       <MemoryRouter initialEntries={['/comunidade']}>
         <Routes>
-          <Route path="/comunidade" element={<ComunidadePostScreen />} />
+          <Route path="/comunidade" element={<Comunidade />} />
           <Route path="/comunidade/:postId" element={<div>DETALHE DO POST</div>} />
           <Route path="/dashboard" element={<div>DASHBOARD</div>} />
         </Routes>
@@ -101,7 +101,7 @@ function cardForTitle(title: string): HTMLElement {
 const deleteControls = () => screen.queryAllByRole('button', { name: 'Excluir post' });
 const confirmButton = () => screen.getByRole('button', { name: 'Excluir' });
 
-describe('ComunidadePostScreen - exclusao e navegacao na lista', () => {
+describe('Comunidade - exclusao e navegacao na lista', () => {
   beforeEach(() => {
     refetchMock.mockClear();
     deletePostMock.mockReset();
@@ -184,7 +184,7 @@ describe('ComunidadePostScreen - exclusao e navegacao na lista', () => {
       <AuthProvider>
         <MemoryRouter initialEntries={['/comunidade']}>
           <Routes>
-            <Route path="/comunidade" element={<ComunidadePostScreen />} />
+            <Route path="/comunidade" element={<Comunidade />} />
           </Routes>
         </MemoryRouter>
       </AuthProvider>,

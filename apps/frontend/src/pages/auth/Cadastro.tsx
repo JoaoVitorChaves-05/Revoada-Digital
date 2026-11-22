@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import iconContainer from './icons/icon-container.png';
-import { API_BASE_URL } from '../utils/apiBase';
+import iconContainer from '../../assets/icons/icon-container.png';
+import { API_BASE_URL } from '../../utils/apiBase';
 
 type CadastroScreenProps = {
   onBack: () => void;
@@ -10,7 +10,7 @@ const API_BASE = API_BASE_URL;
 
 type Status = 'idle' | 'enviando' | 'sucesso' | 'erro';
 
-export function CadastroScreen({ onBack }: CadastroScreenProps) {
+export function Cadastro({ onBack }: CadastroScreenProps) {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [confirmEmail, setConfirmEmail] = useState('');

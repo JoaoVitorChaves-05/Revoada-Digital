@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   ArrowLeft,
   Bookmark,
@@ -15,14 +15,14 @@ import {
   Users,
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useForumPost, useCreateReply } from '../hooks/useForum';
-import { SUBJECT_LABELS, PROFILE_LABELS } from '../types/forum.types';
-import type { ForumReply } from '../types/forum.types';
-import { HeaderApp } from '../components/HeaderApp';
-import { DeletePostButton } from '../components/DeletePostButton';
-import { useAuth } from '../auth/useAuth';
+import { useForumPost, useCreateReply } from '../../hooks/useForum';
+import { SUBJECT_LABELS, PROFILE_LABELS } from '../../types/forum.types';
+import type { ForumReply } from '../../types/forum.types';
+import { HeaderApp } from '../../components/HeaderApp';
+import { DeletePostButton } from '../../components/DeletePostButton';
+import { useAuth } from '../../auth/useAuth';
 
-export default function PostDetalheScreen() {
+export function PostDetalhe() {
   const navigate = useNavigate();
   const { postId = '' } = useParams<{ postId: string }>();
   const { usuario } = useAuth();

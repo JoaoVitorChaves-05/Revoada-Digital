@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { HomeScreen } from '../screens/HomeScreen';
+import { Home } from '../pages/home/Home';
 
 /**
  * Wrapper de rota da landing pública.
@@ -8,7 +8,7 @@ import { HomeScreen } from '../screens/HomeScreen';
 export function HomeRoute() {
   const navigate = useNavigate();
   return (
-    <HomeScreen
+    <Home
       onCadastro={() => navigate('/cadastro')}
       onLogin={() => navigate('/login')}
     />

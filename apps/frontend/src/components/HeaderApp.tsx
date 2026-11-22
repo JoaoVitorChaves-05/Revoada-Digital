@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Home, BookOpen, FileText, Users, MessageCircle, Gift, Coins } from 'lucide-react';
-import iconContainer from '../screens/icons/icon-container.png';
+import iconContainer from '../assets/icons/icon-container.png';
 import { UserMenu } from './UserMenu';
 import { useSaldoCoins } from '../hooks/useSaldoCoins';
 import { useAuth } from '../auth/useAuth';

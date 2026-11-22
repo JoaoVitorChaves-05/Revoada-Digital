@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { GerarSimulado } from '../pages/Simulado/GerarSimulado';
+import { GerarSimulado } from '../pages/simulado/GerarSimulado';
 import { useAuth } from '../auth/useAuth';
 
 /**

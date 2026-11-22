@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import './PainelDesempenho.css';
-import { BarraMateria } from '../components/BarraMateria';
-import { MapaDefasagem } from '../components/MapaDefasagem';
-import type { RespostaDefasagem } from '../types/desempenho.types';
-import { API_BASE_URL } from '../utils/apiBase';
+import { BarraMateria } from '../../components/BarraMateria';
+import { MapaDefasagem } from '../../components/MapaDefasagem';
+import type { RespostaDefasagem } from '../../types/desempenho.types';
+import { API_BASE_URL } from '../../utils/apiBase';
 
 interface PainelDesempenhoPageProps {
   onBack: () => void;
@@ -11,7 +11,7 @@ interface PainelDesempenhoPageProps {
 
 const URL_BASE_API = API_BASE_URL;
 
-export function PainelDesempenhoPage({ onBack }: PainelDesempenhoPageProps) {
+export function PainelDesempenho({ onBack }: PainelDesempenhoPageProps) {
   const [dados, setDados] = useState<RespostaDefasagem | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

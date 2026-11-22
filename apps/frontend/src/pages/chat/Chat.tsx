@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import './ChatPage.css';
+import './Chat.css';
 import { useChat } from '../../hooks/useChat';
 
 interface ChatPageProps {
@@ -19,7 +19,7 @@ function formatarHora(iso: string) {
   });
 }
 
-export function ChatPage({
+export function Chat({
   onBack,
   currentUserId,
   testUsers,

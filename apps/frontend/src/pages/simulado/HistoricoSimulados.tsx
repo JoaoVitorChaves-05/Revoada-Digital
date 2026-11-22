@@ -7,7 +7,7 @@ interface HistoryPageProps {
   onBack?: () => void;
 }
 
-export function HistoryPage({ onBack }: HistoryPageProps) {
+export function HistoricoSimulados({ onBack }: HistoryPageProps) {
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);

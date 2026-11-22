@@ -8,7 +8,7 @@ interface ResultPageProps {
   attemptId: string;
 }
 
-export function ResultPage({ attemptId }: ResultPageProps) {
+export function ResultadoSimulado({ attemptId }: ResultPageProps) {
   const [result, setResult] = useState<AttemptResult | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

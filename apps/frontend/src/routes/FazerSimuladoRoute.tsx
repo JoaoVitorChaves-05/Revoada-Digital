@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { FazerSimulado } from '../pages/Simulado/FazerSimulado';
+import { FazerSimulado } from '../pages/simulado/FazerSimulado';
 
 /**
  * Rota de execução de um simulado (/simulado/fazer/:attemptId). Lê o attemptId

@@ -5,9 +5,9 @@
 // com `vi.stubGlobal`. Estados assincronos sao aguardados com `findBy*`.
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { DashboardPage } from './Dashboard.page';
-import { renderComProviders, seedUsuario } from '../test/router';
-import type { Attempt, AttemptAnswer } from '../types/attempts.types';
+import { Dashboard } from './Dashboard';
+import { renderComProviders, seedUsuario } from '../../test/router';
+import type { Attempt, AttemptAnswer } from '../../types/attempts.types';
 
 const MENSAGEM_ERRO = 'Não foi possível carregar seu painel.';
 
@@ -72,7 +72,7 @@ function criarFetchMock(impl: (input?: RequestInfo | URL) => Promise<Response>) 
   return vi.fn<typeof fetch>(impl);
 }
 
-describe('DashboardPage', () => {
+describe('Dashboard', () => {
   beforeEach(() => {
     // HeaderApp/UserMenu usam useAuth; semeia uma sessão para o AuthProvider.
     seedUsuario();
@@ -89,7 +89,7 @@ describe('DashboardPage', () => {
     const fetchMock = criarFetchMock(() => new Promise<Response>(() => {}));
     vi.stubGlobal('fetch', fetchMock);
 
-    renderComProviders(<DashboardPage onVerEstatisticas={vi.fn()} />);
+    renderComProviders(<Dashboard onVerEstatisticas={vi.fn()} />);
 
     const status = screen.getByRole('status');
     expect(status).toHaveTextContent('Carregando seu painel...');
@@ -113,7 +113,7 @@ describe('DashboardPage', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    renderComProviders(<DashboardPage onVerEstatisticas={vi.fn()} />);
+    renderComProviders(<Dashboard onVerEstatisticas={vi.fn()} />);
 
     const alerta = await screen.findByRole('alert');
     expect(alerta).toHaveTextContent(`Erro: ${MENSAGEM_ERRO}`);
@@ -138,7 +138,7 @@ describe('DashboardPage', () => {
     );
     vi.stubGlobal('fetch', fetchMock);
 
-    renderComProviders(<DashboardPage onVerEstatisticas={vi.fn()} />);
+    renderComProviders(<Dashboard onVerEstatisticas={vi.fn()} />);
 
     const estadoVazio = await screen.findByRole('region', {
       name: 'Comece seu primeiro simulado',
@@ -159,7 +159,7 @@ describe('DashboardPage', () => {
     );
     vi.stubGlobal('fetch', fetchMock);
 
-    renderComProviders(<DashboardPage onVerEstatisticas={vi.fn()} />);
+    renderComProviders(<Dashboard onVerEstatisticas={vi.fn()} />);
 
     // Metrica principal derivada dos answers (3 answers => "3").
     const tituloCard = await screen.findByRole('heading', {
@@ -190,7 +190,7 @@ describe('DashboardPage', () => {
     const onVerEstatisticas = vi.fn();
 
     renderComProviders(
-      <DashboardPage onVerEstatisticas={onVerEstatisticas} />,
+      <Dashboard onVerEstatisticas={onVerEstatisticas} />,
     );
 
     const botao = await screen.findByRole('button', { name: 'Ver estatísticas' });

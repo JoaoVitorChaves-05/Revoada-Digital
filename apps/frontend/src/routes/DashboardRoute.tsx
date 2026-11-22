@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { DashboardPage } from '../pages/Dashboard.page';
+import { Dashboard } from '../pages/dashboard/Dashboard';
 
 /**
  * Wrapper de rota do Dashboard ("Início"). O cabeçalho e o menu de conta
@@ -9,7 +9,7 @@ import { DashboardPage } from '../pages/Dashboard.page';
 export function DashboardRoute() {
   const navigate = useNavigate();
   return (
-    <DashboardPage
+    <Dashboard
       onVerEstatisticas={() => navigate('/desempenho')}
       onVerDisciplinas={() => navigate('/disciplinas')}
     />

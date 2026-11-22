@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   ArrowLeft,
@@ -13,12 +13,12 @@ import {
   ThumbsUp,
   Users,
 } from 'lucide-react'
-import { useForumPosts } from '../hooks/useForum';
-import { SUBJECT_LABELS } from '../types/forum.types';
-import { HeaderApp } from '../components/HeaderApp';
-import { DeletePostButton } from '../components/DeletePostButton';
+import { useForumPosts } from '../../hooks/useForum';
+import { SUBJECT_LABELS } from '../../types/forum.types';
+import { HeaderApp } from '../../components/HeaderApp';
+import { DeletePostButton } from '../../components/DeletePostButton';
 import { CreatePostModal } from './CreatePostModal';
-import { useAuth } from '../auth/useAuth';
+import { useAuth } from '../../auth/useAuth';
 
 const RELATED = [
   { category: 'Matemática', title: 'Probabilidade: quando somar e quando multiplicar?', replies: 8 },
@@ -26,7 +26,7 @@ const RELATED = [
   { category: 'Matemática', title: 'Fatorial e permutação: por onde começar?', replies: 5 },
 ]
 
-export default function ComunidadePostScreen() {
+export function Comunidade() {
   const navigate = useNavigate();
   const { usuario } = useAuth();
   const userId = usuario?.id;

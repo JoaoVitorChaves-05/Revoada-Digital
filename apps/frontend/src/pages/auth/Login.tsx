@@ -1,13 +1,12 @@
-import iconContainer from './icons/icon-container.png';
+import iconContainer from '../../assets/icons/icon-container.png';
 import { useState } from 'react'
-import { API_BASE_URL } from '../utils/apiBase'
-import type { UsuarioLogado } from '../auth/authStore'
+import { API_BASE_URL } from '../../utils/apiBase'
+import type { UsuarioLogado } from '../../auth/authStore'
 
-// Tipo canonico mora em auth/authStore. Reexportado aqui por compatibilidade
-// com importacoes existentes (`import { UsuarioLogado } from './LoginScreen'`).
+// Tipo canonico mora em auth/authStore. Reexportado aqui por compatibilidade.
 export type { UsuarioLogado }
 
-type LoginScreenProps = {
+type LoginProps = {
   onBack: () => void
   onForgot: () => void
   onLoginSuccess: (user: UsuarioLogado) => void
@@ -16,7 +15,7 @@ type LoginScreenProps = {
 // Resolve a URL da API conforme o ambiente (dev/producao). Ver utils/apiBase.
 const API_BASE = API_BASE_URL
 
-export function LoginScreen({ onBack, onForgot, onLoginSuccess }: LoginScreenProps) {
+export function Login({ onBack, onForgot, onLoginSuccess }: LoginProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   

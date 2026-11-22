@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import iconContainer from './icons/icon-container.png';
+import iconContainer from '../../assets/icons/icon-container.png';
 
 type RedefinirScreenProps = {
   onBack: () => void
 }
 
-export function RedefinirScreen({ onBack }: RedefinirScreenProps) {
+export function Redefinir({ onBack }: RedefinirScreenProps) {
   const [email, setEmail] = useState('')
   const [submitted, setSubmitted] = useState(false)
 

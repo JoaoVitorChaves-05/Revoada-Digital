@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { PerfilScreen } from '../screens/PerfilScreen';
+import { Perfil } from '../pages/conta/Perfil';
 import { useAuth } from '../auth/useAuth';
 
 /**
@@ -9,5 +9,5 @@ import { useAuth } from '../auth/useAuth';
 export function PerfilRoute() {
   const navigate = useNavigate();
   const { usuario } = useAuth();
-  return <PerfilScreen userId={usuario?.id ?? ''} onBack={() => navigate(-1)} />;
+  return <Perfil userId={usuario?.id ?? ''} onBack={() => navigate(-1)} />;
 }

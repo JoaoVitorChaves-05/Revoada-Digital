@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import { CadastroScreen } from '../screens/CadastroScreen';
+import { Cadastro } from '../pages/auth/Cadastro';
 
 /** Wrapper de rota do cadastro: liga o "voltar" à navegação por URL. */
 export function CadastroRoute() {
   const navigate = useNavigate();
-  return <CadastroScreen onBack={() => navigate('/')} />;
+  return <Cadastro onBack={() => navigate('/')} />;
 }

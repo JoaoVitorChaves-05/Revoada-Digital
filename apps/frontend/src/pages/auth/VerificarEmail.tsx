@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { API_BASE_URL } from '../utils/apiBase';
+import { API_BASE_URL } from '../../utils/apiBase';
 
 type VerificarEmailScreenProps = {
   token: string | null;
@@ -10,7 +10,7 @@ const API_BASE = API_BASE_URL;
 
 type Status = 'verificando' | 'sucesso' | 'erro';
 
-export function VerificarEmailScreen({ token, onIrParaLogin }: VerificarEmailScreenProps) {
+export function VerificarEmail({ token, onIrParaLogin }: VerificarEmailScreenProps) {
   const [status, setStatus] = useState<Status>('verificando');
   const [mensagem, setMensagem] = useState('Confirmando seu email...');
   // Evita chamar o endpoint duas vezes (StrictMode monta o efeito 2x em dev).

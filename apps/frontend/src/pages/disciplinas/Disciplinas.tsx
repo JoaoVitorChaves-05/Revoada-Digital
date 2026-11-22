@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
-import { HeaderApp } from '../components/HeaderApp'
-import type { DesempenhoArea } from '../types/desempenhoAreas.types'
-import { buscarDesempenhoAreas } from '../utils/desempenhoAreasClient'
-import { sessao } from '../utils/sessao'
+import { HeaderApp } from '../../components/HeaderApp'
+import type { DesempenhoArea } from '../../types/desempenhoAreas.types'
+import { buscarDesempenhoAreas } from '../../utils/desempenhoAreasClient'
+import { sessao } from '../../utils/sessao'
 
 const css = `
 /* Tela Disciplinas — ajuste as variáveis para os tokens reais do seu Figma / CSS global */
@@ -527,7 +527,7 @@ function DonutChart({ valor, label }: Nivel) {
   )
 }
 
-export function DisciplinasScreen({ onEstudar, onPraticarRedacao }: DisciplinasScreenProps) {
+export function Disciplinas({ onEstudar, onPraticarRedacao }: DisciplinasScreenProps) {
   const [disciplinas, setDisciplinas] = useState<Disciplina[]>([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState<string | null>(null)

@@ -3,21 +3,21 @@ import type { CSSProperties, ReactNode } from 'react';
 // CSS específico da página (layout/espaçamento/responsividade e anéis de foco).
 // As cores continuam vindo de `theme` (colors.ts) via estilos inline.
 import './Dashboard.css';
-import { theme } from '../utils/colors';
-import { sessao } from '../utils/sessao';
-import { buscarAttempts } from '../utils/attemptsClient';
-import { derivarMetricas } from '../utils/derivadorMetricas';
-import type { MetricasDashboard } from '../types/dashboard.types';
-import { Saudacao } from '../components/dashboard/Saudacao';
-import { CardMetrica } from '../components/dashboard/CardMetrica';
-import { GraficoFrequencia } from '../components/dashboard/GraficoFrequencia';
-import { ContinueDeOndeParou } from '../components/dashboard/ContinueDeOndeParou';
-import { BlocoDesempenhoAreas } from '../components/dashboard/BlocoDesempenhoAreas';
-import { BlocoDisciplinas } from '../components/dashboard/BlocoDisciplinas';
-import { BlocoRadar } from '../components/dashboard/BlocoRadar';
-import { RodapeInstitucional } from '../components/dashboard/RodapeInstitucional';
-import { Placeholder } from '../components/dashboard/Placeholder';
-import { HeaderApp } from '../components/HeaderApp';
+import { theme } from '../../utils/colors';
+import { sessao } from '../../utils/sessao';
+import { buscarAttempts } from '../../utils/attemptsClient';
+import { derivarMetricas } from '../../utils/derivadorMetricas';
+import type { MetricasDashboard } from '../../types/dashboard.types';
+import { Saudacao } from '../../components/dashboard/Saudacao';
+import { CardMetrica } from '../../components/dashboard/CardMetrica';
+import { GraficoFrequencia } from '../../components/dashboard/GraficoFrequencia';
+import { ContinueDeOndeParou } from '../../components/dashboard/ContinueDeOndeParou';
+import { BlocoDesempenhoAreas } from '../../components/dashboard/BlocoDesempenhoAreas';
+import { BlocoDisciplinas } from '../../components/dashboard/BlocoDisciplinas';
+import { BlocoRadar } from '../../components/dashboard/BlocoRadar';
+import { RodapeInstitucional } from '../../components/dashboard/RodapeInstitucional';
+import { Placeholder } from '../../components/dashboard/Placeholder';
+import { HeaderApp } from '../../components/HeaderApp';
 
 /**
  * Dashboard do Aluno ("Início"), página rica com `fetch` espelhando o padrão de
@@ -79,7 +79,7 @@ const colunasStyle: CSSProperties = {
 };
 
 
-export function DashboardPage({
+export function Dashboard({
   onVerEstatisticas,
   onVerDisciplinas,
 }: DashboardPageProps) {

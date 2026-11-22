@@ -2,7 +2,7 @@ type Props = {
   onBack: () => void;
 };
 
-export function ConfiguracoesScreen({ onBack }: Props) {
+export function Configuracoes({ onBack }: Props) {
   return (
     <div className="min-h-screen bg-[#f7f9fc] text-slate-700">
       <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4 shadow-sm sm:px-10 lg:px-[8%]">

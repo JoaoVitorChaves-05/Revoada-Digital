@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { forumService } from '../services/forum.service';
-import type { Subjects } from '../types/forum.types';
-import { SUBJECT_LABELS } from '../types/forum.types';
+import { forumService } from '../../services/forum.service';
+import type { Subjects } from '../../types/forum.types';
+import { SUBJECT_LABELS } from '../../types/forum.types';
 
 interface CreatePostModalProps {
   isOpen: boolean;

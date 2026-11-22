@@ -2,10 +2,10 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fc from 'fast-check';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import PostDetalheScreen from './PostDetalheScreen';
-import { AuthProvider } from '../auth/AuthContext';
-import type { ForumPost, ProfileType } from '../types/forum.types';
-import type { UsuarioLogado } from '../auth/authStore';
+import { PostDetalhe } from './PostDetalhe';
+import { AuthProvider } from '../../auth/AuthContext';
+import type { ForumPost, ProfileType } from '../../types/forum.types';
+import type { UsuarioLogado } from '../../auth/authStore';
 
 // Mocka os hooks de forum usados pela tela de detalhe e pelo DeletePostButton.
 //  - useForumPost: fornece o post exibido.
@@ -17,7 +17,7 @@ const createReplyMock = vi.fn();
 let deleteState: { loading: boolean; error: string | null };
 let postState: ForumPost | null;
 
-vi.mock('../hooks/useForum', () => ({
+vi.mock('../../hooks/useForum', () => ({
   useForumPost: () => ({
     post: postState,
     loading: false,
@@ -77,7 +77,7 @@ function renderDetalhe(postId = 'post-1') {
       <MemoryRouter initialEntries={[`/comunidade/${postId}`]}>
         <Routes>
           <Route path="/comunidade" element={<div>LISTA DA COMUNIDADE</div>} />
-          <Route path="/comunidade/:postId" element={<PostDetalheScreen />} />
+          <Route path="/comunidade/:postId" element={<PostDetalhe />} />
         </Routes>
       </MemoryRouter>
     </AuthProvider>,
@@ -87,7 +87,7 @@ function renderDetalhe(postId = 'post-1') {
 const deleteControl = () => screen.queryByRole('button', { name: 'Excluir post' });
 const confirmButton = () => screen.getByRole('button', { name: 'Excluir' });
 
-describe('PostDetalheScreen - exclusao de post', () => {
+describe('PostDetalhe - exclusao de post', () => {
   beforeEach(() => {
     deletePostMock.mockReset();
     refetchMock.mockReset();

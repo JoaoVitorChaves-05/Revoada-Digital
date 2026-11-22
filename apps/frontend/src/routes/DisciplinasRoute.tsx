@@ -1,4 +1,4 @@
-import { DisciplinasScreen } from '../screens/DisciplinasScreen';
+import { Disciplinas } from '../pages/disciplinas/Disciplinas';
 
 /**
  * Wrapper de rota das disciplinas. O cabeçalho navega sozinho; as ações de
@@ -7,8 +7,8 @@ import { DisciplinasScreen } from '../screens/DisciplinasScreen';
  */
 export function DisciplinasRoute() {
   return (
-    <DisciplinasScreen
-      onEstudar={(disciplinaId) => console.log('estudar', disciplinaId)}
+    <Disciplinas
+      onEstudar={(disciplinaId: string) => console.log('estudar', disciplinaId)}
       onPraticarRedacao={() => console.log('praticar redação')}
     />
   );
