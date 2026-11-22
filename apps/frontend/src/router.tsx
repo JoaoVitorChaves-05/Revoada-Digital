@@ -1,5 +1,9 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { HomeRoute } from './routes/HomeRoute';
+import { LoginRoute } from './routes/LoginRoute';
+import { CadastroRoute } from './routes/CadastroRoute';
+import { RedefinirRoute } from './routes/RedefinirRoute';
+import { VerificarEmailRoute } from './routes/VerificarEmailRoute';
 
 /**
  * Roteador da aplicação (react-router v7, data router).
@@ -9,12 +13,10 @@ import { HomeRoute } from './routes/HomeRoute';
  * desconhecidas caem na landing pública.
  */
 export const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <HomeRoute />,
-  },
-  {
-    path: '*',
-    element: <Navigate to="/" replace />,
-  },
+  { path: '/', element: <HomeRoute /> },
+  { path: '/login', element: <LoginRoute /> },
+  { path: '/cadastro', element: <CadastroRoute /> },
+  { path: '/redefinir', element: <RedefinirRoute /> },
+  { path: '/verificar-email', element: <VerificarEmailRoute /> },
+  { path: '*', element: <Navigate to="/" replace /> },
 ]);

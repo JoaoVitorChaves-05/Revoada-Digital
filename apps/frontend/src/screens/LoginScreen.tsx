@@ -1,13 +1,11 @@
 import iconContainer from './icons/icon-container.png';
 import { useState } from 'react'
 import { API_BASE_URL } from '../utils/apiBase'
+import type { UsuarioLogado } from '../auth/authStore'
 
-export type UsuarioLogado = {
-  id: string
-  email: string
-  full_name: string
-  profileType: 'STUDENT' | 'TEACHER' | 'ADMIN'
-}
+// Tipo canonico mora em auth/authStore. Reexportado aqui por compatibilidade
+// com importacoes existentes (`import { UsuarioLogado } from './LoginScreen'`).
+export type { UsuarioLogado }
 
 type LoginScreenProps = {
   onBack: () => void
@@ -48,8 +46,8 @@ export function LoginScreen({ onBack, onForgot, onLoginSuccess }: LoginScreenPro
         }
         throw new Error(data?.message ?? 'Email ou senha inválidos.')
       }
-      // Login sem JWT: guarda o usuario logado localmente.
-      localStorage.setItem('usuarioLogado', JSON.stringify(data.user))
+      // Login sem JWT: a persistencia da sessao (localStorage) e feita pelo
+      // AuthContext via onLoginSuccess; a tela apenas repassa o usuario.
       onLoginSuccess(data.user)
     } catch (err: unknown) {
       setErro(err instanceof Error ? err.message : 'Erro ao entrar.')
