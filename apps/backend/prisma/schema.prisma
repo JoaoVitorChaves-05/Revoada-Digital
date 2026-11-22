@@ -195,6 +195,43 @@ enum AttemptStatus {
   ABANDONED
 }
 
+enum PaymentStatus {
+  PENDING
+  APPROVED
+  FAILED
+  REFUNDED
+}
+
+model Payment {
+  id                 String        @id @default(uuid())
+  externalId         String        @unique
+  status             PaymentStatus @default(PENDING)
+  providerStatus     String?
+  amount             Decimal?      @db.Decimal(12, 2)
+  currency           String        @default("BRL")
+  externalReference  String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  events             PaymentEvent[]
+
+  @@index([status])
+  @@map("payments")
+}
+
+model PaymentEvent {
+  id              String   @id @default(uuid())
+  paymentId       String?
+  providerEventId String   @unique
+  action          String?
+  payload         Json
+  createdAt       DateTime @default(now())
+
+  payment Payment? @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  @@index([paymentId])
+  @@map("payment_events")
+}
+
 model Attempt {
   id             String        @id @default(uuid())
   mockExamId     String
