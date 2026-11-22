@@ -14,6 +14,10 @@ import { GerarSimuladoRoute } from './routes/GerarSimuladoRoute';
 import { FazerSimuladoRoute } from './routes/FazerSimuladoRoute';
 import { ResultadoSimuladoRoute } from './routes/ResultadoSimuladoRoute';
 import { HistoricoSimuladosRoute } from './routes/HistoricoSimuladosRoute';
+import { ChatRoute } from './routes/ChatRoute';
+import { RecompensasRoute } from './routes/RecompensasRoute';
+import { MeusResgatesRoute } from './routes/MeusResgatesRoute';
+import { PerfilRoute } from './routes/PerfilRoute';
 import { RotaProtegida } from './auth/RotaProtegida';
 
 /**
@@ -45,6 +49,10 @@ export const router = createBrowserRouter([
       { path: '/simulado/fazer/:attemptId', element: <FazerSimuladoRoute /> },
       { path: '/simulado/resultado/:attemptId', element: <ResultadoSimuladoRoute /> },
       { path: '/simulado/historico', element: <HistoricoSimuladosRoute /> },
+      { path: '/chat', element: <ChatRoute /> },
+      { path: '/recompensas', element: <RecompensasRoute /> },
+      { path: '/recompensas/meus-resgates', element: <MeusResgatesRoute /> },
+      { path: '/perfil', element: <PerfilRoute /> },
     ],
   },
 
