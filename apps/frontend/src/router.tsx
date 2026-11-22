@@ -5,6 +5,9 @@ import { CadastroRoute } from './routes/CadastroRoute';
 import { RedefinirRoute } from './routes/RedefinirRoute';
 import { VerificarEmailRoute } from './routes/VerificarEmailRoute';
 import { DashboardRoute } from './routes/DashboardRoute';
+import { PainelDesempenhoRoute } from './routes/PainelDesempenhoRoute';
+import { DisciplinasRoute } from './routes/DisciplinasRoute';
+import { ConfiguracoesRoute } from './routes/ConfiguracoesRoute';
 import { RotaProtegida } from './auth/RotaProtegida';
 
 /**
@@ -27,6 +30,9 @@ export const router = createBrowserRouter([
     element: <RotaProtegida />,
     children: [
       { path: '/dashboard', element: <DashboardRoute /> },
+      { path: '/desempenho', element: <PainelDesempenhoRoute /> },
+      { path: '/disciplinas', element: <DisciplinasRoute /> },
+      { path: '/configuracoes', element: <ConfiguracoesRoute /> },
     ],
   },
 
