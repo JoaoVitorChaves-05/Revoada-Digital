@@ -1,8 +1,13 @@
 -- CreateEnum
-CREATE TYPE "PaymentStatus" AS ENUM ('PENDING', 'COMPLETED', 'REFUNDED');
+DO $$
+BEGIN
+    CREATE TYPE "PaymentStatus" AS ENUM ('PENDING', 'COMPLETED', 'REFUNDED');
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- CreateTable
-CREATE TABLE "recharge_catalog_items" (
+CREATE TABLE IF NOT EXISTS "recharge_catalog_items" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "amount_brl" DECIMAL(10,2) NOT NULL,
@@ -15,7 +20,7 @@ CREATE TABLE "recharge_catalog_items" (
 );
 
 -- CreateTable
-CREATE TABLE "payments" (
+CREATE TABLE IF NOT EXISTS "payments" (
     "id" TEXT NOT NULL,
     "student_id" TEXT NOT NULL,
     "catalog_item_id" TEXT NOT NULL,
@@ -29,18 +34,3 @@ CREATE TABLE "payments" (
 
     CONSTRAINT "payments_pkey" PRIMARY KEY ("id")
 );
-
--- CreateIndex
-CREATE UNIQUE INDEX "payments_external_id_key" ON "payments"("external_id");
-
--- CreateIndex
-CREATE INDEX "payments_student_id_created_at_idx" ON "payments"("student_id", "created_at");
-
--- CreateIndex
-CREATE INDEX "payments_status_created_at_idx" ON "payments"("status", "created_at");
-
--- AddForeignKey
-ALTER TABLE "payments" ADD CONSTRAINT "payments_student_id_fkey" FOREIGN KEY ("student_id") REFERENCES "student_profiles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "payments" ADD CONSTRAINT "payments_catalog_item_id_fkey" FOREIGN KEY ("catalog_item_id") REFERENCES "recharge_catalog_items"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

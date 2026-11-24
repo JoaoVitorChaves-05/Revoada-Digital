@@ -1,57 +1,60 @@
 import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Home, BookOpen, FileText, Users, MessageCircle, Gift, Coins } from 'lucide-react';
-import iconContainer from '../screens/icons/icon-container.png';
+import iconContainer from '../assets/icons/icon-container.png';
 import { UserMenu } from './UserMenu';
 import { useSaldoCoins } from '../hooks/useSaldoCoins';
+import { useAuth } from '../auth/useAuth';
 
 /**
  * Cabecalho padrao das telas logadas.
  * - Navegacao: painel lateral (drawer) a esquerda, aberto por um botao.
  * - Conta: menu dropdown no avatar, a direita (UserMenu).
- * `ativo` marca a aba atual no drawer.
+ *
+ * Navega por conta propria (useNavigate) e marca a aba atual a partir da URL
+ * (useLocation). Nao recebe mais props de navegacao nem de usuario: o estado de
+ * sessao vem do AuthContext.
  */
 type Aba = 'Início' | 'Disciplinas' | 'Simulados' | 'Comunidade' | 'Chat' | 'Recompensas';
 
-type HeaderAppProps = {
-  ativo?: Aba;
-  userName?: string;
-  isLoggedIn?: boolean;
-  onInicio?: () => void;
-  onDisciplinas?: () => void;
-  onSimulados?: () => void;
-  onComunidade?: () => void;
-  onChat?: () => void;
-  onRecompensas?: () => void;
-  onMeusResgates?: () => void;
-  onPerfil?: () => void;
-  onConfiguracoes?: () => void;
-  onLogout?: () => void;
-};
-
 type ItemMenu = {
-  rotulo: string;
+  rotulo: Aba;
   icone: React.ReactNode;
-  onClick?: () => void;
+  destino: string;
   somenteLogado?: boolean;
 };
 
-export function HeaderApp({
-  ativo,
-  userName,
-  isLoggedIn = true,
-  onInicio,
-  onDisciplinas,
-  onSimulados,
-  onComunidade,
-  onChat,
-  onRecompensas,
-  onMeusResgates,
-  onPerfil,
-  onConfiguracoes,
-  onLogout,
-}: HeaderAppProps) {
+const NAV_ITENS: ItemMenu[] = [
+  { rotulo: 'Início', icone: <Home size={18} />, destino: '/dashboard' },
+  { rotulo: 'Disciplinas', icone: <BookOpen size={18} />, destino: '/disciplinas' },
+  { rotulo: 'Simulados', icone: <FileText size={18} />, destino: '/simulado/gerar' },
+  { rotulo: 'Comunidade', icone: <Users size={18} />, destino: '/comunidade' },
+  { rotulo: 'Chat', icone: <MessageCircle size={18} />, destino: '/chat', somenteLogado: true },
+  { rotulo: 'Recompensas', icone: <Gift size={18} />, destino: '/recompensas' },
+];
+
+/**
+ * Deriva a aba ativa a partir do caminho atual. Usa o prefixo da rota para que
+ * sub-rotas (ex.: /comunidade/:postId, /simulado/gerar) marquem a aba certa.
+ */
+function abaAtivaPorRota(pathname: string): Aba | undefined {
+  if (pathname.startsWith('/dashboard')) return 'Início';
+  if (pathname.startsWith('/disciplinas')) return 'Disciplinas';
+  if (pathname.startsWith('/simulado')) return 'Simulados';
+  if (pathname.startsWith('/comunidade')) return 'Comunidade';
+  if (pathname.startsWith('/chat')) return 'Chat';
+  if (pathname.startsWith('/recompensas')) return 'Recompensas';
+  return undefined;
+}
+
+export function HeaderApp() {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const { estaLogado } = useAuth();
   const [aberto, setAberto] = useState(false);
   const { saldo } = useSaldoCoins();
+
+  const ativo = abaAtivaPorRota(pathname);
 
   // Fecha o drawer com a tecla Esc (acessibilidade).
   useEffect(() => {
@@ -63,18 +66,12 @@ export function HeaderApp({
   }, []);
 
   // Navega e fecha o drawer.
-  function ir(fn?: () => void) {
-    return () => { setAberto(false); fn?.(); };
+  function ir(destino: string) {
+    return () => {
+      setAberto(false);
+      navigate(destino);
+    };
   }
-
-  const navItens: ItemMenu[] = [
-    { rotulo: 'Início', icone: <Home size={18} />, onClick: onInicio },
-    { rotulo: 'Disciplinas', icone: <BookOpen size={18} />, onClick: onDisciplinas },
-    { rotulo: 'Simulados', icone: <FileText size={18} />, onClick: onSimulados },
-    { rotulo: 'Comunidade', icone: <Users size={18} />, onClick: onComunidade },
-    { rotulo: 'Chat', icone: <MessageCircle size={18} />, onClick: onChat, somenteLogado: true },
-    { rotulo: 'Recompensas', icone: <Gift size={18} />, onClick: onRecompensas },
-  ];
 
   return (
     <>
@@ -112,13 +109,7 @@ export function HeaderApp({
               {saldo.toLocaleString('pt-BR')}
             </span>
           )}
-          <UserMenu
-          userName={userName}
-          onPerfil={onPerfil}
-          onMeusResgates={onMeusResgates}
-          onConfiguracoes={onConfiguracoes}
-          onLogout={onLogout}
-          />
+          <UserMenu />
         </div>
       </header>
 
@@ -155,14 +146,14 @@ export function HeaderApp({
 
         <nav className="flex-1 overflow-y-auto p-3">
           <p className="px-3 pb-1 pt-2 text-[10px] font-bold uppercase tracking-wide text-slate-400">Navegação</p>
-          {navItens.map((item) => {
-            if (item.somenteLogado && !isLoggedIn) return null;
+          {NAV_ITENS.map((item) => {
+            if (item.somenteLogado && !estaLogado) return null;
             const ativoCls = item.rotulo === ativo ? 'bg-indigo-50 text-indigo-700' : 'text-slate-700 hover:bg-slate-50';
             return (
               <button
                 key={item.rotulo}
                 type="button"
-                onClick={ir(item.onClick)}
+                onClick={ir(item.destino)}
                 className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-semibold transition ${ativoCls}`}
               >
                 {item.icone}
