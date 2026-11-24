@@ -73,3 +73,8 @@ lib/
 apps/backend/src/generated/
 
 *.csv
+
+#arquivo local
+.github/copilot-instructions.md
+.copilot-context.md
+sync_context.py
