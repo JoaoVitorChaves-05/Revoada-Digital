@@ -19,6 +19,7 @@ type Props = {
   saldoPontos?: number;
   pontosNaSemana?: number;
   onMeusResgates?: () => void;
+  onHistoricoRecargas?: () => void;
 };
 
 const CATEGORIAS: Array<'Todas' | CategoriaRecompensa> = [
@@ -53,6 +54,7 @@ export function LojaRecompensas({
   saldoPontos: saldoPontosProp,
   pontosNaSemana = 250,
   onMeusResgates,
+  onHistoricoRecargas,
 }: Props) {
   const [busca, setBusca] = useState('');
   const [categoria, setCategoria] = useState<'Todas' | CategoriaRecompensa>('Todas');
@@ -94,13 +96,22 @@ export function LojaRecompensas({
             <h1 className="text-2xl font-extrabold text-indigo-950">Recompensas</h1>
             <p className="text-sm text-slate-500">Seu esforço merece mais. Troque seus pontos por novas conquistas!</p>
           </div>
-          <button
-            type="button"
-            onClick={onMeusResgates}
-            className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-indigo-700 transition hover:border-indigo-200 hover:bg-indigo-50"
-          >
-            Meus resgates
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={onMeusResgates}
+              className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-indigo-700 transition hover:border-indigo-200 hover:bg-indigo-50"
+            >
+              Meus resgates
+            </button>
+            <button
+              type="button"
+              onClick={onHistoricoRecargas}
+              className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-indigo-700 transition hover:border-indigo-200 hover:bg-indigo-50"
+            >
+              Histórico de recargas
+            </button>
+          </div>
         </div>
 
         {/* Card de saldo */}
