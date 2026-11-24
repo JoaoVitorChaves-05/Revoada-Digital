@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { mercadoPagoWebhook } from '../controllers/payments.controller';
 import {
   createRecharge,
   getRechargeCatalog,
@@ -16,5 +17,6 @@ paymentsRouter.post(
   validateSchema(createPaymentSchema),
   createRecharge,
 );
+paymentsRouter.post('/webhook/mercado-pago', mercadoPagoWebhook);
 
 export default paymentsRouter;
