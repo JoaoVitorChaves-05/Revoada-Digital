@@ -31,6 +31,21 @@ services:
       - "3000:3000"
     volumes:
       - ./docker/be:/docker/be
+      - ./apps/backend:/RevDig/apps/backend
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+    env_file:
+      - .env.docker
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./docker/fe:/docker/fe
+      - ./apps/frontend:/RevDig/apps/frontend
 
 volumes:
   Revoada_data:

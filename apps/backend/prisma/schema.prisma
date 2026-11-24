@@ -96,6 +96,10 @@ model StudentProfile {
   school    School     @relation(fields: [schoolId], references: [id], onDelete: Restrict)
   mockExams MockExam[]
 
+  redemptions Redemption[]
+  payments Payment[]
+  pointBalance PointBalance?
+
   @@map("student_profiles")
 }
 
@@ -143,6 +147,79 @@ model School {
   teachers TeacherProfile[]
 
   @@map("schools")
+}
+
+model Reward {
+  id          String  @id @default(uuid())
+  name        String
+  description String
+  cost        Int     @map("points_cost")
+  isAvailable Boolean @default(true) @map("is_available")
+  stock       Int? // null representa estoque ilimitado
+  redemptions Redemption[]
+
+  @@map("rewards")
+}
+
+model Redemption {
+  id          String   @id @default(uuid())
+  studentId   String   @map("student_id")
+  rewardId    String   @map("reward_id")
+  pointsSpent Int      @map("points_spent")
+  createdAt   DateTime @default(now()) @map("created_at")
+  student     StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  reward      Reward @relation(fields: [rewardId], references: [id], onDelete: Restrict)
+
+  @@index([studentId, createdAt])
+  @@map("redemptions")
+}
+
+model RechargeCatalogItem {
+  id          String   @id @default(uuid())
+  name        String
+  amountBRL   Decimal  @db.Decimal(10, 2) @map("amount_brl")
+  coinsCost   Int      @map("coins_cost")
+  isAvailable Boolean  @default(true) @map("is_available")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  payments Payment[]
+
+  @@map("recharge_catalog_items")
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  APPROVED
+  FAILED
+  REFUNDED
+}
+
+model Payment {
+  id                String        @id @default(uuid())
+  externalId        String?       @unique @map("external_id")
+  status            PaymentStatus @default(PENDING)
+  providerStatus    String?       @map("provider_status")
+  amount            Decimal?      @db.Decimal(12, 2) @map("amount")
+  amountBRL         Decimal?      @db.Decimal(10, 2) @map("amount_brl")
+  currency          String        @default("BRL")
+  externalReference String?       @map("external_reference")
+  studentId         String?       @map("student_id")
+  catalogItemId     String?       @map("catalog_item_id")
+  phoneNumber       String?       @map("phone_number")
+  coinsSpent        Int?          @map("coins_spent")
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+
+  student     StudentProfile?      @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  catalogItem RechargeCatalogItem? @relation(fields: [catalogItemId], references: [id], onDelete: Restrict)
+  events      PaymentEvent[]
+
+  @@index([studentId, createdAt])
+  @@index([status, createdAt])
+  @@index([status])
+  @@map("payments")
 }
 
 model MockExam {
@@ -195,29 +272,6 @@ enum AttemptStatus {
   ABANDONED
 }
 
-enum PaymentStatus {
-  PENDING
-  APPROVED
-  FAILED
-  REFUNDED
-}
-
-model Payment {
-  id                 String        @id @default(uuid())
-  externalId         String        @unique
-  status             PaymentStatus @default(PENDING)
-  providerStatus     String?
-  amount             Decimal?      @db.Decimal(12, 2)
-  currency           String        @default("BRL")
-  externalReference  String?
-  createdAt          DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
-  events             PaymentEvent[]
-
-  @@index([status])
-  @@map("payments")
-}
-
 model PaymentEvent {
   id              String   @id @default(uuid())
   paymentId       String?
@@ -248,6 +302,7 @@ model Attempt {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  coinsCredited Boolean @default(false)
 
   @@index([mockExamId])
   @@map("attempts")
@@ -376,4 +431,27 @@ model MessageRead {
   @@id([messageId, userId])
   @@index([userId])
   @@map("chat_message_reads")
+}
+
+model PointBalance {
+  studentId String @id
+  balance   Int    @default(0)
+
+  student      StudentProfile     @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  transactions PointTransaction[]
+
+  @@map("point_balances")
+}
+
+model PointTransaction {
+  id        String   @id @default(uuid())
+  studentId String
+  amount    Int
+  reason    String
+  createdAt DateTime @default(now())
+
+  pointBalance PointBalance @relation(fields: [studentId], references: [studentId], onDelete: Restrict)
+
+  @@index([studentId, createdAt])
+  @@map("transactions")
 }
