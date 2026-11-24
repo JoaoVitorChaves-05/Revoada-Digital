@@ -1,13 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Bell, ChevronDown, User, Gift, Settings, LogOut } from 'lucide-react';
-
-type UserMenuProps = {
-  userName?: string;
-  onPerfil?: () => void;
-  onMeusResgates?: () => void;
-  onConfiguracoes?: () => void;
-  onLogout?: () => void;
-};
+import { useAuth } from '../auth/useAuth';
 
 function getInitials(name: string) {
   const parts = name.trim().split(' ');
@@ -15,7 +9,13 @@ function getInitials(name: string) {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-export function UserMenu({ userName, onPerfil, onMeusResgates, onConfiguracoes, onLogout }: UserMenuProps) {
+/**
+ * Menu de conta do cabeçalho. Navega por conta própria (useNavigate) e encerra
+ * a sessão pelo AuthContext. O nome exibido vem do usuário autenticado.
+ */
+export function UserMenu() {
+  const navigate = useNavigate();
+  const { usuario, logout } = useAuth();
   const [aberto, setAberto] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -28,7 +28,19 @@ export function UserMenu({ userName, onPerfil, onMeusResgates, onConfiguracoes, 
     return () => document.removeEventListener('mousedown', aoClicarFora);
   }, []);
 
+  const userName = usuario?.full_name;
   const nome = userName ?? 'Visitante';
+
+  function irPara(destino: string) {
+    setAberto(false);
+    navigate(destino);
+  }
+
+  function sair() {
+    setAberto(false);
+    logout();
+    navigate('/');
+  }
 
   return (
     <div className="relative flex items-center gap-2 text-xs font-bold text-indigo-900" ref={ref}>
@@ -55,21 +67,21 @@ export function UserMenu({ userName, onPerfil, onMeusResgates, onConfiguracoes, 
         >
           <button
             role="menuitem"
-            onClick={() => { setAberto(false); onPerfil?.(); }}
+            onClick={() => irPara('/perfil')}
             className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
           >
             <User size={16} /> Perfil
           </button>
           <button
             role="menuitem"
-            onClick={() => { setAberto(false); onMeusResgates?.(); }}
+            onClick={() => irPara('/recompensas/meus-resgates')}
             className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
           >
             <Gift size={16} /> Meus resgates
           </button>
           <button
             role="menuitem"
-            onClick={() => { setAberto(false); onConfiguracoes?.(); }}
+            onClick={() => irPara('/configuracoes')}
             className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
           >
             <Settings size={16} /> Configurações
@@ -77,7 +89,7 @@ export function UserMenu({ userName, onPerfil, onMeusResgates, onConfiguracoes, 
           <div className="my-1 h-px bg-slate-100" />
           <button
             role="menuitem"
-            onClick={() => { setAberto(false); onLogout?.(); }}
+            onClick={sair}
             className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-semibold text-red-600 transition hover:bg-red-50"
           >
             <LogOut size={16} /> Sair
