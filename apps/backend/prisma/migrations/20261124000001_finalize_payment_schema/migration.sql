@@ -1,0 +1,5 @@
+ALTER TYPE "PaymentStatus" ADD VALUE IF NOT EXISTS 'COMPLETED';
+
+ALTER TABLE "payments"
+  ALTER COLUMN "external_id" DROP NOT NULL,
+  ALTER COLUMN "updated_at" DROP DEFAULT;
