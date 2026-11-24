@@ -20,6 +20,7 @@ import { FazerSimulado } from './pages/Simulado/FazerSimulado'
 import { PerfilScreen } from './screens/PerfilScreen'
 import { ConfiguracoesScreen } from './screens/ConfiguracoesScreen'
 import { AprovacaoUsuarios } from './pages/Admin/AprovacaoUsuarios'
+import { HistoricoRecargas } from './pages/Recompensas/HistoricoRecargas'
 
 // Identidade de teste do chat (6=a): usuários fixos para simular as duas pontas
 // na demo. Substituir pelo usuário autenticado (JWT) no Bloco B (6=b).
