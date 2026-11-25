@@ -1,8 +1,14 @@
-// Renderiza um texto que pode conter imagens em markdown: ![alt](url).
-// As questões do banco guardam enunciados e alternativas nesse formato.
-// Trocamos cada marcação de imagem por uma <img> de verdade e mantemos o texto ao redor como está. (Se a questão não tiver imagem, ele mantém o texto como está, sem alterações.)
+// Renderiza um texto que pode conter imagens, em dois formatos:
+//   1) markdown: ![alt](url)
+//   2) link puro de imagem: https://.../figura.png
+// As questões do banco guardam enunciados e alternativas de ambas as formas.
+// Trocamos cada imagem por uma <img> de verdade e mantemos o texto ao redor
+// como está. (Se não houver imagem, o texto fica igual, sem alterações.)
 
-const IMG_MARKDOWN = /!\[([^\]]*)\]\(([^)\s]+)\)/g;
+// Casa markdown ![alt](url) OU uma URL http(s) que termina em extensão de imagem.
+// Os grupos: markdown => [1]=alt [2]=url; link puro => [3]=url.
+const IMG_PATTERN =
+  /!\[([^\]]*)\]\(([^)\s]+)\)|(https?:\/\/[^\s)]+\.(?:png|jpe?g|gif|webp|svg)(?:\?[^\s)]*)?)/gi;
 
 type TextoComImagemProps = {
   conteudo: string;
@@ -13,12 +19,15 @@ export function TextoComImagem({ conteudo, className }: TextoComImagemProps) {
   const partes: Array<string | { alt: string; src: string }> = [];
   let ultimoIndice = 0;
 
-  for (const match of conteudo.matchAll(IMG_MARKDOWN)) {
+  for (const match of conteudo.matchAll(IMG_PATTERN)) {
     const indice = match.index ?? 0;
     if (indice > ultimoIndice) {
       partes.push(conteudo.slice(ultimoIndice, indice));
     }
-    partes.push({ alt: match[1], src: match[2] });
+    // match[2] = url do markdown; match[3] = url do link puro.
+    const src = match[2] ?? match[3] ?? '';
+    const alt = match[1] ?? '';
+    partes.push({ alt, src });
     ultimoIndice = indice + match[0].length;
   }
 
