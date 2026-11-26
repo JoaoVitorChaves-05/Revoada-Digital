@@ -9,7 +9,7 @@ export type { UsuarioLogado }
 type LoginProps = {
   onBack: () => void
   onForgot: () => void
-  onLoginSuccess: (user: UsuarioLogado) => void
+  onLoginSuccess: (user: UsuarioLogado, token: string) => void
 }
 
 // Resolve a URL da API conforme o ambiente (dev/producao). Ver utils/apiBase.
@@ -45,9 +45,11 @@ export function Login({ onBack, onForgot, onLoginSuccess }: LoginProps) {
         }
         throw new Error(data?.message ?? 'Email ou senha inválidos.')
       }
-      // Login sem JWT: a persistencia da sessao (localStorage) e feita pelo
-      // AuthContext via onLoginSuccess; a tela apenas repassa o usuario.
-      onLoginSuccess(data.user)
+      if (typeof data?.token !== 'string' || !data.token || !data.user?.id) {
+        throw new Error('Resposta de autenticação inválida.')
+      }
+      // O AuthContext persiste a sessão completa recebida do backend.
+      onLoginSuccess(data.user, data.token)
     } catch (err: unknown) {
       setErro(err instanceof Error ? err.message : 'Erro ao entrar.')
     } finally {

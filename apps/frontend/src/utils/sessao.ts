@@ -1,18 +1,18 @@
+import { TOKEN_STORAGE_KEY } from '../auth/authStore';
+
 /**
  * Serviço_Sessão (R2).
  *
  * Interface única que desacopla "quem é o aluno" do restante do Dashboard.
- * Nesta fase (Fase 1) resolve o userId a partir de uma fonte configurável com
- * fallback e nunca lança. A assinatura já prevê o token da Fase 2
- * (`getAuthToken`) sem exigir alteração nos componentes de bloco.
+ * Resolve o userId e o token da sessão persistida, usando fallback quando
+ * necessário, sem exigir alteração nos componentes de bloco.
  */
 
 export interface SessaoAluno {
   /** Retorna o userId atual do aluno. Nunca lança; usa fallback se preciso. */
   getUserId(): string;
   /**
-   * Ponto de extensao Fase 2: token de autenticacao.
-   * Nesta fase retorna null (auth ainda nao emite JWT).
+   * Retorna o token JWT persistido, ou null quando não há sessão disponível.
    */
   getAuthToken(): string | null;
   /** Nome do aluno quando disponivel; null nesta fase (vira placeholder na saudacao). */
@@ -34,7 +34,7 @@ const USER_ID_FALLBACK = '769e855b-4a27-4a5b-a48c-170be35004d2';
 type UsuarioLogadoMinimo = { id: string; full_name?: string };
 
 /**
- * Le o usuario logado gravado pelo LoginScreen no localStorage.
+ * Lê o usuário logado gravado no localStorage.
  * Nunca lanca: retorna null se ausente, invalido ou fora do browser.
  */
 function lerUsuarioLogado(): UsuarioLogadoMinimo | null {
@@ -53,13 +53,17 @@ export function criarSessao(config: ConfigSessao): SessaoAluno {
   return {
     getUserId() {
       // Ordem de resolucao: usuario logado (localStorage) -> fallback.
-      // O LoginScreen grava "usuarioLogado" apos o login (fase sem JWT).
+      // O AuthContext grava "usuarioLogado" após o login.
       const logado = lerUsuarioLogado();
       return logado?.id ?? config.userIdFallback;
     },
     getAuthToken() {
-      // Ainda nao ha JWT emitido nesta fase.
-      return null;
+      if (typeof window === 'undefined' || !window.localStorage) return null;
+      try {
+        return window.localStorage.getItem(TOKEN_STORAGE_KEY);
+      } catch {
+        return null;
+      }
     },
     getNomeAluno() {
       // Usa o nome do usuario logado quando disponivel; senao, placeholder.

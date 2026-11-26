@@ -19,15 +19,19 @@ export type UsuarioLogado = {
 export interface AuthContextValue {
   /** Usuário autenticado atual, ou null se deslogado. */
   usuario: UsuarioLogado | null;
+  /** Token JWT atual, ou null se deslogado. */
+  token: string | null;
   /** Conveniência: `usuario !== null`. */
   estaLogado: boolean;
-  /** Registra o login: grava no localStorage e no estado. */
-  login: (usuario: UsuarioLogado) => void;
-  /** Encerra a sessão: limpa o localStorage e o estado. */
+  /** Registra usuário e token no localStorage e no estado. */
+  login: (usuario: UsuarioLogado, token: string) => void;
+  /** Encerra a sessão: limpa usuário, token, localStorage e estado. */
   logout: () => void;
 }
 
-/** Chave única da sessão no localStorage, compartilhada com utils/sessao.ts. */
+/** Chave do usuário persistido, compartilhada com utils/sessao.ts. */
 export const STORAGE_KEY = 'usuarioLogado';
+/** Chave única do JWT, também usada pelo interceptor da API. */
+export const TOKEN_STORAGE_KEY = 'authToken';
 
 export const AuthContext = createContext<AuthContextValue | null>(null);

@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import {
   AuthContext,
   STORAGE_KEY,
+  TOKEN_STORAGE_KEY,
   type AuthContextValue,
   type UsuarioLogado,
 } from './authStore';
@@ -23,31 +24,45 @@ function lerUsuarioPersistido(): UsuarioLogado | null {
   }
 }
 
+function lerTokenPersistido(): string | null {
+  if (typeof window === 'undefined' || !window.localStorage) return null;
+  try {
+    return window.localStorage.getItem(TOKEN_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   // Inicializa a partir do localStorage para que a sessão sobreviva ao reload.
   const [usuario, setUsuario] = useState<UsuarioLogado | null>(() => lerUsuarioPersistido());
+  const [token, setToken] = useState<string | null>(() => lerTokenPersistido());
 
-  const login = useCallback((proximo: UsuarioLogado) => {
+  const login = useCallback((proximo: UsuarioLogado, proximoToken: string) => {
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(proximo));
+      window.localStorage.setItem(TOKEN_STORAGE_KEY, proximoToken);
     } catch {
       // Ignora falhas de storage (ex.: modo privado); mantém o estado em memória.
     }
     setUsuario(proximo);
+    setToken(proximoToken);
   }, []);
 
   const logout = useCallback(() => {
     try {
       window.localStorage.removeItem(STORAGE_KEY);
+      window.localStorage.removeItem(TOKEN_STORAGE_KEY);
     } catch {
       // Ignora falhas de storage.
     }
     setUsuario(null);
+    setToken(null);
   }, []);
 
   const value = useMemo<AuthContextValue>(
-    () => ({ usuario, estaLogado: usuario !== null, login, logout }),
-    [usuario, login, logout],
+    () => ({ usuario, token, estaLogado: usuario !== null, login, logout }),
+    [usuario, token, login, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
