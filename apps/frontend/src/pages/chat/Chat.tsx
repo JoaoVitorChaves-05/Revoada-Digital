@@ -4,10 +4,8 @@ import { useChat } from '../../hooks/useChat';
 
 interface ChatPageProps {
   onBack: () => void;
-  // Identidade de teste (6=a): id do usuário atual e lista para alternar na demo.
+  // Identidade real do chat: id do usuário autenticado (vem de ChatRoute).
   currentUserId: string;
-  testUsers: { id: string; label: string }[];
-  onSwitchUser: (userId: string) => void;
 }
 
 function formatarHora(iso: string) {
@@ -19,12 +17,7 @@ function formatarHora(iso: string) {
   });
 }
 
-export function Chat({
-  onBack,
-  currentUserId,
-  testUsers,
-  onSwitchUser,
-}: ChatPageProps) {
+export function Chat({ onBack, currentUserId }: ChatPageProps) {
   const {
     conversations,
     conversationsStatus,
@@ -77,9 +70,26 @@ export function Chat({
     setRascunho('');
   };
 
-  const outroUsuarioSelecionado = useMemo(
-    () => testUsers.find((u) => u.id === selectedUserId)?.label,
-    [testUsers, selectedUserId],
+  // Cada conversa vira um item da lista pelo OUTRO participante (quem não sou
+  // eu). Em conversa direta há dois participantes; o meu id é filtrado.
+  const contatos = useMemo(
+    () =>
+      conversations
+        .map((conversa) => {
+          const outro = conversa.participants.find(
+            (p) => p.id !== currentUserId,
+          );
+          if (!outro) return null;
+          return { conversa, outro };
+        })
+        .filter((item): item is NonNullable<typeof item> => item !== null),
+    [conversations, currentUserId],
+  );
+
+  const nomeContatoSelecionado = useMemo(
+    () =>
+      contatos.find((c) => c.outro.id === selectedUserId)?.outro.full_name,
+    [contatos, selectedUserId],
   );
 
   return (
@@ -93,20 +103,6 @@ export function Chat({
           ← Voltar
         </button>
         <h1 className="chat__titulo">Chat</h1>
-        <label className="chat__seletor">
-          <span>Usuário de teste</span>
-          <select
-            value={currentUserId}
-            onChange={(e) => onSwitchUser(e.target.value)}
-            aria-label="Selecionar usuário de teste"
-          >
-            {testUsers.map((u) => (
-              <option key={u.id} value={u.id}>
-                {u.label}
-              </option>
-            ))}
-          </select>
-        </label>
       </header>
 
       <div className="chat__corpo">
@@ -122,64 +118,59 @@ export function Chat({
             </div>
           )}
 
-          {conversationsStatus === 'ready' && conversations.length === 0 && (
+          {conversationsStatus === 'ready' && contatos.length === 0 && (
             <p className="chat__status">
-              Nenhuma conversa ainda. Comece uma escolhendo um contato de teste
-              e enviando a primeira mensagem.
+              Você ainda não tem conversas.
             </p>
           )}
 
           <ul className="chat__lista">
-            {/* Contatos de teste para iniciar conversa (identidade provisória). */}
-            {testUsers
-              .filter((u) => u.id !== currentUserId)
-              .map((u) => {
-                const conversa = conversations.find((c) =>
-                  c.participants.some((p) => p.id === u.id),
-                );
-                const naoLidos = conversa?.unreadCount ?? 0;
-                const selecionado = selectedUserId === u.id;
-                return (
-                  <li key={u.id}>
-                    <button
-                      className={`chat__conversa ${
-                        selecionado ? 'chat__conversa--ativa' : ''
-                      }`}
-                      onClick={() => selectConversationWith(u.id)}
-                      aria-current={selecionado}
-                    >
-                      <span className="chat__conversa-nome">{u.label}</span>
-                      {conversa?.lastMessage && (
-                        <span className="chat__conversa-preview">
-                          {conversa.lastMessage.content}
-                        </span>
-                      )}
-                      {naoLidos > 0 && (
-                        <span
-                          className="chat__badge"
-                          aria-label={`${naoLidos} mensagens não lidas`}
-                        >
-                          {naoLidos}
-                        </span>
-                      )}
-                    </button>
-                  </li>
-                );
-              })}
+            {contatos.map(({ conversa, outro }) => {
+              const naoLidos = conversa.unreadCount ?? 0;
+              const selecionado = selectedUserId === outro.id;
+              return (
+                <li key={conversa.id}>
+                  <button
+                    className={`chat__conversa ${
+                      selecionado ? 'chat__conversa--ativa' : ''
+                    }`}
+                    onClick={() => selectConversationWith(outro.id)}
+                    aria-current={selecionado}
+                  >
+                    <span className="chat__conversa-nome">
+                      {outro.full_name}
+                    </span>
+                    {conversa.lastMessage && (
+                      <span className="chat__conversa-preview">
+                        {conversa.lastMessage.content}
+                      </span>
+                    )}
+                    {naoLidos > 0 && (
+                      <span
+                        className="chat__badge"
+                        aria-label={`${naoLidos} mensagens não lidas`}
+                      >
+                        {naoLidos}
+                      </span>
+                    )}
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         </aside>
 
         <section className="chat__painel" aria-label="Mensagens">
           {!selectedUserId && (
             <p className="chat__status chat__status--centro">
-              Selecione um contato para ver as mensagens.
+              Selecione uma conversa para ver as mensagens.
             </p>
           )}
 
           {selectedUserId && (
             <>
               <div className="chat__painel-cabecalho">
-                <h2>{outroUsuarioSelecionado ?? 'Conversa'}</h2>
+                <h2>{nomeContatoSelecionado ?? 'Conversa'}</h2>
               </div>
 
               {messagesStatus === 'loading' && (
