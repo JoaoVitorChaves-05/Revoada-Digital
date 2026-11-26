@@ -1,14 +1,14 @@
 import { Router } from 'express';
 import { listUserConversations } from '../controllers/chat.list.controller';
 import { getMessageHistory } from '../controllers/chat.controller';
+import { ensureAuthenticated } from '../middlewares/auth.middleware';
 
 const chatRoutes = Router();
 
-// Registro consolidado das rotas de chat sob /chat.
-// Identidade provisória unificada (1=a): histórico usa o mesmo userId provisório
-// (header x-user-id) enquanto conversations usa o id resolvido pela aplicação.
-// A unificação por JWT fica para o Bloco B (Tasks 15-17).
-chatRoutes.get('/conversations', listUserConversations);
-chatRoutes.get('/messages/:userId', getMessageHistory);
+// Rotas de chat sob /chat, protegidas por JWT: ensureAuthenticated verifica o
+// token (Authorization: Bearer) e preenche req.user.id, que os controllers usam
+// como identidade do usuário atual.
+chatRoutes.get('/conversations', ensureAuthenticated, listUserConversations);
+chatRoutes.get('/messages/:userId', ensureAuthenticated, getMessageHistory);
 
 export { chatRoutes };
