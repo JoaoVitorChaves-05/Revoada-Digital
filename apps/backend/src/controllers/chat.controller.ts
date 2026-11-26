@@ -13,7 +13,7 @@ export async function getMessageHistory(
 	res: Response,
 ) {
 	const result = getChatMessagesSchema.safeParse({
-		currentUserId: req.header('x-user-id'),
+		currentUserId: req.user?.id,
 		userId: getUserId(req),
 	});
 
