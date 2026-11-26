@@ -14,8 +14,8 @@ export function LoginRoute() {
     <Login
       onBack={() => navigate('/')}
       onForgot={() => navigate('/redefinir')}
-      onLoginSuccess={(user) => {
-        login(user);
+      onLoginSuccess={(user, token) => {
+        login(user, token);
         navigate('/dashboard');
       }}
     />

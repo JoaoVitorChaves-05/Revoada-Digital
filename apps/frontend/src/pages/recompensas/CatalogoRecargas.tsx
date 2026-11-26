@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { API_BASE_URL } from '../../utils/apiBase';
+import { TOKEN_STORAGE_KEY } from '../../auth/authStore';
 import './CatalogoRecargas.css';
 
 interface OpcaoRecarga {
@@ -53,7 +54,7 @@ export function CatalogoRecargas({ onBack, userId = 'u1000000-1111-4000-8000-000
   const [feedback, setFeedback] = useState<{ tipo: 'sucesso' | 'erro'; texto: string } | null>(null);
 
   const obterHeadersAutenticacao = () => {
-    const token = localStorage.getItem('token') || localStorage.getItem('accessToken') || '';
+    const token = localStorage.getItem(TOKEN_STORAGE_KEY);
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };

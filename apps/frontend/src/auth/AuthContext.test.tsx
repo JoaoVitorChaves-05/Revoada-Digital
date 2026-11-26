@@ -6,9 +6,11 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { ReactNode } from 'react';
 import { AuthProvider } from './AuthContext';
 import { useAuth } from './useAuth';
-import type { UsuarioLogado } from './authStore';
-
-const STORAGE_KEY = 'usuarioLogado';
+import {
+  STORAGE_KEY,
+  TOKEN_STORAGE_KEY,
+  type UsuarioLogado,
+} from './authStore';
 
 function makeUser(overrides: Partial<UsuarioLogado> = {}): UsuarioLogado {
   return {
@@ -42,12 +44,14 @@ describe('AuthContext', () => {
   it('inicia logado lendo o usuário persistido no localStorage', () => {
     const user = makeUser({ id: 'persistido-1', full_name: 'Maria' });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+    localStorage.setItem(TOKEN_STORAGE_KEY, 'token-persistido');
 
     const { result } = renderHook(() => useAuth(), { wrapper });
 
     expect(result.current.estaLogado).toBe(true);
     expect(result.current.usuario?.id).toBe('persistido-1');
     expect(result.current.usuario?.full_name).toBe('Maria');
+    expect(result.current.token).toBe('token-persistido');
   });
 
   it('ignora um valor inválido no localStorage e inicia deslogado', () => {
@@ -60,23 +64,28 @@ describe('AuthContext', () => {
     const { result } = renderHook(() => useAuth(), { wrapper });
     const user = makeUser({ id: 'novo-1' });
 
-    act(() => result.current.login(user));
+    act(() => result.current.login(user, 'token-novo'));
 
     expect(result.current.usuario?.id).toBe('novo-1');
+    expect(result.current.token).toBe('token-novo');
     expect(result.current.estaLogado).toBe(true);
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).id).toBe('novo-1');
+    expect(localStorage.getItem(TOKEN_STORAGE_KEY)).toBe('token-novo');
   });
 
-  it('logout limpa o estado e remove a chave do localStorage', () => {
+  it('logout limpa o estado e remove usuário e token do localStorage', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(makeUser()));
+    localStorage.setItem(TOKEN_STORAGE_KEY, 'token-persistido');
     const { result } = renderHook(() => useAuth(), { wrapper });
     expect(result.current.estaLogado).toBe(true);
 
     act(() => result.current.logout());
 
     expect(result.current.usuario).toBeNull();
+    expect(result.current.token).toBeNull();
     expect(result.current.estaLogado).toBe(false);
     expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+    expect(localStorage.getItem(TOKEN_STORAGE_KEY)).toBeNull();
   });
 
   it('expõe o usuário a um componente consumidor via useAuth', () => {
