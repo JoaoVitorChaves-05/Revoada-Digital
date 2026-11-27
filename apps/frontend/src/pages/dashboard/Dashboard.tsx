@@ -33,6 +33,8 @@ export interface DashboardPageProps {
   onVerEstatisticas: () => void;
   /** Navegação do bloco de disciplinas (clique no card "ver disciplinas"). */
   onVerDisciplinas?: () => void;
+  /** Navegação ao clicar em "Estudar" em uma disciplina do bloco. */
+  onEstudarDisciplina?: (disciplina: string) => void;
 }
 
 
@@ -82,6 +84,7 @@ const colunasStyle: CSSProperties = {
 export function Dashboard({
   onVerEstatisticas,
   onVerDisciplinas,
+  onEstudarDisciplina,
 }: DashboardPageProps) {
   const [metricas, setMetricas] = useState<MetricasDashboard | null>(null);
   const [totalTentativas, setTotalTentativas] = useState<number>(0);
@@ -203,7 +206,10 @@ export function Dashboard({
       <div className="dashboard__blocos" style={{ ...colunasStyle, marginTop: '1.5rem' }}>
         <ContinueDeOndeParou />
         <BlocoDesempenhoAreas onVerEstatisticas={onVerEstatisticas} />
-        <BlocoDisciplinas onVerDisciplinas={() => onVerDisciplinas?.()} />
+        <BlocoDisciplinas
+          onEstudar={onEstudarDisciplina}
+          onVerDisciplinas={() => onVerDisciplinas?.()}
+        />
         <BlocoRadar />
       </div>
 
