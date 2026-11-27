@@ -183,6 +183,59 @@ export class DashboardService {
     private readonly schoolRepository = new SchoolRepository(),
   ) {}
 
+  async getDefasagem(userId: string) {
+    const student = await this.dashboardRepository.findStudentByUserId(userId);
+    if (!student) throw new StudentNotFoundError();
+
+    const attempts = await this.dashboardRepository
+      .findSubmittedAttemptsComConteudoByStudent(student.id);
+    const materias = new Map<string, Contagem & { conteudos: Map<string, Contagem> }>();
+
+    for (const attempt of attempts) {
+      const respostas = new Map(
+        attempt.answers.map((answer) => [answer.questionId, answer.isCorrect]),
+      );
+      // Inclui todas as questões do simulado: omissões contam como erro.
+      // Cada tentativa finalizada contribui separadamente.
+      for (const { question } of attempt.mockExam.questions) {
+        const acertou = respostas.get(question.id) === true;
+        for (const subject of new Set(question.subject)) {
+          const materia = materias.get(subject) ?? {
+            ...novaContagem(), conteudos: new Map<string, Contagem>(),
+          };
+          materia.total++;
+          if (acertou) materia.acertos++;
+          for (const concept of new Set(question.concept)) {
+            const conteudo = materia.conteudos.get(concept) ?? novaContagem();
+            conteudo.total++;
+            if (acertou) conteudo.acertos++;
+            materia.conteudos.set(concept, conteudo);
+          }
+          materias.set(subject, materia);
+        }
+      }
+    }
+
+    return {
+      materias: [...materias]
+        .sort(([a], [b]) => a.localeCompare(b, 'pt-BR'))
+        .map(([materia, contagem]) => ({
+          materia,
+          totalQuestoes: contagem.total,
+          acertos: contagem.acertos,
+          percentualAcerto: taxa(contagem),
+          mapaDefasagem: [...contagem.conteudos]
+            .sort(([a], [b]) => a.localeCompare(b, 'pt-BR'))
+            .map(([nome, conteudo]) => {
+              const taxaExata = (conteudo.acertos / conteudo.total) * 100;
+              const nivel: 'baixa' | 'média' | 'alta' =
+                taxaExata >= 70 ? 'baixa' : taxaExata >= 40 ? 'média' : 'alta';
+              return { nome, percentualAcerto: taxa(conteudo), nivel };
+            }),
+        })),
+    };
+  }
+
   async getClassPerformance(schoolId: string): Promise<ClassPerformance[]> {
     const school = await this.schoolRepository.findById(schoolId);
     if (!school) {

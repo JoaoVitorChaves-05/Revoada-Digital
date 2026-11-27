@@ -4,69 +4,67 @@ import { BarraMateria } from '../../components/BarraMateria';
 import { MapaDefasagem } from '../../components/MapaDefasagem';
 import type { RespostaDefasagem } from '../../types/desempenho.types';
 import { API_BASE_URL } from '../../utils/apiBase';
+import { sessao } from '../../utils/sessao';
 
 interface PainelDesempenhoPageProps {
   onBack: () => void;
 }
 
-const URL_BASE_API = API_BASE_URL;
-
 export function PainelDesempenho({ onBack }: PainelDesempenhoPageProps) {
   const [dados, setDados] = useState<RespostaDefasagem | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  async function carregarDefasagem() {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`${URL_BASE_API}/dashboard/me/defasagem`);
-      if (!response.ok) {
-        throw new Error('Não foi possível carregar seu desempenho.');
-      }
-      const data: RespostaDefasagem = await response.json();
-      setDados(data);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Erro inesperado.');
-    } finally {
-      setLoading(false);
-    }
-  }
+  const [tentativa, setTentativa] = useState(0);
 
   useEffect(() => {
-    carregarDefasagem();
-  }, []);
+    let ativo = true;
+    const controller = new AbortController();
 
-  if (loading) {
-    return (
-      <div className="painel">
-        <BotaoVoltar onBack={onBack} />
-        <p className="painel__status">Carregando seu desempenho...</p>
-      </div>
-    );
-  }
+    async function carregar() {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/dashboard/me/defasagem?userId=${encodeURIComponent(sessao.getUserId())}`,
+          { signal: controller.signal },
+        );
+        if (!response.ok) throw new Error();
+        const data: RespostaDefasagem = await response.json();
+        if (!data || !Array.isArray(data.materias)) throw new Error();
+        if (ativo) setDados(data);
+      } catch {
+        if (ativo) setError('Não foi possível carregar seu desempenho.');
+      } finally {
+        if (ativo) setLoading(false);
+      }
+    }
 
-  if (error) {
-    return (
-      <div className="painel">
-        <BotaoVoltar onBack={onBack} />
-        <p className="painel__erro">Erro: {error}</p>
-        <button className="painel__botao" onClick={carregarDefasagem}>
-          Tentar novamente
-        </button>
-      </div>
-    );
-  }
+    void carregar();
+    return () => {
+      ativo = false;
+      controller.abort();
+    };
+  }, [tentativa]);
 
-  if (!dados || dados.materias.length === 0) {
+  if (loading || error || !dados || dados.materias.length === 0) {
     return (
       <div className="painel">
         <BotaoVoltar onBack={onBack} />
         <h1 className="painel__titulo">Meu desempenho</h1>
-        <p className="painel__vazio">
-          Você ainda não tem dados de desempenho. Faça seu primeiro simulado para
-          começar a acompanhar seu progresso por matéria e descobrir onde reforçar.
-        </p>
+        {loading ? (
+          <p className="painel__status" role="status">Carregando seu desempenho...</p>
+        ) : error ? (
+          <>
+            <p className="painel__erro" role="alert">{error}</p>
+            <button className="painel__botao" onClick={() => setTentativa((valor) => valor + 1)}>
+              Tentar novamente
+            </button>
+          </>
+        ) : (
+          <p className="painel__vazio">
+            Finalize um simulado para acompanhar seu desempenho por matéria e conteúdo.
+          </p>
+        )}
       </div>
     );
   }
