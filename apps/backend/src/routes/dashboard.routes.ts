@@ -4,6 +4,7 @@ import {
   getDashboard,
   getDesempenhoAreas,
   getMyDashboard,
+  getDefasagem,
 } from '../controllers/dashboard.controller';
 import { ensureAuthenticated } from '../middlewares/auth.middleware';
 import { ensureAdmin } from '../middlewares/ensureAdmin.middleware';
@@ -15,5 +16,6 @@ dashboardRouter.get('/me', ensureAuthenticated, getMyDashboard);
 // Saldo de coins resolvido por ?userId= (sem JWT nesta fase), como GET /attempts.
 dashboardRouter.get('/me/coins', getCoins);
 dashboardRouter.get('/me/desempenho-areas', getDesempenhoAreas);
+dashboardRouter.get('/me/defasagem', getDefasagem);
 
 export default dashboardRouter;

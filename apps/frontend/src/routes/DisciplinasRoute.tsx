@@ -1,15 +1,15 @@
+import { useNavigate } from 'react-router-dom';
 import { Disciplinas } from '../pages/disciplinas/Disciplinas';
 
 /**
- * Wrapper de rota das disciplinas. O cabeçalho navega sozinho; as ações de
- * estudar/praticar redação ainda não têm destino de rota definido (tela de
- * questões futura), então permanecem como stubs no-op por enquanto.
+ * Wrapper de rota das disciplinas. O cabeçalho navega sozinho; clicar em
+ * "Estudar" leva o aluno para a geração de simulado.
  */
 export function DisciplinasRoute() {
+  const navigate = useNavigate();
   return (
     <Disciplinas
-      onEstudar={(disciplinaId: string) => console.log('estudar', disciplinaId)}
-      onPraticarRedacao={() => console.log('praticar redação')}
+      onEstudar={() => navigate('/simulado/gerar')}
     />
   );
 }

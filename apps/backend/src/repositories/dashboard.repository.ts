@@ -2,6 +2,24 @@ import { AttemptStatus } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 
 export class DashboardRepository {
+  async findSubmittedAttemptsComConteudoByStudent(studentId: string) {
+    return prisma.attempt.findMany({
+      where: { status: AttemptStatus.SUBMITTED, mockExam: { studentId } },
+      select: {
+        answers: { select: { questionId: true, isCorrect: true } },
+        mockExam: {
+          select: {
+            questions: {
+              select: {
+                question: { select: { id: true, subject: true, concept: true } },
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
   // retorna as respostas submetidas de uma escola específica,
   // incluindo se a resposta está correta,
   // o assunto da questão e o ID do aluno que respondeu.
