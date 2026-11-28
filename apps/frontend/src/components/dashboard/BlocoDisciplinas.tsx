@@ -1,21 +1,20 @@
-import type { CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { theme } from '../../utils/colors';
 import { Placeholder } from './Placeholder';
+import { sessao } from '../../utils/sessao';
+import { buscarDesempenhoAreas } from '../../utils/desempenhoAreasClient';
+import type { DesempenhoArea } from '../../types/desempenhoAreas.types';
 
-// Bloco "O que vamos estudar hoje?" (R13). Apresentacao pura (sem fetch, R18.1):
-// a LISTA de disciplinas e estatica/real (R13.1), mas os NUMEROS por disciplina
-// (questoes resolvidas e taxa de acerto) sao Placeholder "em breve" (R13.2),
-// pois a agregacao por disciplina depende de `Question.subject`, nao retornado
-// por `GET /attempts?userId=`. Cada card tem o controle "Estudar" (R13.3) e o
-// bloco exibe o link "Ver disciplinas" (R13.4). Controles com rotulo textual e
-// operaveis por teclado (R17.1, R17.3); cores de `colors.ts` (R16.2).
+// Bloco "O que vamos estudar hoje?" (R13). Consome GET /dashboard/me/desempenho-areas
+// para exibir questoes resolvidas e taxa de acerto por area do ENEM. Enquanto
+// carrega ou em caso de erro, cai no Placeholder "em breve" preservando o layout.
 
-// As quatro grandes areas do ENEM — lista real/estatica nesta fase (R13.1).
+// As quatro grandes areas do ENEM, na mesma ordem retornada pelo backend.
 const DISCIPLINAS = [
   'Linguagens',
   'Ciências Humanas',
-  'Matemática',
   'Ciências da Natureza',
+  'Matemática',
 ] as const;
 
 export interface BlocoDisciplinasProps {
@@ -74,11 +73,19 @@ const nomeDisciplinaStyle: CSSProperties = {
   color: theme.text.subtitle,
 };
 
-const numerosStyle: CSSProperties = {
+const numerosPlaceholderStyle: CSSProperties = {
   display: 'flex',
   gap: '0.75rem',
   fontSize: '0.8rem',
   color: theme.placeholder.text,
+};
+
+const numerosReaisStyle: CSSProperties = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '0.5rem',
+  fontSize: '0.8rem',
+  color: theme.text.subtitle,
 };
 
 const botaoEstudarStyle: CSSProperties = {
@@ -104,6 +111,26 @@ const linkStyle: CSSProperties = {
 };
 
 export function BlocoDisciplinas({ onEstudar, onVerDisciplinas }: BlocoDisciplinasProps) {
+  const [areas, setAreas] = useState<DesempenhoArea[] | null>(null);
+  const [erro, setErro] = useState(false);
+
+  useEffect(() => {
+    let ativo = true;
+    buscarDesempenhoAreas(sessao.getUserId(), sessao.getAuthToken())
+      .then((dados) => {
+        if (ativo) setAreas(dados);
+      })
+      .catch(() => {
+        if (ativo) setErro(true);
+      });
+    return () => {
+      ativo = false;
+    };
+  }, []);
+
+  const porArea =
+    areas === null ? null : new Map(areas.map((item) => [item.area, item]));
+
   return (
     <section className="bloco-disciplinas" aria-label="O que vamos estudar hoje?" style={secaoStyle}>
       <div style={cabecalhoStyle}>
@@ -119,30 +146,49 @@ export function BlocoDisciplinas({ onEstudar, onVerDisciplinas }: BlocoDisciplin
       </div>
 
       <ul className="bloco-disciplinas__lista" style={listaStyle}>
-        {DISCIPLINAS.map((disciplina) => (
-          <li key={disciplina} className="bloco-disciplinas__item" style={cardStyle}>
-            <div>
-              <p style={nomeDisciplinaStyle}>{disciplina}</p>
-              <Placeholder
-                descricaoAcessivel={`Questões resolvidas e taxa de acerto em ${disciplina} estarão disponíveis em breve.`}
+        {DISCIPLINAS.map((disciplina) => {
+          const dados = erro || porArea === null ? undefined : porArea.get(disciplina);
+
+          return (
+            <li key={disciplina} className="bloco-disciplinas__item" style={cardStyle}>
+              <div>
+                <p style={nomeDisciplinaStyle}>{disciplina}</p>
+                {dados ? (
+                  <span style={numerosReaisStyle}>
+                    <span>
+                      {dados.questoesResolvidas}{' '}
+                      {dados.questoesResolvidas === 1 ? 'resolvida' : 'resolvidas'}
+                    </span>
+                    <span aria-hidden="true">·</span>
+                    <span>
+                      {dados.questoesResolvidas > 0
+                        ? `${dados.taxaAcerto}% de acerto`
+                        : 'Sem dados'}
+                    </span>
+                  </span>
+                ) : (
+                  <Placeholder
+                    descricaoAcessivel={`Questões resolvidas e taxa de acerto em ${disciplina} estarão disponíveis em breve.`}
+                  >
+                    <span style={numerosPlaceholderStyle}>
+                      <span>Questões resolvidas</span>
+                      <span>Taxa de acerto</span>
+                    </span>
+                  </Placeholder>
+                )}
+              </div>
+              <button
+                type="button"
+                className="bloco-disciplinas__estudar"
+                style={botaoEstudarStyle}
+                onClick={onEstudar ? () => onEstudar(disciplina) : undefined}
+                aria-label={`Estudar ${disciplina}`}
               >
-                <span style={numerosStyle}>
-                  <span>Questões resolvidas</span>
-                  <span>Taxa de acerto</span>
-                </span>
-              </Placeholder>
-            </div>
-            <button
-              type="button"
-              className="bloco-disciplinas__estudar"
-              style={botaoEstudarStyle}
-              onClick={onEstudar ? () => onEstudar(disciplina) : undefined}
-              aria-label={`Estudar ${disciplina}`}
-            >
-              Estudar
-            </button>
-          </li>
-        ))}
+                Estudar
+              </button>
+            </li>
+          );
+        })}
       </ul>
     </section>
   );
